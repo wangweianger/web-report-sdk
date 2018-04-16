@@ -10,11 +10,13 @@ let config = {
 	// 错误列表
 	errorList:[],
 	// 延迟请求resourceTime资源时间
-	outtime:200,
-	// onreadystatechange请求的XML信息
-	urlXMLArr:[],
-	// onload的xml请求信息
-	urlOnload:[],
+	outtime:500,
+	// ajax onreadystatechange数量
+	readyNum:0,
+    // 页面fetch数量
+    fetchNum:0,
+	// ajax onload数量
+	loadNum:0,
 	// 页面ajax数量
 	ajaxLength:0,
 	// 页面是否有ajax请求
@@ -39,6 +41,11 @@ let errordefo = {
     data:{}
 };
 
+let beginTime   = new Date().getTime()
+let loadTime    = 0
+let ajaxTime    = 0
+let fetchTime   = 0
+
 //--------------------------------上报数据------------------------------------
 
 // error上报
@@ -46,20 +53,32 @@ _error()
 
 // 绑定onload事件
 addEventListener("load",function(){
-	setTimeout(()=>{
-		console.log(config.errorList)
-	},config.outtime)
+    loadTime = new Date().getTime()-beginTime
+    getLargeTime();
+	// setTimeout(()=>{
+	// 	console.log(config.errorList)
+
+ //        console.log(`loadTime:${loadTime},ajaxTime:${ajaxTime},`)
+
+	// },config.outtime)
 },false);
 
 
 // 执行fetch重写
 _fetch();
 
-
 //  拦截ajax
 _Ajax({
     onreadystatechange:function(xhr){
         if(xhr.readyState === 4){
+            config.readyNum += 1;
+            if(config.readyNum === config.ajaxLength){
+                config.ajaxLength = config.readyNum = 0
+                ajaxTime = new Date().getTime()-beginTime
+                getLargeTime();
+                console.log('走了AJAX onreadystatechange 方法')
+            }
+
             if (xhr.status >= 200 && xhr.status < 300) {
         		
     		}else{
@@ -77,7 +96,15 @@ _Ajax({
     	ajaxResponse(xhr)
     },
     onload:function(xhr){
-    	if(xhr.readyState === 4){
+        if(xhr.readyState === 4){
+            config.loadNum+=1
+            if(config.loadNum === config.ajaxLength){
+                config.ajaxLength = config.loadNum = 0
+                ajaxTime = new Date().getTime()-beginTime
+                getLargeTime();
+                console.log('走了AJAX onload 方法')
+                
+            }
     		if (xhr.status >= 200 && xhr.status < 300) {
         		
     		}else{
@@ -87,7 +114,13 @@ _Ajax({
     	}
     },
     open:function(arg,xhr){
+        if(arg[1].indexOf('http://localhost:8000/sockjs-node/info')!=-1) return;
     	this.args = arg
+        
+        config.ajaxMsg.push(arg)
+        config.haveAjax  = true;
+        config.ajaxLength = config.ajaxLength+1;
+
     }
 })
 
@@ -97,11 +130,19 @@ function getRepotData(){
 
 //--------------------------------工具函数------------------------------------
 
+//比较onload与ajax时间长度
+function getLargeTime (){
+    if(loadTime&&ajaxTime){
+        console.log(`loadTime:${loadTime},ajaxTime:${ajaxTime}`)
+        console.log('最终执行时间')
+    }
+}
+
 // 统计页面性能
 function perforPage(){
-	if (!window.performance) return {};
+	if (!window.performance) return;
 	let timing = performance.timing
-	return {
+	config.performance = {
 		// DNS解析时间
 		dnst:timing.domainLookupEnd-timing.domainLookupStart || 0,  
 		//TCP建立时间
@@ -144,14 +185,16 @@ function perforResource(){
             decodedBodySize:item.decodedBodySize||0,
             nextHopProtocol:item.nextHopProtocol,
         }
-        // for(let i=0,len=ajaxMsg.length;i<len;i++){
-        //     if(ajaxMsg[i][1]===item.name){
-        //         json.method = ajaxMsg[i][0]||'GET'
-        //     }
-        // }
+        if(config.ajaxMsg && config.ajaxMsg.length){
+            for(let i=0,len=config.ajaxMsg.length;i<len;i++){
+                if(config.ajaxMsg[i][1]===item.name){
+                    json.method = config.ajaxMsg[i][0]||'GET'
+                }
+            }
+        }
         resourceList.push(json)
 	})
-	return resourceList;
+    config.resourceList = resourceList
 }
 
 // ajax重写
