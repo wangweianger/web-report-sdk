@@ -29,7 +29,6 @@ let config = {
 	appVersion:navigator.appVersion,
 	// 当前页面
 	page:location.href,
-
 }
 
 // error default
@@ -44,8 +43,6 @@ let errordefo = {
 
 // error上报
 _error()
-
-
 
 // 绑定onload事件
 addEventListener("load",function(){
@@ -67,7 +64,7 @@ _Ajax({
         		
     		}else{
     			xhr.method = xhr.args&&xhr.args.length?xhr.args[0]:'GET'
-    			ajaxRes(xhr)
+    			ajaxResponse(xhr)
     		}
         }
     },
@@ -77,7 +74,7 @@ _Ajax({
     		xhr.responseURL = xhr.args[1]
     		xhr.statusText = 'ajax请求路径有误'
     	}
-    	ajaxRes(xhr)
+    	ajaxResponse(xhr)
     },
     onload:function(xhr){
     	if(xhr.readyState === 4){
@@ -85,7 +82,7 @@ _Ajax({
         		
     		}else{
     			xhr.method = xhr.args&&xhr.args.length?xhr.args[0]:'GET'
-                ajaxRes(xhr)
+                ajaxResponse(xhr)
     		}
     	}
     },
@@ -94,29 +91,11 @@ _Ajax({
     }
 })
 
-// ajax统一上报入口
-function ajaxRes(xhr,type){
-	let defaults 	= Object.assign({},errordefo);
-	defaults.t 		= new Date().getTime();
-	defaults.n 		= 'ajax'
-	defaults.msg 	= xhr.statusText || 'ajax请求错误';
-	defaults.method = xhr.method
-	defaults.data 	= {
-        resourceUrl:xhr.responseURL,
-        text:xhr.statusText,
-        status:xhr.status
-    }
-    config.errorList.push(defaults)
-}
-
-
 // 获得上报数据
 function getRepotData(){
 }
 
-
 //--------------------------------工具函数------------------------------------
-
 
 // 统计页面性能
 function perforPage(){
@@ -293,11 +272,19 @@ function _error(){
     };
 }
 
-/*格式化参数*/
-function formatParams(data) {
-    var arr = [];
-    for (var name in data) arr.push(encodeURIComponent(name) + "=" + encodeURIComponent(data[name]));
-    return arr.join("&");
+// ajax统一上报入口
+function ajaxResponse(xhr,type){
+	let defaults 	= Object.assign({},errordefo);
+	defaults.t 		= new Date().getTime();
+	defaults.n 		= 'ajax'
+	defaults.msg 	= xhr.statusText || 'ajax请求错误';
+	defaults.method = xhr.method
+	defaults.data 	= {
+        resourceUrl:xhr.responseURL,
+        text:xhr.statusText,
+        status:xhr.status
+    }
+    config.errorList.push(defaults)
 }
 
 

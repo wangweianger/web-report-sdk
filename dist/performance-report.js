@@ -63,7 +63,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             if (xhr.readyState === 4) {
                 if (xhr.status >= 200 && xhr.status < 300) {} else {
                     xhr.method = xhr.args && xhr.args.length ? xhr.args[0] : 'GET';
-                    ajaxRes(xhr);
+                    ajaxResponse(xhr);
                 }
             }
         },
@@ -73,13 +73,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 xhr.responseURL = xhr.args[1];
                 xhr.statusText = 'ajax请求路径有误';
             }
-            ajaxRes(xhr);
+            ajaxResponse(xhr);
         },
         onload: function onload(xhr) {
             if (xhr.readyState === 4) {
                 if (xhr.status >= 200 && xhr.status < 300) {} else {
                     xhr.method = xhr.args && xhr.args.length ? xhr.args[0] : 'GET';
-                    ajaxRes(xhr);
+                    ajaxResponse(xhr);
                 }
             }
         },
@@ -88,26 +88,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
     });
 
-    // ajax统一上报入口
-    function ajaxRes(xhr, type) {
-        var defaults = Object.assign({}, errordefo);
-        defaults.t = new Date().getTime();
-        defaults.n = 'ajax';
-        defaults.msg = xhr.statusText || 'ajax请求错误';
-        defaults.method = xhr.method;
-        defaults.data = {
-            resourceUrl: xhr.responseURL,
-            text: xhr.statusText,
-            status: xhr.status
-        };
-        config.errorList.push(defaults);
-    }
-
     // 获得上报数据
     function getRepotData() {}
 
     //--------------------------------工具函数------------------------------------
-
 
     // 统计页面性能
     function perforPage() {
@@ -283,11 +267,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         };
     }
 
-    /*格式化参数*/
-    function formatParams(data) {
-        var arr = [];
-        for (var name in data) {
-            arr.push(encodeURIComponent(name) + "=" + encodeURIComponent(data[name]));
-        }return arr.join("&");
+    // ajax统一上报入口
+    function ajaxResponse(xhr, type) {
+        var defaults = Object.assign({}, errordefo);
+        defaults.t = new Date().getTime();
+        defaults.n = 'ajax';
+        defaults.msg = xhr.statusText || 'ajax请求错误';
+        defaults.method = xhr.method;
+        defaults.data = {
+            resourceUrl: xhr.responseURL,
+            text: xhr.statusText,
+            status: xhr.status
+        };
+        config.errorList.push(defaults);
     }
 })();
