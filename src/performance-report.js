@@ -19,10 +19,16 @@ let config = {
 	loadNum:0,
 	// 页面ajax数量
 	ajaxLength:0,
-	// 页面是否有ajax请求
-	haveAjax:false,
+    // 页面fetch总数量
+    totalFetlength:0,
+    // fetch请求信息
+    fetchMsg:[],
 	// 页面ajax信息
 	ajaxMsg:[],
+    // 是否有ajax
+    haveAjax:false,
+    // 是否有fetch
+    haveFetch:false,
 	// 需要过滤的url信息
 	filterUrl:['http://localhost:35729/livereload.js?snipver=1'],
 	// 来自域名
@@ -73,10 +79,10 @@ _Ajax({
         if(xhr.readyState === 4){
             config.readyNum += 1;
             if(config.readyNum === config.ajaxLength){
+                console.log('走了AJAX onreadystatechange 方法')
                 config.ajaxLength = config.readyNum = 0
                 ajaxTime = new Date().getTime()-beginTime
                 getLargeTime();
-                console.log('走了AJAX onreadystatechange 方法')
             }
 
             if (xhr.status >= 200 && xhr.status < 300) {
@@ -99,10 +105,10 @@ _Ajax({
         if(xhr.readyState === 4){
             config.loadNum+=1
             if(config.loadNum === config.ajaxLength){
+                console.log('走了AJAX onload 方法')
                 config.ajaxLength = config.loadNum = 0
                 ajaxTime = new Date().getTime()-beginTime
                 getLargeTime();
-                console.log('走了AJAX onload 方法')
                 
             }
     		if (xhr.status >= 200 && xhr.status < 300) {
@@ -118,8 +124,8 @@ _Ajax({
     	this.args = arg
         
         config.ajaxMsg.push(arg)
-        config.haveAjax  = true;
-        config.ajaxLength = config.ajaxLength+1;
+        config.ajaxLength   = config.ajaxLength+1;
+        config.haveAjax     = true
 
     }
 })
@@ -132,9 +138,14 @@ function getRepotData(){
 
 //比较onload与ajax时间长度
 function getLargeTime (){
-    if(loadTime&&ajaxTime){
+    if(config.haveAjax&&config.haveFetch&&loadTime&&ajaxTime&&fetchTime){
+        console.log(`loadTime:${loadTime},ajaxTime:${ajaxTime},fetchTime:${fetchTime}`)
+    }else if(config.haveAjax&&!config.haveFetch&&loadTime&&ajaxTime){
         console.log(`loadTime:${loadTime},ajaxTime:${ajaxTime}`)
-        console.log('最终执行时间')
+    }else if(!config.haveAjax&&config.haveFetch&&loadTime&&fetchTime){
+        console.log(`loadTime:${loadTime},fetchTime:${fetchTime}`)
+    }else if(!config.haveAjax&&!config.haveFetch&&loadTime){
+        console.log(`loadTime:${loadTime}`)
     }
 }
 
@@ -257,11 +268,33 @@ function _fetch(){
 	let _fetch = fetch 
 	window.fetch = function(){
 		let _arg = arguments
+
+        config.fetchMsg.push(_arg)
+        config.totalFetlength   = config.totalFetlength+1;
+        config.haveFetch        = true
+
 		_fetch.apply(this, arguments).then(function(res){
 			res.text().then(res=>{
+                config.fetchNum+=1
+                if(config.totalFetlength === config.fetchNum){
+                    console.log('走了 fetch 方法')
+                    config.fetchNum = config.totalFetlength = 0
+                    fetchTime = new Date().getTime()-beginTime
+                    getLargeTime();
+                }
+
 				console.log(res.length)
 			})
 		}).catch(function(err){
+            config.fetchNum+=1
+            if(config.totalFetlength === config.fetchNum){
+                console.log('走了 fetch error 方法')
+                config.fetchNum = config.totalFetlength = 0
+                fetchTime = new Date().getTime()-beginTime
+                getLargeTime();
+            }
+
+            //error
 			let defaults 	= Object.assign({},errordefo);
 			defaults.t 		= new Date().getTime();
 			defaults.n 		= 'fetch'
