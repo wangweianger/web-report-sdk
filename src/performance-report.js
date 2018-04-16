@@ -24,14 +24,26 @@ let config = {
 	// 需要过滤的url信息
 	filterUrl:['http://localhost:35729/livereload.js?snipver=1'],
 	// 来自域名
-	preUrl:document.referrer&&document.referrer!==location.href?document.referrer:''
+	preUrl:document.referrer&&document.referrer!==location.href?document.referrer:'',
+	// 浏览器信息
+	appVersion:navigator.appVersion,
+	// 当前页面
+	page:location.href,
 
 }
 
+// error default
+let errordefo = {
+    t:'',   //发送数据时的时间戳
+    n:'js',//模块名,
+    msg:'',  //错误的具体信息,
+    data:{}
+};
+
 //--------------------------------上报数据------------------------------------
 
-let errmsg = _error()
-
+// error上报
+_error()
 
 
 
@@ -49,25 +61,56 @@ _fetch();
 _Ajax({
     onreadystatechange:function(xhr){
         if(xhr.readyState === 4){
-            console.log('success onreadystatechange')
+            if (xhr.status >= 200 && xhr.status < 300) {
+        		
+    		}else{
+    			xhr.method = xhr.args&&xhr.args.length?xhr.args[0]:'GET'
+    			ajaxRes(xhr)
+    		}
         }
     },
-    onerror:function(){
-
+    onerror:function(xhr){
+    	if(xhr.args&&xhr.args.length){
+    		xhr.method = xhr.args[0]
+    		xhr.responseURL = xhr.args[1]
+    		xhr.statusText = 'ajax请求路径有误'
+    	}
+    	ajaxRes(xhr)
     },
     onload:function(xhr){
-        console.log('success onload')
+    	if(xhr.readyState === 4){
+    		if (xhr.status >= 200 && xhr.status < 300) {
+        		
+    		}else{
+    			xhr.method = xhr.args&&xhr.args.length?xhr.args[0]:'GET'
+                ajaxRes(xhr)
+    		}
+    	}
     },
     open:function(arg,xhr){
-        console.log(arg)
+    	this.args = arg
     }
 })
 
+// ajax统一上报入口
+function ajaxRes(xhr,type){
+	console.log(xhr)
+	let defaults 	= Object.assign({},errordefo);
+	defaults.t 		= new Date().getTime();
+	defaults.n 		= 'ajax'
+	defaults.msg 	= xhr.statusText || 'ajax请求错误';
+	defaults.method = xhr.method
+	defaults.data 	= {
+        resourceUrl:xhr.responseURL,
+        text:xhr.statusText,
+        status:xhr.status
+    }
+    config.errorList.push(defaults)
+}
 
 
 // 获得上报数据
 function getRepotData(){
-	
 }
 
 
@@ -200,19 +243,13 @@ function _fetch(){
 	}
 }
 
-// 拦截error信息
-function _error(){
-	let defaults = {
-        t:'',   //发送数据时的时间戳
-        n:'js',//模块名,
-        msg:'',  //错误的具体信息,
-        a:navigator.appVersion,
-        data:{}
-    };
 
-    
-	//监控资源加载错误(img,script,css,以及jsonp)
-    window.addEventListener('error',function(e){
+// 拦截js error信息
+function _error(){
+	// img,script,css,jsonp
+	window.addEventListener('error',function(e){
+		let defaults 	= Object.assign({},errordefo);
+		defaults.n 		= 'resource'
         defaults.t 		= new Date().getTime();
         defaults.msg 	= e.target.localName+' is load error';
         defaults.method = 'GET'
@@ -220,42 +257,25 @@ function _error(){
            target: e.target.localName,
            type: e.type,
            resourceUrl:e.target.currentSrc,
-           pageUrl:location.href,
-           category:'resource'
         };
-
-        console.log(e.target)
-
-        config.errorList.indexOf()
-
-        //抛去js语法错误
-        if(e.target!=window){
-        	console.log('1111111')
-            config.errorList.push(defaults)
-        }
+        if(e.target!=window) config.errorList.push(defaults)
     },true);
-    //监控js错误
+    // js
     window.onerror = function(msg,_url,line,col,error){
+    	let defaults 		= Object.assign({},errordefo);
         setTimeout(function(){
             col = col || (window.event && window.event.errorCharacter) || 0;
-           	defaults.msg = error && error.stack ?error.stack.toString():msg
+           	defaults.msg 	= error && error.stack ?error.stack.toString():msg
             defaults.method = 'GET'
-            defaults.data={
+            defaults.data 	= {
                 resourceUrl:_url,
-                pageUrl:location.href,
-                category:'js',
                 line:line,
                 col:col
             };
-            defaults.t=new Date().getTime();
-            defaults.level='error';
-
-            console.log('0000000')
-
+            defaults.t 		= new Date().getTime();
             config.errorList.push(defaults)
         },0);
     };
-    
 }
 
 /*格式化参数*/

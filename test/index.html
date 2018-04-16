@@ -22,12 +22,11 @@
 		<h4>标题H4</h4>
 		<h5>标题H5</h5>
 		<h6>标题H6</h6>
-		<img src="http://img1.imgtn.bdimg.com/it/u=1119962396,1839551009&fm=200&gp=0.jpg">
-		<img src="" id="img1">
+		<img src="http://img1.imgtn.bd95510">
+		<img src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=295864288,1887240069&fm=27&gp=0.jpg" id="img1">
 	</div>
 	<script>
 		$(function(){
-			$('#img1').attr('src','https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=295864288,1887240069&fm=27&gp=0.jpg')
 
 			// $.ajax({
 			// 	type:'get',
@@ -37,27 +36,27 @@
 			// 	}
 			// })
 
-			// $.ajax({
-			// 	type:'POST',
-			// 	url:'http://mock-api.seosiwei.com/guest/home/api/settlement/createLinkOrder',
-			// 	success:data=>{
-			// 		// console.log(data)
-			// 	}
-			// })
-
-
-
-			fetch('http://mock-api.seosiwei.com/guest/order/api/order/getOrder',{
-				method: 'POST',
-			}).then(function(response){
-
+			$.ajax({
+				type:'post',
+				url:'http://guestrde',
+				success:data=>{
+					// console.log(data)
+				}
 			})
+
+
+
+			// fetch('http://mock-api.seosiwei.com/guest/order/api/order/getOrder',{
+			// 	method: 'POST',
+			// }).then(function(response){
+
+			// })
 
 
 		})
 
 		console.log(wangwei)
-		
+
 	</script>
 </body>
 </html>
