@@ -10,7 +10,7 @@ let config = {
 	// 错误列表
 	errorList:[],
 	// 延迟请求resourceTime资源时间
-	resourceTime:2000,
+	outtime:200,
 	// onreadystatechange请求的XML信息
 	urlXMLArr:[],
 	// onload的xml请求信息
@@ -51,7 +51,7 @@ _error()
 addEventListener("load",function(){
 	setTimeout(()=>{
 		console.log(config.errorList)
-	},1000)
+	},config.outtime)
 },false);
 
 
@@ -258,7 +258,6 @@ function _fetch(){
 		return _fetch.apply(this, arguments);
 	}
 }
-
 
 // 拦截js error信息
 function _error(){
