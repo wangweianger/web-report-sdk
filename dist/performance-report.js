@@ -49,7 +49,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     // 绑定onload事件
     addEventListener("load", function () {
-        console.log(config.errorList);
+        setTimeout(function () {
+            console.log(config.errorList);
+        }, 1000);
     }, false);
 
     // 执行fetch重写
@@ -88,7 +90,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     // ajax统一上报入口
     function ajaxRes(xhr, type) {
-        console.log(xhr);
         var defaults = Object.assign({}, errordefo);
         defaults.t = new Date().getTime();
         defaults.n = 'ajax';
@@ -223,11 +224,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (!window.fetch) return;
         var _fetch = fetch;
         window.fetch = function () {
-            // console.log(arguments)
+            var _arg = arguments;
             _fetch.apply(this, arguments).then(function (res) {
                 res.text().then(function (res) {
                     console.log(res.length);
                 });
+            }).catch(function (err) {
+                var defaults = Object.assign({}, errordefo);
+                defaults.t = new Date().getTime();
+                defaults.n = 'fetch';
+                defaults.msg = 'fetch请求错误';
+                defaults.method = 'GET';
+                if (_arg && _arg.length > 1) {
+                    defaults.method = _arg[1].method;
+                }
+                defaults.data = {
+                    resourceUrl: _arg[0],
+                    text: err.stack || err,
+                    status: 0
+                };
+                config.errorList.push(defaults);
             });
             return _fetch.apply(this, arguments);
         };
