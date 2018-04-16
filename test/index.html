@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>performance test</title>
+	<script src="../dist/performance-report.js"></script>
+	<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+	<div>performance test</div>
+	<div>
+		<ul>
+			<li>1</li>
+			<li>2</li>
+			<li>3</li>
+			<li>4</li>
+			<li>5</li>
+		</ul>
+		<h1>标题H1</h1>
+		<h2>标题H2</h2>
+		<h3>标题H3</h3>
+		<h4>标题H4</h4>
+		<h5>标题H5</h5>
+		<h6>标题H6</h6>
+		<img src="http://img1.imgtn.bdimg.com/it/u=1119962396,1839551009&fm=200&gp=0.jpg">
+		<img src="" id="img1">
+	</div>
+	<script>
+		$(function(){
+			$('#img1').attr('src','https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=295864288,1887240069&fm=27&gp=0.jpg')
+
+			// $.ajax({
+			// 	type:'get',
+			// 	url:'http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInfo',
+			// 	success:data=>{
+			// 		// console.log(data)
+			// 	}
+			// })
+
+			// $.ajax({
+			// 	type:'POST',
+			// 	url:'http://mock-api.seosiwei.com/guest/home/api/settlement/createLinkOrder',
+			// 	success:data=>{
+			// 		// console.log(data)
+			// 	}
+			// })
+
+
+
+			fetch('http://mock-api.seosiwei.com/guest/order/api/order/getOrder',{
+				method: 'POST',
+			}).then(function(response){
+
+			})
+
+
+		})
+
+		console.log(wangwei)
+		
+	</script>
+</body>
+</html>
+
+
