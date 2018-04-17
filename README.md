@@ -9,11 +9,11 @@
 >  * 当前页面所有资源性能数据 （data.resoruceList）,例如ajax,css,img等资源加载性能数据
 
 ### 使用方式
-```js
-1、下载 dist/performance-report.min.js 到本地
-2、使用script标签引入到html的头部（备注：放到所有js资源之前）
-3、使用performance函数进行数据的监听上报
+>  * 1、下载 dist/performance-report.min.js 到本地
+>  * 2、使用script标签引入到html的头部（备注：放到所有js资源之前）
+>  * 3、使用performance函数进行数据的监听上报
 
+```html
 <html>
 <head>
 	<meta charset="UTF-8">
@@ -42,15 +42,13 @@ Performance({
 	fetch('http://some.com/api',{type:'POST',body:JSON.stringify(result)}).then((data)=>{})
 })
 说明：
-
 同时传入 domain和传入的function ，function优先级更高；
-
-domain：上报api接口
-outtime：上报延迟时间，保证异步数据的加载 （默认：1000ms）
-isPage：是否上报页面性能数据        （默认：true）
-isResource：是否上报页面资源性能数据 （默认：true）
-isError：是否上报页面错误信息数据    （默认：true）
-fn: 自定义上报函数，上报方式可以用ajax可以用fetch  (非必填：默认使用fetch)
+domain		：上报api接口
+outtime		：上报延迟时间，保证异步数据的加载 （默认：1000ms）
+isPage		：是否上报页面性能数据        （默认：true）
+isResource	：是否上报页面资源性能数据 （默认：true）
+isError		：是否上报页面错误信息数据    （默认：true）
+fn			：自定义上报函数，上报方式可以用ajax可以用fetch  (非必填：默认使用fetch)
 
 ```
 
