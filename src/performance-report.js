@@ -6,7 +6,7 @@ Performance({
 })
 
 // web msgs report function
-function Performance(option){
+function Performance(option,fn){
     let opt = {
         // 上报地址
         domain:'http://localhost:8080/',
@@ -37,7 +37,7 @@ function Performance(option){
     	// 页面ajax数量
     	ajaxLength:0,
         // 页面fetch总数量
-        totalFetlength:0,
+        fetLength:0,
     	// 页面ajax信息
     	ajaxMsg:[],
         // ajax成功执行函数
@@ -74,6 +74,7 @@ function Performance(option){
 
     // 绑定onload事件
     addEventListener("load",function(){
+        clearPerformance('load')
         loadTime = new Date().getTime()-beginTime
         getLargeTime();
     },false);
@@ -131,10 +132,21 @@ function Performance(option){
             conf.ajaxLength   = conf.ajaxLength+1;
             conf.haveAjax     = true
 
+            clearPerformance()
         }
     })
 
     //--------------------------------工具函数------------------------------------
+
+    // report date
+    function reportData(){
+        setTimeout(()=>{
+            if(opt.isPage) perforPage();
+            if(opt.isResource) perforResource();
+
+            console.log(conf)
+        },opt.outtime)
+    }
 
     //比较onload与ajax时间长度
     function getLargeTime (){
@@ -151,16 +163,6 @@ function Performance(option){
             console.log(`loadTime:${loadTime}`)
             reportData()
         }
-    }
-
-    // report date
-    function reportData(){
-        setTimeout(()=>{
-            if(opt.isPage) perforPage();
-            if(opt.isResource) perforResource();
-
-            console.log(conf)
-        },opt.outtime)
     }
 
     // 统计页面性能
@@ -284,9 +286,9 @@ function Performance(option){
     	window.fetch   = function(){
     		let _arg   = arguments
             let result = fetArg(_arg)
-
+            clearPerformance()
             conf.ajaxMsg.push(result)
-            conf.totalFetlength   = conf.totalFetlength+1;
+            conf.fetLength   = conf.fetLength+1;
             conf.haveFetch        = true
     		return _fetch.apply(this, arguments)
             .then((res)=>{ 
@@ -386,13 +388,13 @@ function Performance(option){
     // fetch get time
     function getFetchTime(type){
         conf.fetchNum+=1
-        if(conf.totalFetlength === conf.fetchNum){
+        if(conf.fetLength === conf.fetchNum){
             if(type=='success'){
                 console.log('走了 fetch success 方法')
             }else{
                 console.log('走了 fetch error 方法')
             }
-            conf.fetchNum = conf.totalFetlength = 0
+            conf.fetchNum = conf.fetLength = 0
             fetchTime = new Date().getTime()-beginTime
             getLargeTime();
         }
@@ -414,4 +416,17 @@ function Performance(option){
             getLargeTime();
         }
     }
+
+    function clearPerformance(type){
+        if(!window.performance && !window.performance.clearResourceTimings) return;
+        if(type === 'load') performance.clearResourceTimings();
+        if(conf.haveAjax&&conf.haveFetch&&conf.ajaxLength==0&&conf.fetLength==0){
+            performance.clearResourceTimings();
+        }else if(!conf.haveAjax&&conf.haveFetch&&conf.fetLength==0){
+            performance.clearResourceTimings();
+        }else if(conf.haveAjax&&!conf.haveFetch&&conf.ajaxLength==0){
+            performance.clearResourceTimings();
+        }
+    } 
+
 }
