@@ -449,5 +449,4 @@ function Performance(option,fn){try{
         conf.resourceList   = ''
         conf.page           = location.href
     }
-
 }catch(err){}}
