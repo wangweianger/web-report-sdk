@@ -59,20 +59,6 @@ Performance({
 * 2.js报错，代码中的js报错  n='js'
 * 3.ajax请求错误  		n='ajax'
 * 4.fetch请求错误			n='fetch'
-** 代码案例 **
-```js
-[{
-	"t": 1523945465422, 
-	"n": "js", 
-	"msg": "ReferenceError: wangwei is not defined at http://localhost:8080/test/:59:15", 
-	"data": {
-		"resourceUrl": "http://localhost:8080/test/", 
-		"line": 59, 
-		"col": 15
-	}, 
-	"method": "GET"
-}]
-```
 
 ## AJAX处理：
 ### AJAX分为 XMLHttpRequest 和 Fetch的处理
