@@ -2,21 +2,38 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-;(function () {
+Performance({
+    domain: 'http://localhost:8080/',
+    isPage: true,
+    isResource: true,
+    isError: true
+});
 
-    var config = {
+// web msgs report function
+function Performance(option) {
+    var opt = {
         // 上报地址
         domain: 'http://localhost:8080/',
+        // 脚本延迟上报时间
+        outtime: 1000,
+        // ajax请求时需要过滤的url信息
+        filterUrl: ['http://localhost:35729/livereload.js?snipver=1'],
+        // 是否上报页面性能数据
+        isPage: true,
+        // 是否上报页面资源数据
+        isResource: true,
+        // 是否上报错误信息
+        isError: true
+    };
+    opt = Object.assign(opt, option);
+
+    var conf = {
         //资源列表 
         resourceList: [],
         // 页面性能列表
         performance: {},
         // 错误列表
         errorList: [],
-        // 延迟请求resourceTime资源时间
-        outtime: 500,
-        // ajax onreadystatechange数量
-        readyNum: 0,
         // 页面fetch数量
         fetchNum: 0,
         // ajax onload数量
@@ -25,16 +42,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         ajaxLength: 0,
         // 页面fetch总数量
         totalFetlength: 0,
-        // fetch请求信息
-        fetchMsg: [],
         // 页面ajax信息
         ajaxMsg: [],
+        // ajax成功执行函数
+        goingType: '',
         // 是否有ajax
         haveAjax: false,
         // 是否有fetch
         haveFetch: false,
-        // 需要过滤的url信息
-        filterUrl: ['http://localhost:35729/livereload.js?snipver=1'],
         // 来自域名
         preUrl: document.referrer && document.referrer !== location.href ? document.referrer : '',
         // 浏览器信息
@@ -58,97 +73,104 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //--------------------------------上报数据------------------------------------
 
     // error上报
-    _error();
+    if (opt.isError) _error();
 
     // 绑定onload事件
     addEventListener("load", function () {
         loadTime = new Date().getTime() - beginTime;
         getLargeTime();
-        // setTimeout(()=>{
-        // 	console.log(config.errorList)
-
-        //        console.log(`loadTime:${loadTime},ajaxTime:${ajaxTime},`)
-
-        // },config.outtime)
     }, false);
 
     // 执行fetch重写
-    _fetch();
+    if (opt.isResource || opt.isError) _fetch();
 
     //  拦截ajax
-    _Ajax({
+    if (opt.isResource || opt.isError) _Ajax({
         onreadystatechange: function onreadystatechange(xhr) {
             if (xhr.readyState === 4) {
-                config.readyNum += 1;
-                if (config.readyNum === config.ajaxLength) {
-                    console.log('走了AJAX onreadystatechange 方法');
-                    config.ajaxLength = config.readyNum = 0;
-                    ajaxTime = new Date().getTime() - beginTime;
-                    getLargeTime();
-                }
+                if (conf.goingType === 'load') return;
+                conf.goingType = 'readychange';
 
-                if (xhr.status >= 200 && xhr.status < 300) {} else {
-                    xhr.method = xhr.args && xhr.args.length ? xhr.args[0] : 'GET';
+                getAjaxTime('readychange');
+
+                if (xhr.status < 200 || xhr.status > 300) {
+                    xhr.method = xhr.args.method;
                     ajaxResponse(xhr);
                 }
             }
         },
         onerror: function onerror(xhr) {
+            getAjaxTime('error');
+
             if (xhr.args && xhr.args.length) {
-                xhr.method = xhr.args[0];
-                xhr.responseURL = xhr.args[1];
+                xhr.method = xhr.args.method;
+                xhr.responseURL = xhr.args.url;
                 xhr.statusText = 'ajax请求路径有误';
             }
             ajaxResponse(xhr);
         },
         onload: function onload(xhr) {
             if (xhr.readyState === 4) {
-                config.loadNum += 1;
-                if (config.loadNum === config.ajaxLength) {
-                    console.log('走了AJAX onload 方法');
-                    config.ajaxLength = config.loadNum = 0;
-                    ajaxTime = new Date().getTime() - beginTime;
-                    getLargeTime();
-                }
-                if (xhr.status >= 200 && xhr.status < 300) {} else {
-                    xhr.method = xhr.args && xhr.args.length ? xhr.args[0] : 'GET';
+                if (conf.goingType === 'readychange') return;
+                conf.goingType = 'load';
+                getAjaxTime('load');
+                if (xhr.status < 200 || xhr.status > 300) {
+                    xhr.method = xhr.args.method;
                     ajaxResponse(xhr);
                 }
             }
         },
         open: function open(arg, xhr) {
-            if (arg[1].indexOf('http://localhost:8000/sockjs-node/info') != -1) return;
-            this.args = arg;
+            if (opt.filterUrl && opt.filterUrl.length) {
+                var begin = false;
+                opt.filterUrl.forEach(function (item) {
+                    if (arg[1].indexOf(item) != -1) begin = true;
+                });
+                if (begin) return;
+            }
+            var result = { url: arg[1], method: arg[0] || 'GET', type: 'xmlhttprequest' };
+            this.args = result;
 
-            config.ajaxMsg.push(arg);
-            config.ajaxLength = config.ajaxLength + 1;
-            config.haveAjax = true;
+            conf.ajaxMsg.push(result);
+            conf.ajaxLength = conf.ajaxLength + 1;
+            conf.haveAjax = true;
         }
     });
-
-    // 获得上报数据
-    function getRepotData() {}
 
     //--------------------------------工具函数------------------------------------
 
     //比较onload与ajax时间长度
     function getLargeTime() {
-        if (config.haveAjax && config.haveFetch && loadTime && ajaxTime && fetchTime) {
+        if (conf.haveAjax && conf.haveFetch && loadTime && ajaxTime && fetchTime) {
             console.log('loadTime:' + loadTime + ',ajaxTime:' + ajaxTime + ',fetchTime:' + fetchTime);
-        } else if (config.haveAjax && !config.haveFetch && loadTime && ajaxTime) {
+            reportData();
+        } else if (conf.haveAjax && !conf.haveFetch && loadTime && ajaxTime) {
             console.log('loadTime:' + loadTime + ',ajaxTime:' + ajaxTime);
-        } else if (!config.haveAjax && config.haveFetch && loadTime && fetchTime) {
+            reportData();
+        } else if (!conf.haveAjax && conf.haveFetch && loadTime && fetchTime) {
             console.log('loadTime:' + loadTime + ',fetchTime:' + fetchTime);
-        } else if (!config.haveAjax && !config.haveFetch && loadTime) {
+            reportData();
+        } else if (!conf.haveAjax && !conf.haveFetch && loadTime) {
             console.log('loadTime:' + loadTime);
+            reportData();
         }
+    }
+
+    // report date
+    function reportData() {
+        setTimeout(function () {
+            if (opt.isPage) perforPage();
+            if (opt.isResource) perforResource();
+
+            console.log(conf);
+        }, opt.outtime);
     }
 
     // 统计页面性能
     function perforPage() {
         if (!window.performance) return;
         var timing = performance.timing;
-        config.performance = {
+        conf.performance = {
             // DNS解析时间
             dnst: timing.domainLookupEnd - timing.domainLookupStart || 0,
             //TCP建立时间
@@ -170,7 +192,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             //页面解析dom耗时
             andt: timing.domComplete - timing.domInteractive || 0,
             // 上一页面
-            pre: preUrl
+            pre: conf.preUrl
         };
     }
 
@@ -191,16 +213,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 decodedBodySize: item.decodedBodySize || 0,
                 nextHopProtocol: item.nextHopProtocol
             };
-            if (config.ajaxMsg && config.ajaxMsg.length) {
-                for (var i = 0, len = config.ajaxMsg.length; i < len; i++) {
-                    if (config.ajaxMsg[i][1] === item.name) {
-                        json.method = config.ajaxMsg[i][0] || 'GET';
+            if (conf.ajaxMsg && conf.ajaxMsg.length) {
+                for (var i = 0, len = conf.ajaxMsg.length; i < len; i++) {
+                    if (conf.ajaxMsg[i].url === item.name) {
+                        json.method = conf.ajaxMsg[i].method || 'GET';
+                        json.type = conf.ajaxMsg[i].type || json.type;
                     }
                 }
             }
             resourceList.push(json);
         });
-        config.resourceList = resourceList;
+        conf.resourceList = resourceList;
     }
 
     // ajax重写
@@ -263,50 +286,53 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         var _fetch = fetch;
         window.fetch = function () {
             var _arg = arguments;
+            var result = fetArg(_arg);
 
-            config.fetchMsg.push(_arg);
-            config.totalFetlength = config.totalFetlength + 1;
-            config.haveFetch = true;
-
-            _fetch.apply(this, arguments).then(function (res) {
-                res.text().then(function (res) {
-                    config.fetchNum += 1;
-                    if (config.totalFetlength === config.fetchNum) {
-                        console.log('走了 fetch 方法');
-                        config.fetchNum = config.totalFetlength = 0;
-                        fetchTime = new Date().getTime() - beginTime;
-                        getLargeTime();
-                    }
-
-                    console.log(res.length);
-                });
+            conf.ajaxMsg.push(result);
+            conf.totalFetlength = conf.totalFetlength + 1;
+            conf.haveFetch = true;
+            return _fetch.apply(this, arguments).then(function (res) {
+                getFetchTime('success');
+                return res;
             }).catch(function (err) {
-                config.fetchNum += 1;
-                if (config.totalFetlength === config.fetchNum) {
-                    console.log('走了 fetch error 方法');
-                    config.fetchNum = config.totalFetlength = 0;
-                    fetchTime = new Date().getTime() - beginTime;
-                    getLargeTime();
-                }
-
+                getFetchTime('error');
                 //error
                 var defaults = Object.assign({}, errordefo);
                 defaults.t = new Date().getTime();
                 defaults.n = 'fetch';
                 defaults.msg = 'fetch请求错误';
-                defaults.method = 'GET';
-                if (_arg && _arg.length > 1) {
-                    defaults.method = _arg[1].method;
-                }
+                defaults.method = result.method;
                 defaults.data = {
-                    resourceUrl: _arg[0],
+                    resourceUrl: result.url,
                     text: err.stack || err,
                     status: 0
                 };
-                config.errorList.push(defaults);
+                conf.errorList.push(defaults);
+                return err;
             });
-            return _fetch.apply(this, arguments);
         };
+    }
+
+    // fetch arguments
+    function fetArg(arg) {
+        var result = { method: 'GET', type: 'fetchrequest' };
+        var args = Array.prototype.slice.apply(arg);
+
+        if (!args || !args.length) return result;
+        try {
+            if (args.length === 1) {
+                if (typeof args[0] === 'string') {
+                    result.url = args[0];
+                } else if (_typeof(args[0]) === 'object') {
+                    result.url = args[0].url;
+                    result.method = args[0].method;
+                }
+            } else {
+                result.url = args[0];
+                result.method = args[1].method;
+            }
+        } catch (err) {}
+        return result;
     }
 
     // 拦截js error信息
@@ -323,7 +349,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 type: e.type,
                 resourceUrl: e.target.currentSrc
             };
-            if (e.target != window) config.errorList.push(defaults);
+            if (e.target != window) conf.errorList.push(defaults);
         }, true);
         // js
         window.onerror = function (msg, _url, line, col, error) {
@@ -338,7 +364,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                     col: col
                 };
                 defaults.t = new Date().getTime();
-                config.errorList.push(defaults);
+                conf.errorList.push(defaults);
             }, 0);
         };
     }
@@ -355,6 +381,38 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             text: xhr.statusText,
             status: xhr.status
         };
-        config.errorList.push(defaults);
+        conf.errorList.push(defaults);
     }
-})();
+
+    // fetch get time
+    function getFetchTime(type) {
+        conf.fetchNum += 1;
+        if (conf.totalFetlength === conf.fetchNum) {
+            if (type == 'success') {
+                console.log('走了 fetch success 方法');
+            } else {
+                console.log('走了 fetch error 方法');
+            }
+            conf.fetchNum = conf.totalFetlength = 0;
+            fetchTime = new Date().getTime() - beginTime;
+            getLargeTime();
+        }
+    }
+
+    // ajax get time
+    function getAjaxTime(type) {
+        conf.loadNum += 1;
+        if (conf.loadNum === conf.ajaxLength) {
+            if (type == 'load') {
+                console.log('走了AJAX onload 方法');
+            } else if (type == 'readychange') {
+                console.log('走了AJAX onreadystatechange 方法');
+            } else {
+                console.log('走了 error 方法');
+            }
+            conf.ajaxLength = conf.loadNum = 0;
+            ajaxTime = new Date().getTime() - beginTime;
+            getLargeTime();
+        }
+    }
+}

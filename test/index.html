@@ -22,40 +22,41 @@
 		<h4>标题H4</h4>
 		<h5>标题H5</h5>
 		<h6>标题H6</h6>
-		<!-- <img src="http://img1.imgtn.bd95510"> -->
+		<img src="http://img1.imgtn.bd95510">
 		<img src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=295864288,1887240069&fm=27&gp=0.jpg" id="img1">
 	</div>
 	<script>
 		$(function(){
 
-			$.ajax({
-				type:'get',
-				url:'http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInfo',
-				success:data=>{
-					// console.log(data)
-				}
-			})
-
 			// $.ajax({
-			// 	type:'post',
-			// 	url:'http://mock-api.seosiwei.com/guest/order/api/order/getOrder',
+			// 	type:'get',
+			// 	url:'http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInf',
 			// 	success:data=>{
 			// 		// console.log(data)
 			// 	}
 			// })
 
+			fetch('http://mock-api.seosiwei.com/guest/order/api/order/getOrder',{
+				method: 'POST',
+			}).then(function(response){
+				console.log('++++')
+			})
 
+			var req = new Request('http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInfo', {method: 'GET', cache: 'reload'});
+			fetch(req).then(function(response){
+				console.log('-----')
+			})
 
-			// fetch('http://mock-api.seosiwei.com/guest/order/api/order/getOrder',{
-			// 	method: 'POST',
-			// }).then(function(response){
-
-			// })
-
-
+			$.ajax({
+				type:'post',
+				url:'http://mock-api.seosiwei.com/guest/order/api/order/getOrder',
+				success:data=>{
+					// console.log(data)
+				}
+			})
 		})
 
-		// console.log(wangwei)
+		console.log(wangwei)
 
 	</script>
 </body>
