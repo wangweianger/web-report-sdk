@@ -87,7 +87,18 @@ Performance({
 * xmlhttprequest：ajax请求资源
 * other ：其他
 
+## 运行方式
+```js
+git clone https://github.com/wangweianger/web-performance-report.git
+npm install
+//开发
+npm run dev
+//打包
+npm run build
 
+http://localhost:8080/test/ 页面测试
+
+```
 
 
 

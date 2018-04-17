@@ -2,13 +2,9 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-Performance({
-    domain: 'http://some.com/api',
-    outtime: 500,
-    isPage: true,
-    isResource: true,
-    isError: true
-});
+// Performance({
+//     domain:'http://some.com/api',
+// })
 
 // web msgs report function
 function Performance(option, fn) {
