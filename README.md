@@ -134,7 +134,7 @@ http://localhost:8080/test/ 页面测试
 | ->type | 请求资源类型 | script，img，fetchrequest，xmlhttprequest，other |
 
 ### 一份完整的上报数据看起来像这样：
-```
+```js
 {
   "page": "http://localhost:8080/test/", 
   "preUrl": "", 
