@@ -92,6 +92,7 @@ http://localhost:8080/test/ 页面测试
 | appVerfion | 当前浏览器信息 |  |
 | page | 当前页面 |  |
 | preUrl | 上一页面 |  |
+|  |  |  |
 | errorList | 错误资源列表信息 |  |
 | ->t | 资源时间 |  |
 | ->n | 资源类型 | resource，js，ajax，fetch,other  |
@@ -101,7 +102,8 @@ http://localhost:8080/test/ 页面测试
 | ->data->col | js错误行 |  |
 | ->data->line | js错误列 |  |
 | ->data->status | ajax错误状态 |  |
-| errorList->data->text | ajax错误信息 |  |
+| ->data->text | ajax错误信息 |  |
+|  |  |  |
 | performance | 页面资源性能数据(单位均为毫秒) |  |
 | ->dnst | DNS解析时间 |  |
 | ->tcpt | TCP建立时间 |  |
@@ -112,7 +114,8 @@ http://localhost:8080/test/ 页面测试
 | ->rdit | 页面重定向时间 |  |
 | ->uodt | unload时间 |  |
 | ->reqt | request请求耗时 |  |
-| performance->andt | 页面解析dom耗时 |  |
+| ->andt | 页面解析dom耗时 |  |
+|  |  |  |
 | resoruceList | 页面资源性能数据 |  |
 | ->decodedBodySize | 资源返回数据大小 |  |
 | ->duration | 资源耗时 |  |
