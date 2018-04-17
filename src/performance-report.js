@@ -146,6 +146,7 @@ function Performance(option,fn){try{
                 performance:conf.performance,
                 resourceList:conf.resourceList,
             }
+            console.log(JSON.stringify(result))
             fn&&fn(result)
             if(!fn && window.fetch){
                 fetch(opt.domain,{ 
