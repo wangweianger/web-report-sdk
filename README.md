@@ -85,7 +85,7 @@ http://localhost:8080/test/ 页面测试
 ```
 
 
-返回参数说明
+## 返回参数说明
 
 | 参数名 | 描述 | 说明 |
 | --- | --- | --- |
@@ -93,33 +93,33 @@ http://localhost:8080/test/ 页面测试
 | page | 当前页面 |  |
 | preUrl | 上一页面 |  |
 | errorList | 错误资源列表信息 |  |
-| errorList->t | 资源时间 |  |
-| errorList->n | 资源类型 | resource，js，ajax，fetch,other  |
-| errorList->msg | 错误信息 |  |
-| errorList->method | 资源请求方式 | GET，POST |
-| errorList->data->resourceUrl | 请求资源路径 |  |
-| errorList->data->col | js错误行 |  |
-| errorList->data->line | js错误列 |  |
-| errorList->data->status | ajax错误状态 |  |
+| ->t | 资源时间 |  |
+| ->n | 资源类型 | resource，js，ajax，fetch,other  |
+| ->msg | 错误信息 |  |
+| ->method | 资源请求方式 | GET，POST |
+| ->data->resourceUrl | 请求资源路径 |  |
+| ->data->col | js错误行 |  |
+| ->data->line | js错误列 |  |
+| ->data->status | ajax错误状态 |  |
 | errorList->data->text | ajax错误信息 |  |
 | performance | 页面资源性能数据(单位均为毫秒) |  |
-| performance->dnst | DNS解析时间 |  |
-| performance->tcpt | TCP建立时间 |  |
-| performance->wit | 白屏时间 |  |
-| performance->domt | dom渲染完成时间 |  |
-| performance->lodt | 页面onload时间 |  |
-| performance->radt | 页面准备时间  |  |
-| performance->rdit | 页面重定向时间 |  |
-| performance->uodt | unload时间 |  |
-| performance->reqt | request请求耗时 |  |
+| ->dnst | DNS解析时间 |  |
+| ->tcpt | TCP建立时间 |  |
+| ->wit | 白屏时间 |  |
+| ->domt | dom渲染完成时间 |  |
+| ->lodt | 页面onload时间 |  |
+| ->radt | 页面准备时间  |  |
+| ->rdit | 页面重定向时间 |  |
+| ->uodt | unload时间 |  |
+| ->reqt | request请求耗时 |  |
 | performance->andt | 页面解析dom耗时 |  |
 | resoruceList | 页面资源性能数据 |  |
-| resoruceList->decodedBodySize | 资源返回数据大小 |  |
-| resoruceList->duration | 资源耗时 |  |
-| resoruceList->method | 请求方式 | GET,POST |
-| resoruceList->name | 请求资源路径 |  |
-| resoruceList->nextHopProtocol | http协议版本 |  |
-| resoruceList->type | 请求资源类型 | script，img，fetchrequest，xmlhttprequest，other |
+| ->decodedBodySize | 资源返回数据大小 |  |
+| ->duration | 资源耗时 |  |
+| ->method | 请求方式 | GET,POST |
+| ->name | 请求资源路径 |  |
+| ->nextHopProtocol | http协议版本 |  |
+| ->type | 请求资源类型 | script，img，fetchrequest，xmlhttprequest，other |
 
 
 
