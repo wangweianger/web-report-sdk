@@ -4,15 +4,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 Performance({
     domain: 'http://some.com/api',
+    outtime: 500,
     isPage: true,
     isResource: true,
     isError: true
-}, function (data) {
-    fetch('http://some.com/api', {
-        method: 'POST',
-        type: 'report-data',
-        body: JSON.stringify(data)
-    });
 });
 
 // web msgs report function
@@ -61,7 +56,6 @@ function Performance(option, fn) {
         appVersion: navigator.appVersion,
         // 当前页面
         page: location.href
-
         // error default
     };var errordefo = {
         t: '', //发送数据时的时间戳
@@ -69,13 +63,10 @@ function Performance(option, fn) {
         msg: '', //错误的具体信息,
         data: {}
     };
-
     var beginTime = new Date().getTime();
     var loadTime = 0;
     var ajaxTime = 0;
     var fetchTime = 0;
-
-    //--------------------------------上报数据------------------------------------
 
     // error上报
     if (opt.isError) _error();
@@ -143,8 +134,6 @@ function Performance(option, fn) {
             clearPerformance();
         }
     });
-
-    //--------------------------------工具函数------------------------------------
 
     // report date
     function reportData() {

@@ -1,14 +1,9 @@
 Performance({
     domain:'http://some.com/api',
+    outtime:500,
     isPage:true,
     isResource:true,
     isError:true,
-},(data)=>{
-    fetch('http://some.com/api',{ 
-        method: 'POST',
-        type:'report-data',
-        body:JSON.stringify(data) 
-    })
 })
 
 // web msgs report function
@@ -58,7 +53,6 @@ function Performance(option,fn){
     	// 当前页面
     	page:location.href,
     }
-
     // error default
     let errordefo = {
         t:'',   //发送数据时的时间戳
@@ -66,13 +60,10 @@ function Performance(option,fn){
         msg:'',  //错误的具体信息,
         data:{}
     };
-
     let beginTime   = new Date().getTime()
     let loadTime    = 0
     let ajaxTime    = 0
     let fetchTime   = 0
-
-    //--------------------------------上报数据------------------------------------
 
     // error上报
     if(opt.isError) _error();
@@ -82,7 +73,6 @@ function Performance(option,fn){
         loadTime = new Date().getTime()-beginTime
         getLargeTime();
     },false);
-
 
     // 执行fetch重写
     if(opt.isResource || opt.isError) _fetch();
@@ -139,8 +129,6 @@ function Performance(option,fn){
             clearPerformance()
         }
     })
-
-    //--------------------------------工具函数------------------------------------
 
     // report date
     function reportData(){
@@ -448,5 +436,4 @@ function Performance(option,fn){
             performance.clearResourceTimings();
         }
     } 
-
 }
