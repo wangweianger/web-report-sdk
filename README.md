@@ -94,7 +94,7 @@ http://localhost:8080/test/ 页面测试
 | preUrl | 上一页面 |  |
 | errorList | 错误资源列表信息 |  |
 | errorList->t | 资源时间 |  |
-| errorList->n | 资源类型 | resource:请求资源，js:错误js，ajax:错误ajax请求,fetch:错误fetch请求  |
+| errorList->n | 资源类型 | resource，js，ajax，fetch,other  |
 | errorList->msg | 错误信息 |  |
 | errorList->method | 资源请求方式 | GET，POST |
 | errorList->data->resourceUrl | 请求资源路径 |  |
@@ -119,7 +119,7 @@ http://localhost:8080/test/ 页面测试
 | resoruceList->method | 请求方式 | GET,POST |
 | resoruceList->name | 请求资源路径 |  |
 | resoruceList->nextHopProtocol | http协议版本 |  |
-| resoruceList->type | 请求资源类型 | script：脚本，img：图片，fetchrequest：fetch请求方式，xmlhttprequest:XML请求方式 |
+| resoruceList->type | 请求资源类型 | script，img，fetchrequest，xmlhttprequest，other |
 
 
 
