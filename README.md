@@ -31,7 +31,6 @@
 
 ### 参数说明
 ```js
-完整的调用方式为：
 Performance({
     domain:'http://some.com/api', 
     outtime:500,
@@ -43,15 +42,14 @@ Performance({
 })
 ```
 
->  * 同时传入 domain和传入的function ，function优先级更高；
->  * domain		：上报api接口
->  * outtime	：上报延迟时间，保证异步数据的加载 （默认：1000ms）
->  * isPage		：是否上报页面性能数据        （默认：true）
->  * isResource	：是否上报页面资源性能数据 （默认：true）
->  * isError	：是否上报页面错误信息数据    （默认：true）
->  * fn			：自定义上报函数，上报方式可以用ajax可以用fetch  (非必填：默认使用fetch)
+* 同时传入 domain和传入的function ，function优先级更高；
+* domain		：上报api接口
+* outtime	：上报延迟时间，保证异步数据的加载 （默认：1000ms）
+* isPage		：是否上报页面性能数据        （默认：true）
+* isResource	：是否上报页面资源性能数据 （默认：true）
+* isError	：是否上报页面错误信息数据    （默认：true）
+* fn			：自定义上报函数，上报方式可以用ajax可以用fetch  (非必填：默认使用fetch)
 
-## 功能说明
 ## 错误处理：
 * 插件会处理所有的error信息并完成上报
 * 错误处理分为4种类型
@@ -61,7 +59,7 @@ Performance({
 * 4.fetch请求错误			n='fetch'
 
 ## AJAX处理：
-### AJAX分为 XMLHttpRequest 和 Fetch的处理
+* AJAX分为 XMLHttpRequest 和 Fetch的处理
 * AJAX兼容老板般与新版本 例如：jq的1.x版本与2.x版本以上需要做兼容处理
 * 拦截所有fetch请求信息，遇到错误时收集并上报
 
@@ -86,6 +84,15 @@ http://localhost:8080/test/ 页面测试
 
 ```
 
+
+返回参数说明
+
+| 参数名 | 描述 | 说明 |
+| --- | --- | --- |
+| appVerfion | 当前浏览器信息 |  |
+| errorList | 错误资源列表信息 |  |
+| errorList->t | 资源时间 |  |
+| errorList->n | 资源类型 | resource:请求资源，js:错误js，ajax:错误ajax请求,fetch:错误fetch请求  |
 
 
 
