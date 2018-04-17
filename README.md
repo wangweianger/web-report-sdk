@@ -8,6 +8,8 @@
 >  * 当前页面错误信息  （data.errorList） 包含（js,css,img,ajax,fetch 等错误信息）
 >  * 当前页面所有资源性能数据 （data.resoruceList）,例如ajax,css,img等资源加载性能数据
 
+### 完整前端性能监控系统koa+mysql+vue完整源码：https://github.com/wangweianger/web-performance-monitoring-system
+
 ### 使用方式
 >  * 1、下载 dist/performance-report.min.js 到本地
 >  * 2、使用script标签引入到html的头部（备注：放到所有js资源之前）
@@ -83,7 +85,6 @@ npm run build
 http://localhost:8080/test/ 页面测试
 
 ```
-
 
 ## 返回参数说明
 
