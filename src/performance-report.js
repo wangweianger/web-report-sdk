@@ -196,8 +196,6 @@ function Performance(option,fn){try{
     		reqt:timing.responseEnd - timing.requestStart || 0, 
     		//页面解析dom耗时
     		andt:timing.domComplete - timing.domInteractive || 0, 
-    		// 上一页面
-    		pre:conf.preUrl
     	}
     }
 
