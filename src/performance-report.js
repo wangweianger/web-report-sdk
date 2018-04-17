@@ -56,9 +56,9 @@ function Performance(option,fn){try{
     }
     // error default
     let errordefo = {
-        t:'',   //发送数据时的时间戳
-        n:'js',//模块名,
-        msg:'',  //错误的具体信息,
+        t:'',   
+        n:'js',
+        msg:'',  
         data:{}
     };
 
