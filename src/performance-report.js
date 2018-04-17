@@ -7,14 +7,15 @@ Performance({
 })
 
 // web msgs report function
-function Performance(option,fn){
+function Performance(option,fn){try{  
+
     let opt = {
         // 上报地址
         domain:'http://localhost/api',
         // 脚本延迟上报时间
         outtime:1000,
         // ajax请求时需要过滤的url信息
-        filterUrl:['http://localhost:35729/livereload.js?snipver=1'],
+        filterUrl:['http://localhost:35729/livereload.js?snipver=1','http://localhost:8000/sockjs-node/info'],
         // 是否上报页面性能数据
         isPage:true,
         // 是否上报页面资源数据
@@ -60,6 +61,7 @@ function Performance(option,fn){
         msg:'',  //错误的具体信息,
         data:{}
     };
+
     let beginTime   = new Date().getTime()
     let loadTime    = 0
     let ajaxTime    = 0
@@ -81,20 +83,21 @@ function Performance(option,fn){
     if(opt.isResource || opt.isError) _Ajax({
         onreadystatechange:function(xhr){
             if(xhr.readyState === 4){
-                if(conf.goingType === 'load') return;
-                conf.goingType = 'readychange';
+                setTimeout(()=>{
+                    if(conf.goingType === 'load') return;
+                    conf.goingType = 'readychange';
 
-                getAjaxTime('readychange')
+                    getAjaxTime('readychange')
 
-                if (xhr.status < 200 || xhr.status > 300) {
-        			xhr.method = xhr.args.method
-        			ajaxResponse(xhr)
-        		}
+                    if (xhr.status < 200 || xhr.status > 300) {
+            			xhr.method = xhr.args.method
+            			ajaxResponse(xhr)
+            		}
+                },600)
             }
         },
         onerror:function(xhr){
             getAjaxTime('error')
-
         	if(xhr.args&&xhr.args.length){
         		xhr.method = xhr.args.method
         		xhr.responseURL = xhr.args.url
@@ -119,14 +122,14 @@ function Performance(option,fn){
                 opt.filterUrl.forEach(item=>{ if(arg[1].indexOf(item)!=-1) begin = true; })
                 if(begin) return;
             }
+
             let result = { url:arg[1], method: arg[0]||'GET' ,type:'xmlhttprequest' }
         	this.args = result
-            
+
+            clearPerformance()
             conf.ajaxMsg.push(result)
             conf.ajaxLength   = conf.ajaxLength+1;
             conf.haveAjax     = true
-
-            clearPerformance()
         }
     })
 
@@ -292,10 +295,12 @@ function Performance(option,fn){
     	window.fetch   = function(){
     		let _arg   = arguments
             let result = fetArg(_arg)
-            clearPerformance()
-            conf.ajaxMsg.push(result)
-            conf.fetLength   = conf.fetLength+1;
-            conf.haveFetch        = true
+            if(result.type !== 'report-data'){
+                clearPerformance()
+                conf.ajaxMsg.push(result)
+                conf.fetLength   = conf.fetLength+1;
+                conf.haveFetch   = true
+            }
     		return _fetch.apply(this, arguments)
             .then((res)=>{ 
                 if(result.type === 'report-data') return;
@@ -436,4 +441,5 @@ function Performance(option,fn){
             performance.clearResourceTimings();
         }
     } 
-}
+
+}catch(err){}}

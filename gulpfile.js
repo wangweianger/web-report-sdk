@@ -4,6 +4,7 @@ const babel = require('gulp-babel')
 const uglify = require('gulp-uglify')
 const clean = require('gulp-clean')
 const rename = require("gulp-rename");
+const stripDebug = require('gulp-strip-debug');
 
 gulp.task('connect', function() {
   	connect.server({
@@ -37,6 +38,7 @@ gulp.task('default', ['connect', 'watch','babel']);
 
 gulp.task('build', () =>
     gulp.src('./dist/performance-report.js')
+        .pipe(stripDebug())
         .pipe(uglify()) 
         .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest('./dist'))
