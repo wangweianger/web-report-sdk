@@ -4,7 +4,6 @@
 
 // web msgs report function
 function Performance(option,fn){try{  
-
     let opt = {
         // 上报地址
         domain:'http://localhost/api',
