@@ -7,6 +7,7 @@
 >  * 页面性能数据信息   （data.performance），例如：页面加载时间，白屏时间，dns解析时间等
 >  * 当前页面错误信息  （data.errorList） 包含（js,css,img,ajax,fetch 等错误信息）
 >  * 当前页面所有资源性能数据 （data.resoruceList）,例如ajax,css,img等资源加载性能数据
+>  * 不用担心阻塞页面，压缩资源大小6kb,上报方式为异步上报
 
 ### 完整前端性能监控系统koa+mysql+vue完整源码：https://github.com/wangweianger/web-performance-monitoring-system
 
