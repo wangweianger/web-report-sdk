@@ -61,24 +61,31 @@ Performance({
 * 4.fetch请求错误			n='fetch'
 ** 代码案例 **
 ```js
-[
-    {
-      "t": 1523945465422, 
-      "n": "js", 
-      "msg": "ReferenceError: wangwei is not defined at http://localhost:8080/test/:59:15", 
-      "data": {
-        "resourceUrl": "http://localhost:8080/test/", 
-        "line": 59, 
-        "col": 15
-      }, 
-      "method": "GET"
-    }, 
-  ]
+[{
+	"t": 1523945465422, 
+	"n": "js", 
+	"msg": "ReferenceError: wangwei is not defined at http://localhost:8080/test/:59:15", 
+	"data": {
+		"resourceUrl": "http://localhost:8080/test/", 
+		"line": 59, 
+		"col": 15
+	}, 
+	"method": "GET"
+}]
 ```
 
+### AJAX处理
+### AJAX分为 XMLHttpRequest 和 Fetch的处理
+* AJAX兼容老板般与新版本 例如：jq的1.x版本与2.x版本以上需要做兼容处理
+* 拦截所有fetch请求信息，遇到错误时收集并上报
 
-
-
+### 所有资源信息处理
+* 上报所有资源信息 资源类型以type来区分 type类型有
+* script：js脚本资源
+* img：图片资源
+* fetchrequest：fetch请求资源
+* xmlhttprequest：ajax请求资源
+* other ：其他
 
 
 
