@@ -133,7 +133,105 @@ http://localhost:8080/test/ 页面测试
 | ->nextHopProtocol | http协议版本 |  |
 | ->type | 请求资源类型 | script，img，fetchrequest，xmlhttprequest，other |
 
-
+### 一份完整的上报数据看起来像这样：
+```
+{
+  "page": "http://localhost:8080/test/", 
+  "preUrl": "", 
+  "appVersion": "5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36", 
+  "errorList": [
+    {
+      "t": 1523948635259, 
+      "n": "js", 
+      "msg": "ReferenceError: wangwei is not defined at http://localhost:8080/test/:64:15", 
+      "data": {
+        "resourceUrl": "http://localhost:8080/test/", 
+        "line": 64, 
+        "col": 15
+      }, 
+      "method": "GET"
+    }, 
+    {
+      "t": 1523948635330, 
+      "n": "resource", 
+      "msg": "img is load error", 
+      "data": {
+        "target": "img", 
+        "type": "error", 
+        "resourceUrl": "http://img1.imgtn.bd95510/"
+      }, 
+      "method": "GET"
+    }, 
+    {
+      "t": 1523948635405, 
+      "n": "ajax", 
+      "msg": "ajax请求错误", 
+      "data": {
+        "resourceUrl": "", 
+        "text": "", 
+        "status": 0
+      }
+    }, 
+    {
+      "t": 1523948635425, 
+      "n": "fetch", 
+      "msg": "fetch请求错误", 
+      "data": {
+        "resourceUrl": "http://mock-api.seosiwei.com/guest/order/api/order/getOrde", 
+        "text": "TypeError: Failed to fetch", 
+        "status": 0
+      }, 
+      "method": "POST"
+    }
+  ], 
+  "performance": {
+    "dnst": 0, 
+    "tcpt": 0, 
+    "wit": 17, 
+    "domt": 239, 
+    "lodt": 904, 
+    "radt": 8, 
+    "rdit": 0, 
+    "uodt": 0, 
+    "reqt": 23, 
+    "andt": 645
+  }, 
+  "resourceList": [
+    {
+      "name": "https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js", 
+      "method": "GET", 
+      "type": "script", 
+      "duration": "0.00", 
+      "decodedBodySize": 0, 
+      "nextHopProtocol": "h2"
+    }, 
+    {
+      "name": "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=295864288,1887240069&fm=27&gp=0.jpg", 
+      "method": "GET", 
+      "type": "img", 
+      "duration": "0.00", 
+      "decodedBodySize": 0, 
+      "nextHopProtocol": "http/1.1"
+    }, 
+    {
+      "name": "http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInfo", 
+      "method": "GET", 
+      "type": "fetchrequest", 
+      "duration": "157.10", 
+      "decodedBodySize": 0, 
+      "nextHopProtocol": "http/1.1"
+    }, 
+    {
+      "name": "http://mock-api.seosiwei.com/guest/order/api/order/getOrder", 
+      "method": "POST", 
+      "type": "xmlhttprequest", 
+      "duration": "148.40", 
+      "decodedBodySize": 0, 
+      "nextHopProtocol": "http/1.1"
+    }
+  ]
+}
+```
 
 
 
