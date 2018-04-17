@@ -3,17 +3,23 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 Performance({
-    domain: 'http://localhost:8080/',
+    domain: 'http://some.com/api',
     isPage: true,
     isResource: true,
     isError: true
+}, function (data) {
+    fetch('http://some.com/api', {
+        method: 'POST',
+        type: 'report-data',
+        body: JSON.stringify(data)
+    });
 });
 
 // web msgs report function
 function Performance(option, fn) {
     var opt = {
         // 上报地址
-        domain: 'http://localhost:8080/',
+        domain: 'http://localhost/api',
         // 脚本延迟上报时间
         outtime: 1000,
         // ajax请求时需要过滤的url信息
@@ -26,7 +32,6 @@ function Performance(option, fn) {
         isError: true
     };
     opt = Object.assign(opt, option);
-
     var conf = {
         //资源列表 
         resourceList: [],
@@ -77,7 +82,6 @@ function Performance(option, fn) {
 
     // 绑定onload事件
     addEventListener("load", function () {
-        clearPerformance('load');
         loadTime = new Date().getTime() - beginTime;
         getLargeTime();
     }, false);
@@ -147,8 +151,22 @@ function Performance(option, fn) {
         setTimeout(function () {
             if (opt.isPage) perforPage();
             if (opt.isResource) perforResource();
-
-            console.log(conf);
+            var result = {
+                page: conf.page,
+                preUrl: conf.preUrl,
+                appVersion: conf.appVersion,
+                errorList: conf.errorList,
+                performance: conf.performance,
+                resourceList: conf.resourceList
+            };
+            fn && fn(result);
+            if (!fn && window.fetch) {
+                fetch(opt.domain, {
+                    method: 'POST',
+                    type: 'report-data',
+                    body: JSON.stringify(result)
+                });
+            }
         }, opt.outtime);
     }
 
@@ -295,9 +313,11 @@ function Performance(option, fn) {
             conf.fetLength = conf.fetLength + 1;
             conf.haveFetch = true;
             return _fetch.apply(this, arguments).then(function (res) {
+                if (result.type === 'report-data') return;
                 getFetchTime('success');
                 return res;
             }).catch(function (err) {
+                if (result.type === 'report-data') return;
                 getFetchTime('error');
                 //error
                 var defaults = Object.assign({}, errordefo);
@@ -333,6 +353,7 @@ function Performance(option, fn) {
             } else {
                 result.url = args[0];
                 result.method = args[1].method;
+                result.type = args[1].type;
             }
         } catch (err) {}
         return result;
@@ -421,7 +442,6 @@ function Performance(option, fn) {
 
     function clearPerformance(type) {
         if (!window.performance && !window.performance.clearResourceTimings) return;
-        if (type === 'load') performance.clearResourceTimings();
         if (conf.haveAjax && conf.haveFetch && conf.ajaxLength == 0 && conf.fetLength == 0) {
             performance.clearResourceTimings();
         } else if (!conf.haveAjax && conf.haveFetch && conf.fetLength == 0) {

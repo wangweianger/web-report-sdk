@@ -28,15 +28,15 @@
 	<script>
 		$(function(){
 
-			// $.ajax({
-			// 	type:'get',
-			// 	url:'http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInf',
-			// 	success:data=>{
-			// 		// console.log(data)
-			// 	}
-			// })
+			$.ajax({
+				type:'get',
+				url:'http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInf',
+				success:data=>{
+					// console.log(data)
+				}
+			})
 
-			fetch('http://mock-api.seosiwei.com/guest/order/api/order/getOrder',{
+			fetch('http://mock-api.seosiwei.com/guest/order/api/order/getOrde',{
 				method: 'POST',
 			}).then(function(response){
 				console.log('++++')
