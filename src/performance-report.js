@@ -434,12 +434,20 @@ function Performance(option,fn){try{
     function clearPerformance(type){
         if(!window.performance && !window.performance.clearResourceTimings) return;
         if(conf.haveAjax&&conf.haveFetch&&conf.ajaxLength==0&&conf.fetLength==0){
-            performance.clearResourceTimings();
+            clear()
         }else if(!conf.haveAjax&&conf.haveFetch&&conf.fetLength==0){
-            performance.clearResourceTimings();
+            clear()
         }else if(conf.haveAjax&&!conf.haveFetch&&conf.ajaxLength==0){
-            performance.clearResourceTimings();
+            clear()
         }
     } 
+    function clear(){
+        performance.clearResourceTimings();
+        conf.performance    = {}
+        conf.errorList      = []
+        conf.preUrl         = ''
+        conf.resourceList   = ''
+        conf.page           = location.href
+    }
 
 }catch(err){}}
