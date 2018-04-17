@@ -40,6 +40,7 @@ Performance({
     isPage:true,
     isResource:true,
     isError:true,
+    filterUrl:['http://localhost:35729/livereload.js?snipver=1']
 },(data)=>{
 	fetch('http://some.com/api',{type:'POST',body:JSON.stringify(result)}).then((data)=>{})
 })
@@ -51,6 +52,7 @@ Performance({
 * isPage		：是否上报页面性能数据        （默认：true）
 * isResource	：是否上报页面资源性能数据 （默认：true）
 * isError	：是否上报页面错误信息数据    （默认：true）
+* filterUrl ：不需要上报的ajax请求 （例如开发模式下的livereload链接）
 * fn			：自定义上报函数，上报方式可以用ajax可以用fetch  (非必填：默认使用fetch)
 
 ## 错误处理：
