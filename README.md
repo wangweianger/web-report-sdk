@@ -20,7 +20,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>performance test</title>
-	<!-- 放到所有资源之前 防止抓取不到error信息 -->
+	<!-- 放到所有资源之前 防止获取不到error信息 -->
 	<script src="../dist/performance-report.min.js"></script>
 	<script>
 		//开始上报数据
@@ -85,6 +85,11 @@ npm run build
 http://localhost:8080/test/ 页面测试
 
 ```
+
+## 单页面程序处理说明
+* 对于单页面应用程序，只有第一次加载的页面性能数据有效，之后的路由跳转不会有页面的性能数据，因为需要的静态资源已经加载完成
+* 如果新的路由有ajax请求或者fetch请求，会抓取所有新的请求数据并上报。
+* 多页面应用程序不会受影响
 
 ## 返回参数说明
 
