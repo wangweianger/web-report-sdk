@@ -43,13 +43,13 @@ Performance({
 })
 ```
 
-同时传入 domain和传入的function ，function优先级更高；
-domain		：上报api接口
-outtime		：上报延迟时间，保证异步数据的加载 （默认：1000ms）
-isPage		：是否上报页面性能数据        （默认：true）
-isResource	：是否上报页面资源性能数据 （默认：true）
-isError		：是否上报页面错误信息数据    （默认：true）
-fn			：自定义上报函数，上报方式可以用ajax可以用fetch  (非必填：默认使用fetch)
+>  * 同时传入 domain和传入的function ，function优先级更高；
+>  * domain		：上报api接口
+>  * outtime		：上报延迟时间，保证异步数据的加载 （默认：1000ms）
+>  * isPage		：是否上报页面性能数据        （默认：true）
+>  * isResource	：是否上报页面资源性能数据 （默认：true）
+>  * isError		：是否上报页面错误信息数据    （默认：true）
+>  * fn			：自定义上报函数，上报方式可以用ajax可以用fetch  (非必填：默认使用fetch)
 
 ### 功能说明
 
