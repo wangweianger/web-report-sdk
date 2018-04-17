@@ -60,7 +60,7 @@ Performance({
 * 3.ajax请求错误  		n='ajax'
 * 4.fetch请求错误			n='fetch'
 ** 代码案例 **
-```
+```js
 [
     {
       "t": 1523945465422, 
