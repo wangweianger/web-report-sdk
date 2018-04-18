@@ -15,8 +15,6 @@ https://github.com/wangweianger/web-performance-monitoring-system
 ### Chinese document https://blog.seosiwei.com/detail/30
 
 ## Browser usage
-
-### Use
 >  * 1、download dist/performance-report.min.js 
 >  * 2、The use of the script tag to the head of the HTML
 >  * 3、Using performance function to monitor and report data
