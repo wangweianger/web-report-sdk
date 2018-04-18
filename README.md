@@ -1,38 +1,74 @@
-## 健全完整的性能、错误、资源上报数据
+## Sound and complete performance, error and resource reporting data.
 
-### performance-report 是比较完整和健全的数据上报插件，它可以帮你完成以下功能：
->  * 当前页面URL  (data.page)
->  * 上一页面URL （data.preUrl）
->  * 当前浏览器版本信息 （data.appVersion）
->  * 页面性能数据信息   （data.performance），例如：页面加载时间，白屏时间，dns解析时间等
->  * 当前页面错误信息  （data.errorList） 包含（js,css,img,ajax,fetch 等错误信息）
->  * 当前页面所有资源性能数据 （data.resoruceList）,例如ajax,css,img等资源加载性能数据
->  * 不用担心阻塞页面，压缩资源大小6kb,上报方式为异步上报
+### performance-report It can help you complete the following functions：
+>  * Current page URL  
+>  * The last page URL 
+>  * Current browser version information 
+>  * Page performance data information   
+>  * Current page error information  
+>  * Current page all resource performance data .for example:ajax,css,img
+>  * Don't worry about blocking pages.The size of the compressed resource is less than 6KB.Async Report.
 
-### 完整前端性能监控系统koa+mysql+vue完整源码：https://github.com/wangweianger/web-performance-monitoring-system
+### Complete front end performance monitoring system
+https://github.com/wangweianger/web-performance-monitoring-system
 
-### 使用方式
->  * 1、下载 dist/performance-report.min.js 到本地
->  * 2、使用script标签引入到html的头部（备注：放到所有js资源之前）
->  * 3、使用performance函数进行数据的监听上报
+## Browser usage
+
+### Use
+>  * 1、download dist/performance-report.min.js 
+>  * 2、The use of the script tag to the head of the HTML
+>  * 3、Using performance function to monitor and report data
 
 ```html
 <html>
 <head>
-	<meta charset="UTF-8">
-	<title>performance test</title>
-	<!-- 放到所有资源之前 防止获取不到error信息 -->
-	<script src="../dist/performance-report.min.js"></script>
-	<script>
-		//开始上报数据
-		Performance({
-		    domain:'http://some.com/api', //更改成你自己的上报地址域名
-		})
-	</script>
+  <meta charset="UTF-8">
+  <title>performance test</title>
+  <script src="../dist/performance-report.min.js"></script>
+  <script>
+    Performance({
+        domain:'http://some.com/api', //Your API address
+    })
+  </script>
 </head>
 ```
 
-### 参数说明
+
+### Webpack usage
+*1、*
+```js
+npm install performance-report --save-dev
+```
+*2、*
+```js
+//New performance.js file
+//The contents are as follows
+
+import Performance from 'performance-report'
+Performance({ 
+  domain:'http://some.com/api' 
+})
+```
+*3、*
+```
+//Change webpack configuration
+
+entry: {
+    //add performance entry
+    'performance':path.resolve(__dirname, '../src/performance.js'),
+},
+
+//change htmlWebpackPlugin config like this
+//Attention to dependence
+new htmlWebpackPlugin({
+    ...
+    chunks: ['performance','vendors','main'],
+    chunksSortMode: 'manual',
+}),
+
+```
+
+### Options
 ```js
 Performance({
     domain:'http://some.com/api', 
@@ -42,98 +78,105 @@ Performance({
     isError:true,
     filterUrl:['http://localhost:35729/livereload.js?snipver=1']
 },(data)=>{
-	fetch('http://some.com/api',{type:'POST',body:JSON.stringify(result)}).then((data)=>{})
+  fetch('http://some.com/api',{type:'POST',body:JSON.stringify(result)}).then((data)=>{})
 })
 ```
 
-* 同时传入 domain和传入的function ，function优先级更高；
-* domain		：上报api接口
-* outtime	：上报延迟时间，保证异步数据的加载 （默认：1000ms）
-* isPage		：是否上报页面性能数据        （默认：true）
-* isResource	：是否上报页面资源性能数据 （默认：true）
-* isError	：是否上报页面错误信息数据    （默认：true）
-* filterUrl ：不需要上报的ajax请求 （例如开发模式下的livereload链接）
-* fn			：自定义上报函数，上报方式可以用ajax可以用fetch  (非必填：默认使用fetch)
+* At the same time, domain and function parameters are introduced, and function has higher priority.
+* domain    ：Report API interface
+* outtime ：Reporting delay time to ensure asynchronous data loading （default：1000ms）
+* isPage    ：Whether to report page performance data        （default：true）
+* isResource  ：Whether to report page resource performance data （default：true）
+* isError ：Whether or not to report page error data    （default：true）
+* filterUrl ：A request that does not need to be reported
+* fn      ：Custom reporting function
 
-## 错误处理：
-* 插件会处理所有的error信息并完成上报
-* 错误处理分为4种类型
-* 1.图片资源，js资源文本资源等资源错误信息 n='resource'
-* 2.js报错，代码中的js报错  n='js'
-* 3.ajax请求错误  		n='ajax'
-* 4.fetch请求错误			n='fetch'
+## USE Vue
+If you use the Vue framework, you can do it like this.
+* 1、Introduce Performance
+* 2、Copy the following code
+```
+import Performance from './performance-report'
+Vue.config.errorHandler = function (err, vm, info) {
+    let { message, name,  stack } = err;
 
-## AJAX处理：
-* AJAX分为 XMLHttpRequest 和 Fetch的处理
-* AJAX兼容老板般与新版本 例如：jq的1.x版本与2.x版本以上需要做兼容处理
-* 拦截所有fetch请求信息，遇到错误时收集并上报
+    // Processing error
+    let resourceUrl,col,line;
+    let errs = stack.match(/\(.+?\)/)
+    if(errs&&errs.length) errs = errs[0]
+    errs=errs.replace(/http.+js/g,$1=>{resourceUrl=$1;return '';})
+    errs=errs.split(':')
+    if(errs&&errs.length>2)line=parseInt(errs[1]);col=parseInt(errs[2])
 
-## 所有资源信息处理：
-* 上报所有资源信息 资源类型以type来区分 type类型有
-* script：js脚本资源
-* img：图片资源
-* fetchrequest：fetch请求资源
-* xmlhttprequest：ajax请求资源
-* other ：其他
+    // Fixed parameters
+    // Call the Performance.addError method
+    Performance.addError({
+      msg:message,
+      col:col,
+      line:line,
+      resourceUrl:resourceUrl
+    })
+}
+```
 
-## 运行方式
+
+## Runing
 ```js
 git clone https://github.com/wangweianger/web-performance-report.git
 npm install
-//开发
+
+//Development
 npm run dev
-//打包
+
+//product
 npm run build
 
-http://localhost:8080/test/ 页面测试
+//test page
+http://localhost:8080/test/ 
 
 ```
 
-## 单页面程序处理说明
-* 对于单页面应用程序，只有第一次加载的页面性能数据有效，之后的路由跳转不会有页面的性能数据，因为需要的静态资源已经加载完成
-* 如果新的路由有ajax请求或者fetch请求，会抓取所有新的请求数据并上报。
-* 多页面应用程序不会受影响
 
-## 返回参数说明
+## Return parameter description
 
-| 参数名 | 描述 | 说明 |
+| parameter name | describe | explain |
 | --- | --- | --- |
-| appVerfion | 当前浏览器信息 |  |
-| page | 当前页面 |  |
-| preUrl | 上一页面 |  |
+| appVerfion | Current browser information |  |
+| page | now page |  |
+| preUrl | previous page |  |
 |  |  |  |
-| errorList | 错误资源列表信息 |  |
-| ->t | 资源时间 |  |
-| ->n | 资源类型 | resource，js，ajax，fetch,other  |
-| ->msg | 错误信息 |  |
-| ->method | 资源请求方式 | GET，POST |
-| ->data->resourceUrl | 请求资源路径 |  |
-| ->data->col | js错误行 |  |
-| ->data->line | js错误列 |  |
-| ->data->status | ajax错误状态 |  |
-| ->data->text | ajax错误信息 |  |
+| errorList | err list |  |
+| ->t | now time |  |
+| ->n | resource type | resource，js，ajax，fetch,other  |
+| ->msg | error msg |  |
+| ->method | resource request method | GET，POST |
+| ->data->resourceUrl | Request resource path |  |
+| ->data->col | js error line |  |
+| ->data->line | js error col |  |
+| ->data->status | ajax error state |  |
+| ->data->text | ajax error msg |  |
 |  |  |  |
-| performance | 页面资源性能数据(单位均为毫秒) |  |
-| ->dnst | DNS解析时间 |  |
-| ->tcpt | TCP建立时间 |  |
-| ->wit | 白屏时间 |  |
-| ->domt | dom渲染完成时间 |  |
-| ->lodt | 页面onload时间 |  |
-| ->radt | 页面准备时间  |  |
-| ->rdit | 页面重定向时间 |  |
-| ->uodt | unload时间 |  |
-| ->reqt | request请求耗时 |  |
-| ->andt | 页面解析dom耗时 |  |
+| performance | page resource performance data |  |
+| ->dnst | DNS parsing time |  |
+| ->tcpt | TCP set up time |  |
+| ->wit | White screen time |  |
+| ->domt | DOM rendering completion time |  |
+| ->lodt | Page onload time |  |
+| ->radt | Page preparation time  |  |
+| ->rdit | Page redirection time |  |
+| ->uodt | unload time |  |
+| ->reqt | request time consuming |  |
+| ->andt | Page parsing DOM time consuming |  |
 |  |  |  |
-| resoruceList | 页面资源性能数据 |  |
-| ->decodedBodySize | 资源返回数据大小 |  |
-| ->duration | 资源耗时 |  |
-| ->method | 请求方式 | GET,POST |
-| ->name | 请求资源路径 |  |
-| ->nextHopProtocol | http协议版本 |  |
-| ->type | 请求资源类型 | script，img，fetchrequest，xmlhttprequest，other |
+| resoruceList | Page resource performance data |  |
+| ->decodedBodySize | body size |  |
+| ->duration | Time consuming |  |
+| ->method | Request method | GET,POST |
+| ->name | Request resource path |  |
+| ->nextHopProtocol | HTTP protocol version |  |
+| ->type | Request resource type | script，img，fetchrequest，xmlhttprequest，other |
 
-### 一份完整的上报数据看起来像这样：
+### A complete report of the report looks like this.
 ```js
 {
   "page": "http://localhost:8080/test/", 
