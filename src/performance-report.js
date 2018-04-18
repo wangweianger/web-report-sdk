@@ -93,7 +93,7 @@ function Performance(option,fn){try{
         },
         onerror:function(xhr){
             getAjaxTime('error')
-        	if(xhr.args&&xhr.args.length){
+        	if(xhr.args){
         		xhr.method = xhr.args.method
         		xhr.responseURL = xhr.args.url
         		xhr.statusText = 'ajax请求路径有误'
@@ -141,7 +141,7 @@ function Performance(option,fn){try{
                 performance:conf.performance,
                 resourceList:conf.resourceList,
             }
-            console.log(JSON.stringify(result))
+            // console.log(JSON.stringify(result))
             fn&&fn(result)
             if(!fn && window.fetch){
                 fetch(opt.domain,{ 

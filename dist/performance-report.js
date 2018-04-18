@@ -22,9 +22,8 @@ function Performance(option, fn) {
                     errorList: conf.errorList,
                     performance: conf.performance,
                     resourceList: conf.resourceList
-                };
-                console.log(JSON.stringify(result));
-                fn && fn(result);
+                    // console.log(JSON.stringify(result))
+                };fn && fn(result);
                 if (!fn && window.fetch) {
                     fetch(opt.domain, {
                         method: 'POST',
@@ -433,7 +432,7 @@ function Performance(option, fn) {
             },
             onerror: function onerror(xhr) {
                 getAjaxTime('error');
-                if (xhr.args && xhr.args.length) {
+                if (xhr.args) {
                     xhr.method = xhr.args.method;
                     xhr.responseURL = xhr.args.url;
                     xhr.statusText = 'ajax请求路径有误';

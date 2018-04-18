@@ -141,9 +141,10 @@ http://localhost:8080/test/ 页面测试
   "appVersion": "5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36", 
   "errorList": [
     {
-      "t": 1523948635259, 
+      "t": 1524017149094, 
       "n": "js", 
-      "msg": "ReferenceError: wangwei is not defined at http://localhost:8080/test/:64:15", 
+      "msg": "ReferenceError: wangwei is not defined
+    at http://localhost:8080/test/:64:15", 
       "data": {
         "resourceUrl": "http://localhost:8080/test/", 
         "line": 64, 
@@ -152,7 +153,7 @@ http://localhost:8080/test/ 页面测试
       "method": "GET"
     }, 
     {
-      "t": 1523948635330, 
+      "t": 1524017149102, 
       "n": "resource", 
       "msg": "img is load error", 
       "data": {
@@ -163,17 +164,7 @@ http://localhost:8080/test/ 页面测试
       "method": "GET"
     }, 
     {
-      "t": 1523948635405, 
-      "n": "ajax", 
-      "msg": "ajax请求错误", 
-      "data": {
-        "resourceUrl": "", 
-        "text": "", 
-        "status": 0
-      }
-    }, 
-    {
-      "t": 1523948635425, 
+      "t": 1524017149151, 
       "n": "fetch", 
       "msg": "fetch请求错误", 
       "data": {
@@ -182,21 +173,40 @@ http://localhost:8080/test/ 页面测试
         "status": 0
       }, 
       "method": "POST"
+    }, 
+    {
+      "t": 1524017149154, 
+      "n": "ajax", 
+      "msg": "ajax请求路径有误", 
+      "data": {
+        "resourceUrl": "http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInf", 
+        "text": "ajax请求路径有误", 
+        "status": 0
+      }, 
+      "method": "GET"
     }
   ], 
   "performance": {
     "dnst": 0, 
-    "tcpt": 0, 
-    "wit": 17, 
-    "domt": 239, 
-    "lodt": 904, 
-    "radt": 8, 
+    "tcpt": 2, 
+    "wit": 304, 
+    "domt": 445, 
+    "lodt": 677, 
+    "radt": 7, 
     "rdit": 0, 
     "uodt": 0, 
-    "reqt": 23, 
-    "andt": 645
+    "reqt": 294, 
+    "andt": 223
   }, 
   "resourceList": [
+    {
+      "name": "http://localhost:8080/dist/performance-report.js", 
+      "method": "GET", 
+      "type": "script", 
+      "duration": "81.70", 
+      "decodedBodySize": 17589, 
+      "nextHopProtocol": "http/1.1"
+    }, 
     {
       "name": "https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js", 
       "method": "GET", 
@@ -214,10 +224,18 @@ http://localhost:8080/test/ 页面测试
       "nextHopProtocol": "http/1.1"
     }, 
     {
+      "name": "http://localhost:35729/livereload.js?snipver=1", 
+      "method": "GET", 
+      "type": "script", 
+      "duration": "138.60", 
+      "decodedBodySize": 0, 
+      "nextHopProtocol": "http/1.1"
+    }, 
+    {
       "name": "http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInfo", 
       "method": "GET", 
       "type": "fetchrequest", 
-      "duration": "157.10", 
+      "duration": "55.80", 
       "decodedBodySize": 0, 
       "nextHopProtocol": "http/1.1"
     }, 
@@ -225,7 +243,7 @@ http://localhost:8080/test/ 页面测试
       "name": "http://mock-api.seosiwei.com/guest/order/api/order/getOrder", 
       "method": "POST", 
       "type": "xmlhttprequest", 
-      "duration": "148.40", 
+      "duration": "43.40", 
       "decodedBodySize": 0, 
       "nextHopProtocol": "http/1.1"
     }
