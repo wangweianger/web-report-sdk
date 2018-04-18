@@ -92,7 +92,7 @@ Performance({
 ### Method
 1、addError ： Reporting custom error information. like vue,react,try{}catch.you can use it.
 for example：
-```
+```js
 let message = 'js add error'
 let col = 20
 let line = 20
@@ -107,7 +107,7 @@ Performance.addError({
 ```
 2、addData ： Custom data at the time of reporting
 for example：
-```
+```js
 Performance.addData((data)=>{
   data.name = 'wangwei'
   data.some = {
