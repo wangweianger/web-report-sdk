@@ -13,6 +13,7 @@
 https://github.com/wangweianger/web-performance-monitoring-system
 
 ### Chinese document https://blog.seosiwei.com/detail/30
+### npm address:https://www.npmjs.com/package/performance-report
 
 ## Browser usage
 >  * 1、download dist/performance-report.min.js 
