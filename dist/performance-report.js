@@ -1,11 +1,36 @@
-'use strict';
+"use strict";
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-// Performance({
-//     domain:'http://some.com/api',
-// })
+/*!
+ * performance-report Javascript Library 0.0.1
+ * https://github.com/wangweianger/web-performance-report
+ * Date : 2018-04-18
+ * auther :zane
+ */
+if (typeof require === 'function' && (typeof exports === "undefined" ? "undefined" : _typeof(exports)) === "object" && (typeof module === "undefined" ? "undefined" : _typeof(module)) === "object") {
+    module.exports = Performance;
+} else {
+    window.Performance = Performance;
+}
 
+window.ERRORLIST = [];
+Performance.addError = function () {
+    var err = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    err = {
+        method: 'GET',
+        msg: err.msg,
+        n: 'js',
+        data: {
+            col: err.col,
+            line: err.line,
+            resourceUrl: err.resourceUrl
+        }
+    };
+    console.log(err);
+    ERRORLIST.push(err);
+};
 // web msgs report function
 function Performance(option, fn) {
     try {
@@ -15,6 +40,7 @@ function Performance(option, fn) {
             setTimeout(function () {
                 if (opt.isPage) perforPage();
                 if (opt.isResource) perforResource();
+                if (ERRORLIST && ERRORLIST.length) conf.errorList = conf.errorList.concat(ERRORLIST);
                 var result = {
                     page: conf.page,
                     preUrl: conf.preUrl,
@@ -39,16 +65,16 @@ function Performance(option, fn) {
 
         var getLargeTime = function getLargeTime() {
             if (conf.haveAjax && conf.haveFetch && loadTime && ajaxTime && fetchTime) {
-                console.log('loadTime:' + loadTime + ',ajaxTime:' + ajaxTime + ',fetchTime:' + fetchTime);
+                console.log("loadTime:" + loadTime + ",ajaxTime:" + ajaxTime + ",fetchTime:" + fetchTime);
                 reportData();
             } else if (conf.haveAjax && !conf.haveFetch && loadTime && ajaxTime) {
-                console.log('loadTime:' + loadTime + ',ajaxTime:' + ajaxTime);
+                console.log("loadTime:" + loadTime + ",ajaxTime:" + ajaxTime);
                 reportData();
             } else if (!conf.haveAjax && conf.haveFetch && loadTime && fetchTime) {
-                console.log('loadTime:' + loadTime + ',fetchTime:' + fetchTime);
+                console.log("loadTime:" + loadTime + ",fetchTime:" + fetchTime);
                 reportData();
             } else if (!conf.haveAjax && !conf.haveFetch && loadTime) {
-                console.log('loadTime:' + loadTime);
+                console.log("loadTime:" + loadTime);
                 reportData();
             }
         };
@@ -342,6 +368,7 @@ function Performance(option, fn) {
             conf.preUrl = '';
             conf.resourceList = '';
             conf.page = location.href;
+            ERRORLIST = [];
         };
 
         var opt = {
