@@ -92,7 +92,7 @@ Performance({
 If you use the Vue framework, you can do it like this.
 * 1、Introduce Performance
 * 2、Copy the following code
-```
+```js
 import Performance from './performance-report'
 Vue.config.errorHandler = function (err, vm, info) {
     let { message, stack } = err;
@@ -122,7 +122,7 @@ If you use the React framework, you can do it like this.
 * 2、Error Handling in React 16.
 If you don't know Error Handling.Go to the official website to understand
 https://reactjs.org/blog/2017/07/26/error-handling-in-react-16.html
-```
+```js
 //Top reference
 import Performance from './performance-report'
 
