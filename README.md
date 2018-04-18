@@ -35,11 +35,9 @@ https://github.com/wangweianger/web-performance-monitoring-system
 
 
 ### Webpack usage
-*1、*
 ```js
 npm install performance-report --save-dev
 ```
-*2、*
 ```js
 //New performance.js file
 //The contents are as follows
@@ -49,8 +47,7 @@ Performance({
   domain:'http://some.com/api' 
 })
 ```
-*3、*
-```
+```js
 //Change webpack configuration
 
 entry: {
