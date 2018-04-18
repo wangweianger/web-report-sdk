@@ -258,8 +258,7 @@ http://localhost:8080/test/
     {
       "t": 1524050060674, 
       "n": "js", 
-      "msg": "ReferenceError: wangwei is not defined
-    at http://localhost:8080/test/:73:15", 
+      "msg": "ReferenceError: wangwei is not defined at http://localhost:8080/test/:73:15", 
       "data": {
         "resourceUrl": "http://localhost:8080/test/", 
         "line": 73, 
