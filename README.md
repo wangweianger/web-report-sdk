@@ -12,6 +12,8 @@
 ### Complete front end performance monitoring system
 https://github.com/wangweianger/web-performance-monitoring-system
 
+### Chinese document https://blog.seosiwei.com/detail/30
+
 ## Browser usage
 
 ### Use
