@@ -94,6 +94,7 @@ If you use the Vue framework, you can do it like this.
 * 2、Copy the following code
 ```js
 import Performance from './performance-report'
+
 Vue.config.errorHandler = function (err, vm, info) {
     let { message, stack } = err;
 
