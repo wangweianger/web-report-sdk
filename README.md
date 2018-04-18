@@ -97,15 +97,48 @@ If you use the Vue framework, you can do it like this.
 ```
 import Performance from './performance-report'
 Vue.config.errorHandler = function (err, vm, info) {
-    let { message, name,  stack } = err;
+    let { message, stack } = err;
 
     // Processing error
     let resourceUrl,col,line;
     let errs = stack.match(/\(.+?\)/)
     if(errs&&errs.length) errs = errs[0]
-    errs=errs.replace(/http.+js/g,$1=>{resourceUrl=$1;return '';})
+    errs=errs.replace(/\w.+js/g,$1=>{resourceUrl=$1;return '';})
     errs=errs.split(':')
-    if(errs&&errs.length>2)line=parseInt(errs[1]);col=parseInt(errs[2])
+    if(errs&&errs.length>1)line=parseInt(errs[1]||0);col=parseInt(errs[2]||0)
+
+    // Fixed parameters
+    // Call the Performance.addError method
+    Performance.addError({
+      msg:message,
+      col:col,
+      line:line,
+      resourceUrl:resourceUrl
+    })
+}
+```
+
+## USE React
+If you use the React framework, you can do it like this.
+* 1、Introduce Performance
+* 2、Error Handling in React 16.
+If you don't know Error Handling.Go to the official website to understand
+https://reactjs.org/blog/2017/07/26/error-handling-in-react-16.html
+```
+//Top reference
+import Performance from './performance-report'
+
+//Parent component listens for subcomponent error information
+componentDidCatch(error, info) {
+    let {message,stack} = error  
+
+    // Processing error
+    let resourceUrl,col,line;
+    let errs = stack.match(/\(.+?\)/)
+    if(errs&&errs.length) errs = errs[0]
+    errs=errs.replace(/\w.+js/g,$1=>{resourceUrl=$1;return '';})
+    errs=errs.split(':')
+    if(errs&&errs.length>1)line=parseInt(errs[1]||0);col=parseInt(errs[2]||0)
 
     // Fixed parameters
     // Call the Performance.addError method
