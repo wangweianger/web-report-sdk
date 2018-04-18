@@ -89,6 +89,35 @@ Performance({
 * filterUrl ：A request that does not need to be reported
 * fn      ：Custom reporting function
 
+### Method
+1、addError ： Reporting custom error information. like vue,react,try{}catch.you can use it.
+for example：
+```
+let message = 'js add error'
+let col = 20
+let line = 20
+let resourceUrl = 'http://www.xxx.com/01.js'
+
+Performance.addError({
+      msg:message,
+      col:col,
+      line:line,
+      resourceUrl:resourceUrl
+})
+```
+2、addData ： Custom data at the time of reporting
+for example：
+```
+Performance.addData((data)=>{
+  data.name = 'wangwei'
+  data.some = {
+    name:'wangwie',
+    age:20
+  }
+})
+
+```
+
 ## USE Vue
 If you use the Vue framework, you can do it like this.
 * 1、Introduce Performance
@@ -216,18 +245,7 @@ http://localhost:8080/test/
   "appVersion": "5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36", 
   "errorList": [
     {
-      "t": 1524017149094, 
-      "n": "js", 
-      "msg": "ReferenceError: wangwei is not defined at http://localhost:8080/test/:64:15", 
-      "data": {
-        "resourceUrl": "http://localhost:8080/test/", 
-        "line": 64, 
-        "col": 15
-      }, 
-      "method": "GET"
-    }, 
-    {
-      "t": 1524017149102, 
+      "t": 1524050060518, 
       "n": "resource", 
       "msg": "img is load error", 
       "data": {
@@ -238,18 +256,19 @@ http://localhost:8080/test/
       "method": "GET"
     }, 
     {
-      "t": 1524017149151, 
-      "n": "fetch", 
-      "msg": "fetch请求错误", 
+      "t": 1524050060674, 
+      "n": "js", 
+      "msg": "ReferenceError: wangwei is not defined
+    at http://localhost:8080/test/:73:15", 
       "data": {
-        "resourceUrl": "http://mock-api.seosiwei.com/guest/order/api/order/getOrde", 
-        "text": "TypeError: Failed to fetch", 
-        "status": 0
+        "resourceUrl": "http://localhost:8080/test/", 
+        "line": 73, 
+        "col": 15
       }, 
-      "method": "POST"
+      "method": "GET"
     }, 
     {
-      "t": 1524017149154, 
+      "t": 1524050060707, 
       "n": "ajax", 
       "msg": "ajax请求路径有误", 
       "data": {
@@ -258,27 +277,38 @@ http://localhost:8080/test/
         "status": 0
       }, 
       "method": "GET"
+    }, 
+    {
+      "t": 1524050060714, 
+      "n": "fetch", 
+      "msg": "fetch请求错误", 
+      "data": {
+        "resourceUrl": "http://mock-api.seosiwei.com/guest/order/api/order/getOrde", 
+        "text": "TypeError: Failed to fetch", 
+        "status": 0
+      }, 
+      "method": "POST"
     }
   ], 
   "performance": {
     "dnst": 0, 
-    "tcpt": 2, 
-    "wit": 304, 
-    "domt": 445, 
-    "lodt": 677, 
-    "radt": 7, 
+    "tcpt": 1, 
+    "wit": 17, 
+    "domt": 165, 
+    "lodt": 379, 
+    "radt": 6, 
     "rdit": 0, 
     "uodt": 0, 
-    "reqt": 294, 
-    "andt": 223
+    "reqt": 16, 
+    "andt": 210
   }, 
   "resourceList": [
     {
       "name": "http://localhost:8080/dist/performance-report.js", 
       "method": "GET", 
       "type": "script", 
-      "duration": "81.70", 
-      "decodedBodySize": 17589, 
+      "duration": "71.60", 
+      "decodedBodySize": 18592, 
       "nextHopProtocol": "http/1.1"
     }, 
     {
@@ -301,7 +331,7 @@ http://localhost:8080/test/
       "name": "http://localhost:35729/livereload.js?snipver=1", 
       "method": "GET", 
       "type": "script", 
-      "duration": "138.60", 
+      "duration": "149.20", 
       "decodedBodySize": 0, 
       "nextHopProtocol": "http/1.1"
     }, 
@@ -309,7 +339,7 @@ http://localhost:8080/test/
       "name": "http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInfo", 
       "method": "GET", 
       "type": "fetchrequest", 
-      "duration": "55.80", 
+      "duration": "38.30", 
       "decodedBodySize": 0, 
       "nextHopProtocol": "http/1.1"
     }, 
@@ -317,11 +347,18 @@ http://localhost:8080/test/
       "name": "http://mock-api.seosiwei.com/guest/order/api/order/getOrder", 
       "method": "POST", 
       "type": "xmlhttprequest", 
-      "duration": "43.40", 
+      "duration": "42.30", 
       "decodedBodySize": 0, 
       "nextHopProtocol": "http/1.1"
     }
-  ]
+  ], 
+  "addData": {
+    "name": "wangwei", 
+    "some": {
+      "name": "wangwie", 
+      "age": 20
+    }
+  }
 }
 ```
 

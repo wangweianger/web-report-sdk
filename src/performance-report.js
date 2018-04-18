@@ -11,6 +11,7 @@ if(typeof require === 'function' && typeof exports === "object" && typeof module
 }
 
 window.ERRORLIST = [];
+window.ADDDATA   = {};
 Performance.addError =(err={})=>{
     err = {
         method:'GET',
@@ -22,9 +23,10 @@ Performance.addError =(err={})=>{
             resourceUrl:err.resourceUrl
         }
     }
-    console.log(err)
     ERRORLIST.push(err)
 }
+Performance.addData = fn =>{ fn&&fn(ADDDATA) }
+
 // web msgs report function
 function Performance(option,fn){try{  
     let opt = {
@@ -164,8 +166,9 @@ function Performance(option,fn){try{
                 errorList:conf.errorList,
                 performance:conf.performance,
                 resourceList:conf.resourceList,
+                addData:ADDDATA
             }
-            // console.log(JSON.stringify(result))
+            console.log(JSON.stringify(result))
             fn&&fn(result)
             if(!fn && window.fetch){
                 fetch(opt.domain,{ 

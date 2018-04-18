@@ -15,6 +15,7 @@ if (typeof require === 'function' && (typeof exports === "undefined" ? "undefine
 }
 
 window.ERRORLIST = [];
+window.ADDDATA = {};
 Performance.addError = function () {
     var err = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
@@ -28,9 +29,12 @@ Performance.addError = function () {
             resourceUrl: err.resourceUrl
         }
     };
-    console.log(err);
     ERRORLIST.push(err);
 };
+Performance.addData = function (fn) {
+    fn && fn(ADDDATA);
+};
+
 // web msgs report function
 function Performance(option, fn) {
     try {
@@ -47,9 +51,11 @@ function Performance(option, fn) {
                     appVersion: conf.appVersion,
                     errorList: conf.errorList,
                     performance: conf.performance,
-                    resourceList: conf.resourceList
-                    // console.log(JSON.stringify(result))
-                };fn && fn(result);
+                    resourceList: conf.resourceList,
+                    addData: ADDDATA
+                };
+                console.log(JSON.stringify(result));
+                fn && fn(result);
                 if (!fn && window.fetch) {
                     fetch(opt.domain, {
                         method: 'POST',
