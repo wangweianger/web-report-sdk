@@ -184,7 +184,7 @@ componentDidCatch(error, info) {
 
 ## Runing
 ```js
-git clone https://github.com/wangweianger/web-performance-report.git
+git clone https://github.com/wangweianger/performance-report.git
 npm install
 
 //Development
@@ -241,13 +241,13 @@ http://localhost:8080/test/
 ### A complete report of the report looks like this.
 ```js
 {
-  "time":1524106087652,
+  "time": 1524136760783, 
   "page": "http://localhost:8080/test/", 
   "preUrl": "", 
   "appVersion": "5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36", 
   "errorList": [
     {
-      "t": 1524050060518, 
+      "t": 1524136759597, 
       "n": "resource", 
       "msg": "img is load error", 
       "data": {
@@ -258,9 +258,10 @@ http://localhost:8080/test/
       "method": "GET"
     }, 
     {
-      "t": 1524050060674, 
+      "t": 1524136759720, 
       "n": "js", 
-      "msg": "ReferenceError: wangwei is not defined at http://localhost:8080/test/:73:15", 
+      "msg": "ReferenceError: wangwei is not defined
+    at http://localhost:8080/test/:73:15", 
       "data": {
         "resourceUrl": "http://localhost:8080/test/", 
         "line": 73, 
@@ -269,47 +270,47 @@ http://localhost:8080/test/
       "method": "GET"
     }, 
     {
-      "t": 1524050060707, 
-      "n": "ajax", 
-      "msg": "ajax请求路径有误", 
-      "data": {
-        "resourceUrl": "http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInf", 
-        "text": "ajax请求路径有误", 
-        "status": 0
-      }, 
-      "method": "GET"
-    }, 
-    {
-      "t": 1524050060714, 
+      "t": 1524136759764, 
       "n": "fetch", 
-      "msg": "fetch请求错误", 
+      "msg": "fetch request error", 
       "data": {
         "resourceUrl": "http://mock-api.seosiwei.com/guest/order/api/order/getOrde", 
         "text": "TypeError: Failed to fetch", 
         "status": 0
       }, 
       "method": "POST"
+    }, 
+    {
+      "t": 1524136759780, 
+      "n": "ajax", 
+      "msg": "ajax request error", 
+      "data": {
+        "resourceUrl": "http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInf", 
+        "text": "ajax request error", 
+        "status": 0
+      }, 
+      "method": "GET"
     }
   ], 
   "performance": {
     "dnst": 0, 
-    "tcpt": 1, 
-    "wit": 17, 
-    "domt": 165, 
-    "lodt": 379, 
-    "radt": 6, 
+    "tcpt": 0, 
+    "wit": 542, 
+    "domt": 693, 
+    "lodt": 872, 
+    "radt": 4, 
     "rdit": 0, 
     "uodt": 0, 
-    "reqt": 16, 
-    "andt": 210
+    "reqt": 540, 
+    "andt": 168
   }, 
   "resourceList": [
     {
       "name": "http://localhost:8080/dist/performance-report.js", 
       "method": "GET", 
       "type": "script", 
-      "duration": "71.60", 
-      "decodedBodySize": 18592, 
+      "duration": "73.70", 
+      "decodedBodySize": 18666, 
       "nextHopProtocol": "http/1.1"
     }, 
     {
@@ -332,7 +333,7 @@ http://localhost:8080/test/
       "name": "http://localhost:35729/livereload.js?snipver=1", 
       "method": "GET", 
       "type": "script", 
-      "duration": "149.20", 
+      "duration": "149.00", 
       "decodedBodySize": 0, 
       "nextHopProtocol": "http/1.1"
     }, 
@@ -340,7 +341,7 @@ http://localhost:8080/test/
       "name": "http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInfo", 
       "method": "GET", 
       "type": "fetchrequest", 
-      "duration": "38.30", 
+      "duration": "48.80", 
       "decodedBodySize": 0, 
       "nextHopProtocol": "http/1.1"
     }, 
@@ -348,7 +349,7 @@ http://localhost:8080/test/
       "name": "http://mock-api.seosiwei.com/guest/order/api/order/getOrder", 
       "method": "POST", 
       "type": "xmlhttprequest", 
-      "duration": "42.30", 
+      "duration": "40.20", 
       "decodedBodySize": 0, 
       "nextHopProtocol": "http/1.1"
     }

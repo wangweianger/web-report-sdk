@@ -54,9 +54,8 @@ function Performance(option, fn) {
                     performance: conf.performance,
                     resourceList: conf.resourceList,
                     addData: ADDDATA
-                };
-                console.log(JSON.stringify(result));
-                fn && fn(result);
+                    // console.log(JSON.stringify(result))
+                };fn && fn(result);
                 if (!fn && window.fetch) {
                     fetch(opt.domain, {
                         method: 'POST',
@@ -230,7 +229,7 @@ function Performance(option, fn) {
                     var defaults = Object.assign({}, errordefo);
                     defaults.t = new Date().getTime();
                     defaults.n = 'fetch';
-                    defaults.msg = 'fetch请求错误';
+                    defaults.msg = 'fetch request error';
                     defaults.method = result.method;
                     defaults.data = {
                         resourceUrl: result.url,
@@ -311,7 +310,7 @@ function Performance(option, fn) {
             var defaults = Object.assign({}, errordefo);
             defaults.t = new Date().getTime();
             defaults.n = 'ajax';
-            defaults.msg = xhr.statusText || 'ajax请求错误';
+            defaults.msg = xhr.statusText || 'ajax request error';
             defaults.method = xhr.method;
             defaults.data = {
                 resourceUrl: xhr.responseURL,
@@ -470,7 +469,7 @@ function Performance(option, fn) {
                 if (xhr.args) {
                     xhr.method = xhr.args.method;
                     xhr.responseURL = xhr.args.url;
-                    xhr.statusText = 'ajax请求路径有误';
+                    xhr.statusText = 'ajax request error';
                 }
                 ajaxResponse(xhr);
             },
