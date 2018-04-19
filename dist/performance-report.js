@@ -46,6 +46,7 @@ function Performance(option, fn) {
                 if (opt.isResource) perforResource();
                 if (ERRORLIST && ERRORLIST.length) conf.errorList = conf.errorList.concat(ERRORLIST);
                 var result = {
+                    time: new Date().getTime(),
                     page: conf.page,
                     preUrl: conf.preUrl,
                     appVersion: conf.appVersion,
@@ -375,6 +376,7 @@ function Performance(option, fn) {
             conf.resourceList = '';
             conf.page = location.href;
             ERRORLIST = [];
+            ADDDATA = [];
         };
 
         var opt = {

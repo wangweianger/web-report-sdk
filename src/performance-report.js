@@ -160,6 +160,7 @@ function Performance(option,fn){try{
             if(opt.isResource) perforResource();
             if(ERRORLIST&&ERRORLIST.length) conf.errorList = conf.errorList.concat(ERRORLIST)
             let result = {
+                time:new Date().getTime(),
                 page:conf.page,
                 preUrl:conf.preUrl,
                 appVersion:conf.appVersion,
@@ -470,6 +471,7 @@ function Performance(option,fn){try{
         conf.resourceList   = ''
         conf.page           = location.href
         ERRORLIST           = []
+        ADDDATA             = []
     }
 }catch(err){}}
 
