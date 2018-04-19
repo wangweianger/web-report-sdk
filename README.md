@@ -1,6 +1,7 @@
 ## Sound and complete performance, error and resource reporting data.
 
 ### performance-report It can help you complete the following functions：
+>  * report time
 >  * Current page URL  
 >  * The last page URL 
 >  * Current browser version information 
@@ -212,8 +213,8 @@ http://localhost:8080/test/
 | ->msg | error msg |  |
 | ->method | resource request method | GET，POST |
 | ->data->resourceUrl | Request resource path |  |
-| ->data->col | js error line |  |
-| ->data->line | js error col |  |
+| ->data->col | js error col |  |
+| ->data->line | js error line |  |
 | ->data->status | ajax error state |  |
 | ->data->text | ajax error msg |  |
 |  |  |  |
@@ -240,6 +241,7 @@ http://localhost:8080/test/
 ### A complete report of the report looks like this.
 ```js
 {
+  "time":1524106087652,
   "page": "http://localhost:8080/test/", 
   "preUrl": "", 
   "appVersion": "5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36", 
