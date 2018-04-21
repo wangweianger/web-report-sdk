@@ -35,7 +35,6 @@ https://github.com/wangweianger/web-performance-monitoring-system
 </head>
 ```
 
-
 ### Webpack usage
 ```js
 npm install performance-report --save-dev
