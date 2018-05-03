@@ -45,6 +45,8 @@ function Performance(option, fn) {
                 if (opt.isPage) perforPage();
                 if (opt.isResource) perforResource();
                 if (ERRORLIST && ERRORLIST.length) conf.errorList = conf.errorList.concat(ERRORLIST);
+                var w = document.documentElement.clientWidth || document.body.clientWidth;
+                var h = document.documentElement.clientHeight || document.body.clientHeight;
                 var result = {
                     time: new Date().getTime(),
                     page: conf.page,
@@ -53,7 +55,9 @@ function Performance(option, fn) {
                     errorList: conf.errorList,
                     performance: conf.performance,
                     resourceList: conf.resourceList,
-                    addData: ADDDATA
+                    addData: ADDDATA,
+                    screenwidth: w,
+                    screenheight: h
                     // console.log(JSON.stringify(result))
                 };fn && fn(result);
                 if (!fn && window.fetch) {
