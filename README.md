@@ -2,7 +2,7 @@
 
 ### performance-report It can help you complete the following functions：
 >  * report time
->  * Current page URL  
+>  * Current page URL
 >  * The last page URL 
 >  * Current browser version information 
 >  * Page performance data information   
@@ -34,7 +34,6 @@ https://github.com/wangweianger/web-performance-monitoring-system
   </script>
 </head>
 ```
-
 
 ### Webpack usage
 ```js
