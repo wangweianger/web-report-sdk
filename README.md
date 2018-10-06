@@ -13,6 +13,9 @@
 ### Complete front end performance monitoring system
 https://github.com/wangweianger/web-performance-monitoring-system
 
+### new Performance monitoring system.
+https://github.com/wangweianger/egg-mongoose-performance-system
+
 ### Chinese document https://blog.seosiwei.com/detail/30
 ### npm address:https://www.npmjs.com/package/performance-report
 
@@ -72,6 +75,7 @@ Performance({
     domain:'http://some.com/api', 
     outtime:500,
     isPage:true,
+    isAjax:true,
     isResource:true,
     isError:true,
     filterUrl:['http://localhost:35729/livereload.js?snipver=1']
@@ -84,6 +88,7 @@ Performance({
 * domain    ：Report API interface
 * outtime ：Reporting delay time to ensure asynchronous data loading （default：1000ms）
 * isPage    ：Whether to report page performance data        （default：true）
+* isAjax : Whether to report ajax data （default：true）
 * isResource  ：Whether to report page resource performance data （default：true）
 * isError ：Whether or not to report page error data    （default：true）
 * filterUrl ：A request that does not need to be reported

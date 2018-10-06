@@ -43,7 +43,7 @@ function Performance(option, fn) {
         var reportData = function reportData() {
             setTimeout(function () {
                 if (opt.isPage) perforPage();
-                if (opt.isResource) perforResource();
+                if (opt.isResource || opt.isAjax) perforResource();
                 if (ERRORLIST && ERRORLIST.length) conf.errorList = conf.errorList.concat(ERRORLIST);
                 var w = document.documentElement.clientWidth || document.body.clientWidth;
                 var h = document.documentElement.clientHeight || document.body.clientHeight;
@@ -58,11 +58,13 @@ function Performance(option, fn) {
                     addData: ADDDATA,
                     screenwidth: w,
                     screenheight: h
-                    // console.log(JSON.stringify(result))
-                };fn && fn(result);
+                };
+                fn && fn(result);
                 if (!fn && window.fetch) {
                     fetch(opt.domain, {
                         method: 'POST',
+                        credentials: 'include',
+                        headers: { 'Content-Type': 'application/json' },
                         type: 'report-data',
                         body: JSON.stringify(result)
                     });
@@ -130,6 +132,8 @@ function Performance(option, fn) {
             if (!resource && !resource.length) return resourceList;
 
             resource.forEach(function (item) {
+                if (!opt.isAjax && (item.initiatorType == 'xmlhttprequest' || item.initiatorType == 'fetchrequest')) return;
+                if (!opt.isResource && item.initiatorType != 'xmlhttprequest' && item.initiatorType !== 'fetchrequest') return;
                 var json = {
                     name: item.name,
                     method: 'GET',
@@ -391,6 +395,8 @@ function Performance(option, fn) {
             filterUrl: ['http://localhost:35729/livereload.js?snipver=1', 'http://localhost:8000/sockjs-node/info'],
             // 是否上报页面性能数据
             isPage: true,
+            // 是否上报ajax性能数据
+            isAjax: true,
             // 是否上报页面资源数据
             isResource: true,
             // 是否上报错误信息
@@ -449,10 +455,10 @@ function Performance(option, fn) {
         }, false);
 
         // 执行fetch重写
-        if (opt.isResource || opt.isError) _fetch();
+        if (opt.isAjax || opt.isError) _fetch();
 
         //  拦截ajax
-        if (opt.isResource || opt.isError) _Ajax({
+        if (opt.isAjax || opt.isError) _Ajax({
             onreadystatechange: function onreadystatechange(xhr) {
                 if (xhr.readyState === 4) {
                     setTimeout(function () {

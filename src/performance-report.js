@@ -38,6 +38,8 @@ function Performance(option,fn){try{
         filterUrl:['http://localhost:35729/livereload.js?snipver=1','http://localhost:8000/sockjs-node/info'],
         // 是否上报页面性能数据
         isPage:true,
+        // 是否上报ajax性能数据
+        isAjax:true,
         // 是否上报页面资源数据
         isResource:true,
         // 是否上报错误信息
@@ -97,10 +99,10 @@ function Performance(option,fn){try{
     },false);
 
     // 执行fetch重写
-    if(opt.isResource || opt.isError) _fetch();
+    if(opt.isAjax || opt.isError) _fetch();
 
     //  拦截ajax
-    if(opt.isResource || opt.isError) _Ajax({
+    if(opt.isAjax || opt.isError) _Ajax({
         onreadystatechange:function(xhr){
             if(xhr.readyState === 4){
                 setTimeout(()=>{
@@ -157,7 +159,7 @@ function Performance(option,fn){try{
     function reportData(){
         setTimeout(()=>{
             if(opt.isPage) perforPage();
-            if(opt.isResource) perforResource();
+            if(opt.isResource || opt.isAjax) perforResource();
             if(ERRORLIST&&ERRORLIST.length) conf.errorList = conf.errorList.concat(ERRORLIST)
             let w = document.documentElement.clientWidth || document.body.clientWidth;
             let h = document.documentElement.clientHeight || document.body.clientHeight;
@@ -171,15 +173,16 @@ function Performance(option,fn){try{
                 resourceList:conf.resourceList,
                 addData:ADDDATA,
                 screenwidth:w,
-                screenheight:h
+                screenheight:h,
             }
-            // console.log(JSON.stringify(result))
             fn&&fn(result)
             if(!fn && window.fetch){
                 fetch(opt.domain,{ 
                     method: 'POST',
+                    credentials: 'include',
+                    headers: {'Content-Type': 'application/json'},
                     type:'report-data',
-                    body:JSON.stringify(result) 
+                    body:JSON.stringify(result)
                 })
             }
         },opt.outtime)
@@ -239,6 +242,8 @@ function Performance(option,fn){try{
         if(!resource && !resource.length) return resourceList;
 
         resource.forEach((item)=>{
+            if(!opt.isAjax && (item.initiatorType == 'xmlhttprequest' || item.initiatorType == 'fetchrequest')) return;
+            if(!opt.isResource && (item.initiatorType != 'xmlhttprequest' && item.initiatorType !== 'fetchrequest')) return;
             let json = {
                 name:item.name,
                 method:'GET',
@@ -478,4 +483,3 @@ function Performance(option,fn){try{
         ADDDATA             = []
     }
 }catch(err){}}
-
