@@ -80,7 +80,13 @@ Performance({
     isError:true,
     filterUrl:['http://localhost:35729/livereload.js?snipver=1']
 },(data)=>{
-  fetch('http://some.com/api',{type:'POST',body:JSON.stringify(result)}).then((data)=>{})
+  fetch('http://some.com/api',{
+    type:'POST',
+    credentials: 'include',
+    headers: {'Content-Type': 'application/json'},
+    type:'report-data',
+    body:JSON.stringify(result)
+  }).then((data)=>{})
 })
 ```
 
