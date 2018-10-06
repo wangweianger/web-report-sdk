@@ -85,7 +85,7 @@ Performance({
     credentials: 'include',
     headers: {'Content-Type': 'application/json'},
     type:'report-data',
-    body:JSON.stringify(result)
+    body:JSON.stringify(data)
   }).then((data)=>{})
 })
 ```
