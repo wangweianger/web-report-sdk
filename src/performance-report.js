@@ -27,6 +27,17 @@ Performance.addError =(err={})=>{
 }
 Performance.addData = fn =>{ fn&&fn(ADDDATA) }
 
+function randomString(len) {
+　　len = len || 19;
+　　var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz123456789';
+　　var maxPos = $chars.length;
+　　var pwd = '';
+　　for (let i = 0; i < len; i++) {
+　　　　pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+　　}
+　　return pwd + new Date().getTime();
+}
+
 // web msgs report function
 function Performance(option,fn){try{  
     let opt = {
@@ -174,6 +185,7 @@ function Performance(option,fn){try{
                 performance:conf.performance,
                 resourceList:conf.resourceList,
                 addData:ADDDATA,
+                markPage:randomString(),
                 screenwidth:w,
                 screenheight:h,
             }

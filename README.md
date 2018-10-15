@@ -264,6 +264,7 @@ http://localhost:8080/test/
   "page": "http://localhost:8080/test/", 
   "preUrl": "", 
   "appId":"123456",
+  "markPage": "W3xtZaXDWQHDaank2ZeR31539600822860",
   "appVersion": "5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36", 
   "errorList": [
     {
