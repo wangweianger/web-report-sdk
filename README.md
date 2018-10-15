@@ -78,6 +78,9 @@ Performance({
     isAjax:true,
     isResource:true,
     isError:true,
+    add:{
+      appId:'123456'
+    },
     filterUrl:['http://localhost:35729/livereload.js?snipver=1']
 },(data)=>{
   fetch('http://some.com/api',{
@@ -98,6 +101,7 @@ Performance({
 * isResource  ：Whether to report page resource performance data （default：true）
 * isError ：Whether or not to report page error data    （default：true）
 * filterUrl ：A request that does not need to be reported
+* add : add option data
 * fn      ：Custom reporting function
 
 ### Method
@@ -254,6 +258,7 @@ http://localhost:8080/test/
   "time": 1524136760783, 
   "page": "http://localhost:8080/test/", 
   "preUrl": "", 
+  "appId":"123456",
   "appVersion": "5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36", 
   "errorList": [
     {

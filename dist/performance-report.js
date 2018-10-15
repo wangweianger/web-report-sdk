@@ -59,6 +59,7 @@ function Performance(option, fn) {
                     screenwidth: w,
                     screenheight: h
                 };
+                result = Object.assign(result, opt.add);
                 fn && fn(result);
                 if (!fn && window.fetch) {
                     fetch(opt.domain, {
@@ -281,6 +282,7 @@ function Performance(option, fn) {
         var _error = function _error() {
             // img,script,css,jsonp
             window.addEventListener('error', function (e) {
+                console.log(e);
                 var defaults = Object.assign({}, errordefo);
                 defaults.n = 'resource';
                 defaults.t = new Date().getTime();
@@ -289,7 +291,7 @@ function Performance(option, fn) {
                 defaults.data = {
                     target: e.target.localName,
                     type: e.type,
-                    resourceUrl: e.target.currentSrc
+                    resourceUrl: e.target.href || e.target.currentSrc
                 };
                 if (e.target != window) conf.errorList.push(defaults);
             }, true);
@@ -396,11 +398,13 @@ function Performance(option, fn) {
             // 是否上报页面性能数据
             isPage: true,
             // 是否上报ajax性能数据
-            isAjax: true,
+            isAjax: false,
             // 是否上报页面资源数据
             isResource: true,
             // 是否上报错误信息
-            isError: true
+            isError: true,
+            // 提交参数
+            add: {}
         };
         opt = Object.assign(opt, option);
         var conf = {
