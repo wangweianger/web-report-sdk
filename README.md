@@ -18,8 +18,11 @@ https://github.com/wangweianger/web-performance-monitoring-system
 ### new Performance monitoring system.
 https://github.com/wangweianger/egg-mongoose-performance-system
 
-### Chinese document https://blog.seosiwei.com/detail/30
-### npm address:https://www.npmjs.com/package/performance-report
+### Chinese document 
+https://blog.seosiwei.com/detail/30
+
+### npm address:
+https://www.npmjs.com/package/performance-report
 
 ## Browser usage
 >  * 1、download dist/performance-report.min.js 
