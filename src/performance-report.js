@@ -12,7 +12,7 @@ if(typeof require === 'function' && typeof exports === "object" && typeof module
 
 window.ERRORLIST = [];
 window.ADDDATA   = {};
-Performance.addError =(err={})=>{
+Performance.addError = (err={})=>{
     err = {
         method:'GET',
         msg:err.msg,
@@ -186,6 +186,7 @@ function Performance(option,fn){try{
                 resourceList:conf.resourceList,
                 addData:ADDDATA,
                 markPage:randomString(),
+                markUser:window.performance_markuser,
                 screenwidth:w,
                 screenheight:h,
             }
@@ -194,7 +195,6 @@ function Performance(option,fn){try{
             if(!fn && window.fetch){
                 fetch(opt.domain,{ 
                     method: 'POST',
-                    credentials: 'include',
                     headers: {'Content-Type': 'application/json'},
                     type:'report-data',
                     body:JSON.stringify(result)
@@ -400,7 +400,6 @@ function Performance(option,fn){try{
     function _error(){
         // img,script,css,jsonp
         window.addEventListener('error',function(e){
-            console.log(e);
             let defaults    = Object.assign({},errordefo);
             defaults.n      = 'resource'
             defaults.t      = new Date().getTime();

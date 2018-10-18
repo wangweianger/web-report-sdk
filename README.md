@@ -68,7 +68,7 @@ entry: {
 //Attention to dependence
 new htmlWebpackPlugin({
     ...
-    chunks: ['performance','vendors','main'],
+    chunks: ['vendors','performance','main'],
     chunksSortMode: 'manual',
 }),
 
