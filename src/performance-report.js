@@ -176,6 +176,10 @@ function Performance(option,fn){try{
             if(ERRORLIST&&ERRORLIST.length) conf.errorList = conf.errorList.concat(ERRORLIST)
             let w = document.documentElement.clientWidth || document.body.clientWidth;
             let h = document.documentElement.clientHeight || document.body.clientHeight;
+
+            let markUser = sessionStorage.getItem('markUser');
+            if(!markUser)  sessionStorage.setItem('markUser',randomString());
+
             let result = {
                 time:new Date().getTime(),
                 page:conf.page,
@@ -186,7 +190,7 @@ function Performance(option,fn){try{
                 resourceList:conf.resourceList,
                 addData:ADDDATA,
                 markPage:randomString(),
-                markUser:window.performance_markuser,
+                markUser:markUser,
                 screenwidth:w,
                 screenheight:h,
             }
