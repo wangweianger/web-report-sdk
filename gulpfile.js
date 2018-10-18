@@ -5,6 +5,7 @@ const uglify = require('gulp-uglify')
 const clean = require('gulp-clean')
 const rename = require("gulp-rename");
 const stripDebug = require('gulp-strip-debug');
+const gutil = require('gulp-util');
 
 gulp.task('connect', function() {
   	connect.server({
@@ -37,14 +38,18 @@ gulp.task('default', ['connect', 'watch','babel']);
 
 
 gulp.task('build', () =>
-    gulp.src('./dist/performance-report.js')
-        .pipe(stripDebug())
-        .pipe(uglify()) 
+    gulp.src('./src/performance-report.js')
+        .pipe(gulp.dest('./dist'))
+        .pipe(babel({
+            presets: ['env']
+        }))
+        .pipe(uglify({ mangle: false })) 
+        .on('error', function (err) {
+            gutil.log(gutil.colors.red('[Error]'), err.toString());
+        })
         .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest('./dist'))
 );
-
-
 
 
 

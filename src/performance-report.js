@@ -12,7 +12,7 @@ if(typeof require === 'function' && typeof exports === "object" && typeof module
 
 window.ERRORLIST = [];
 window.ADDDATA   = {};
-Performance.addError = (err={})=>{
+Performance.addError=function(err){
     err = {
         method:'GET',
         msg:err.msg,
@@ -25,7 +25,7 @@ Performance.addError = (err={})=>{
     }
     ERRORLIST.push(err)
 }
-Performance.addData = fn =>{ fn&&fn(ADDDATA) }
+Performance.addData = function(fn){fn&&fn(ADDDATA)};
 
 function randomString(len) {
 　　len = len || 19;
@@ -33,7 +33,7 @@ function randomString(len) {
 　　var maxPos = $chars.length;
 　　var pwd = '';
 　　for (let i = 0; i < len; i++) {
-　　　　pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+　　　　pwd = pwd + $chars.charAt(Math.floor(Math.random() * maxPos));
 　　}
 　　return pwd + new Date().getTime();
 }
@@ -46,7 +46,7 @@ function Performance(option,fn){try{
         // 脚本延迟上报时间
         outtime:300,
         // ajax请求时需要过滤的url信息
-        filterUrl:[],
+        filterUrl:['http://localhost:35729/livereload.js?snipver=1', 'http://localhost:8000/sockjs-node/info'],
         // 是否上报页面性能数据
         isPage:true,
         // 是否上报ajax性能数据
@@ -178,7 +178,10 @@ function Performance(option,fn){try{
             let h = document.documentElement.clientHeight || document.body.clientHeight;
 
             let markUser = sessionStorage.getItem('markUser');
-            if(!markUser)  sessionStorage.setItem('markUser',randomString());
+            if(!markUser){
+                markUser = randomString();
+                sessionStorage.setItem('markUser',markUser);
+            }  
 
             let result = {
                 time:new Date().getTime(),
@@ -199,7 +202,6 @@ function Performance(option,fn){try{
             if(!fn && window.fetch){
                 fetch(opt.domain,{ 
                     method: 'POST',
-                    credentials:'omit',
                     headers: {'Content-Type': 'application/json'},
                     type:'report-data',
                     body:JSON.stringify(result)
