@@ -199,6 +199,7 @@ function Performance(option,fn){try{
             if(!fn && window.fetch){
                 fetch(opt.domain,{ 
                     method: 'POST',
+                    credentials:'omit',
                     headers: {'Content-Type': 'application/json'},
                     type:'report-data',
                     body:JSON.stringify(result)
