@@ -46,11 +46,11 @@ function Performance(option,fn){try{
         // 脚本延迟上报时间
         outtime:300,
         // ajax请求时需要过滤的url信息
-        filterUrl:['http://localhost:35729/livereload.js?snipver=1','http://localhost:8000/sockjs-node/info'],
+        filterUrl:[],
         // 是否上报页面性能数据
         isPage:true,
         // 是否上报ajax性能数据
-        isAjax:false,
+        isAjax:true,
         // 是否上报页面资源数据
         isResource:true,
         // 是否上报错误信息
