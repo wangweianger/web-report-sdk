@@ -177,7 +177,7 @@ function Performance(option,fn){try{
             let w = document.documentElement.clientWidth || document.body.clientWidth;
             let h = document.documentElement.clientHeight || document.body.clientHeight;
 
-            let markUser = sessionStorage.getItem('markUser');
+            let markUser = sessionStorage.getItem('markUser')||'';
             if(!markUser){
                 markUser = randomString();
                 sessionStorage.setItem('markUser',markUser);
