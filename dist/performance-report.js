@@ -84,10 +84,6 @@ function Performance(option,fn){try{
         haveFetch:false,
         // 来自域名
         preUrl:document.referrer&&document.referrer!==location.href?document.referrer:'',
-        // 浏览器信息
-        appVersion:navigator.appVersion,
-        // 当前页面
-        page:location.href,
     }
     // error default
     let errordefo = {
@@ -185,9 +181,7 @@ function Performance(option,fn){try{
 
             let result = {
                 time:new Date().getTime(),
-                page:conf.page,
                 preUrl:conf.preUrl,
-                appVersion:conf.appVersion,
                 errorList:conf.errorList,
                 performance:conf.performance,
                 resourceList:conf.resourceList,
