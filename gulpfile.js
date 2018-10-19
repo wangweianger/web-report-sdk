@@ -37,9 +37,21 @@ gulp.task('watch', function () {
 gulp.task('default', ['connect', 'watch','babel']);
 
 
+gulp.task('test', () =>
+    gulp.src('./src/performance-report.js')
+        .pipe(gulp.dest('./dist'))
+        .pipe(stripDebug())
+        .pipe(babel({
+            presets: ['env']
+        }))
+        .pipe(rename({suffix: '.test'}))
+        .pipe(gulp.dest('./dist'))
+);
+
 gulp.task('build', () =>
     gulp.src('./src/performance-report.js')
         .pipe(gulp.dest('./dist'))
+        .pipe(stripDebug())
         .pipe(babel({
             presets: ['env']
         }))

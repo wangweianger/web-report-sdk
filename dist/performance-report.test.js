@@ -48,71 +48,6 @@ function randomString(len) {
 function Performance(option, fn) {
     try {
 
-        // ajax重写
-        var _Ajax = function _Ajax(proxy) {
-            window._ahrealxhr = window._ahrealxhr || XMLHttpRequest;
-            XMLHttpRequest = function XMLHttpRequest() {
-                this.xhr = new window._ahrealxhr();
-                for (var attr in this.xhr) {
-                    var type = "";
-                    try {
-                        type = _typeof(this.xhr[attr]);
-                    } catch (e) {}
-                    if (type === "function") {
-                        this[attr] = hookfun(attr);
-                    } else {
-                        Object.defineProperty(this, attr, {
-                            get: getFactory(attr),
-                            set: setFactory(attr)
-                        });
-                    }
-                }
-            };
-
-            function getFactory(attr) {
-                return function () {
-                    var v = this.hasOwnProperty(attr + "_") ? this[attr + "_"] : this.xhr[attr];
-                    var attrGetterHook = (proxy[attr] || {})["getter"];
-                    return attrGetterHook && attrGetterHook(v, this) || v;
-                };
-            }
-
-            function setFactory(attr) {
-                return function (v) {
-                    var xhr = this.xhr;
-                    var that = this;
-                    var hook = proxy[attr];
-                    if (typeof hook === "function") {
-                        xhr[attr] = function () {
-                            proxy[attr](that) || v.apply(xhr, arguments);
-                        };
-                    } else {
-                        var attrSetterHook = (hook || {})["setter"];
-                        v = attrSetterHook && attrSetterHook(v, that) || v;
-                        try {
-                            xhr[attr] = v;
-                        } catch (e) {
-                            this[attr + "_"] = v;
-                        }
-                    }
-                };
-            }
-
-            function hookfun(fun) {
-                return function () {
-                    var args = [].slice.call(arguments);
-                    if (proxy[fun] && proxy[fun].call(this, args, this.xhr)) {
-                        return;
-                    }
-                    return this.xhr[fun].apply(this.xhr, args);
-                };
-            }
-            return window._ahrealxhr;
-        };
-
-        //  拦截ajax
-
-
         // report date
         var reportData = function reportData() {
             setTimeout(function () {
@@ -158,16 +93,16 @@ function Performance(option, fn) {
 
         var getLargeTime = function getLargeTime() {
             if (conf.haveAjax && conf.haveFetch && loadTime && ajaxTime && fetchTime) {
-                console.log("loadTime:" + loadTime + ",ajaxTime:" + ajaxTime + ",fetchTime:" + fetchTime);
+                void 0;
                 reportData();
             } else if (conf.haveAjax && !conf.haveFetch && loadTime && ajaxTime) {
-                console.log("loadTime:" + loadTime + ",ajaxTime:" + ajaxTime);
+                void 0;
                 reportData();
             } else if (!conf.haveAjax && conf.haveFetch && loadTime && fetchTime) {
-                console.log("loadTime:" + loadTime + ",fetchTime:" + fetchTime);
+                void 0;
                 reportData();
             } else if (!conf.haveAjax && !conf.haveFetch && loadTime) {
-                console.log("loadTime:" + loadTime);
+                void 0;
                 reportData();
             }
         };
@@ -234,6 +169,62 @@ function Performance(option, fn) {
                 resourceList.push(json);
             });
             conf.resourceList = resourceList;
+        };
+
+        // ajax重写
+
+
+        var _Ajax = function _Ajax(funs) {
+            window._ahrealxhr = window._ahrealxhr || XMLHttpRequest;
+            XMLHttpRequest = function XMLHttpRequest() {
+                this.xhr = new window._ahrealxhr();
+                for (var attr in this.xhr) {
+                    var type = "";
+                    try {
+                        type = _typeof(this.xhr[attr]);
+                    } catch (e) {}
+                    if (type === "function") {
+                        this[attr] = hookfun(attr);
+                    } else {
+                        Object.defineProperty(this, attr, {
+                            get: getFactory(attr),
+                            set: setFactory(attr)
+                        });
+                    }
+                }
+            };
+            function getFactory(attr) {
+                return function () {
+                    return this.hasOwnProperty(attr + "_") ? this[attr + "_"] : this.xhr[attr];
+                };
+            }
+            function setFactory(attr) {
+                return function (f) {
+                    var xhr = this.xhr;
+                    var that = this;
+                    if (attr.indexOf("on") != 0) {
+                        this[attr + "_"] = f;
+                        return;
+                    }
+                    if (funs[attr]) {
+                        xhr[attr] = function () {
+                            funs[attr](that) || f.apply(xhr, arguments);
+                        };
+                    } else {
+                        xhr[attr] = f;
+                    }
+                };
+            }
+            function hookfun(fun) {
+                return function () {
+                    var args = [].slice.call(arguments);
+                    if (funs[fun] && funs[fun].call(this, args, this.xhr)) {
+                        return;
+                    }
+                    return this.xhr[fun].apply(this.xhr, args);
+                };
+            }
+            return window._ahrealxhr;
         };
 
         // 拦截fetch请求
@@ -360,9 +351,9 @@ function Performance(option, fn) {
             conf.fetchNum += 1;
             if (conf.fetLength === conf.fetchNum) {
                 if (type == 'success') {
-                    console.log('走了 fetch success 方法');
+                    void 0;
                 } else {
-                    console.log('走了 fetch error 方法');
+                    void 0;
                 }
                 conf.fetchNum = conf.fetLength = 0;
                 fetchTime = new Date().getTime() - beginTime;
@@ -377,11 +368,11 @@ function Performance(option, fn) {
             conf.loadNum += 1;
             if (conf.loadNum === conf.ajaxLength) {
                 if (type == 'load') {
-                    console.log('走了AJAX onload 方法');
+                    void 0;
                 } else if (type == 'readychange') {
-                    console.log('走了AJAX onreadystatechange 方法');
+                    void 0;
                 } else {
-                    console.log('走了 error 方法');
+                    void 0;
                 }
                 conf.ajaxLength = conf.loadNum = 0;
                 ajaxTime = new Date().getTime() - beginTime;
@@ -478,7 +469,10 @@ function Performance(option, fn) {
         }, false);
 
         // 执行fetch重写
-        if (opt.isAjax || opt.isError) _fetch();if (opt.isAjax || opt.isError) _Ajax({
+        if (opt.isAjax || opt.isError) _fetch();
+
+        //  拦截ajax
+        if (opt.isAjax || opt.isError) _Ajax({
             onreadystatechange: function onreadystatechange(xhr) {
                 if (xhr.readyState === 4) {
                     setTimeout(function () {
