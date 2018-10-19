@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<title>performance test</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
-	<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
 	<!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
 	<script src="../dist/performance-report-jquery.js"></script>
 	<script>
@@ -66,30 +66,32 @@
 		//     console.log(error);
 		//   });
 
+		// $.ajax({
+		// 	type:'get',
+		// 	report:'report-data',
+		// 	url:'http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInf',
+		// 	success:data=>{
+		// 		// console.log(data)
+		// 	}
+		// })
+
 		$.ajax({
-			type:'get',
-			report:'report-data',
-			url:'http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInf',
+			type:'post',
+			url:'http://mock-api.seosiwei.com/guest/order/api/order/getOrder',
 			success:data=>{
+				console.log('------')
+				console.log(data)
 				// console.log(data)
 			}
 		})
 
-		// $.ajax({
-		// 	type:'post',
-		// 	url:'http://mock-api.seosiwei.com/guest/order/api/order/getOrder',
-		// 	success:data=>{
-		// 		// console.log(data)
-		// 	}
-		// })
-
-		// $.ajax({
-		// 	type:'post',
-		// 	url:'http://mock-api.seosiwei.com/guest/order/api/order/getOrder',
-		// 	success:data=>{
-		// 		// console.log(data)
-		// 	}
-		// })
+		$.ajax({
+			type:'post',
+			url:'http://mock-api.seosiwei.com/guest/order/api/order/getOrde',
+			success:data=>{
+				// console.log(data)
+			}
+		})
 
 		// fetch('http://mock-api.seosiwei.com/guest/order/api/order/getOrde',{
 		// 	method: 'POST',

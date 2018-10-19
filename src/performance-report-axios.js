@@ -267,12 +267,12 @@ function Performance(option,fn){try{
                 }
                 return _key.apply(this, arguments)
                     .then((res)=>{ 
-                        if(result.report === 'report-data') return;
+                        if(result.report === 'report-data') return res;
                         getAjaxTime('load');
                         return res
                     })
                     .catch((err)=>{ 
-                        if(result.report === 'report-data') return;
+                        if(result.report === 'report-data') return res;
                         getAjaxTime('error')
                         //error
                         ajaxResponse({

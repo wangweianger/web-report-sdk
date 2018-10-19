@@ -234,6 +234,7 @@ function Performance(option,fn){try{
     function _Ajax(){
         if(!window.$.ajax) return;
         let _ajax  = window.$.ajax 
+        
         window.$.ajax = function(){
             let _arg   = arguments
             let result = ajaxArg(_arg)
@@ -243,14 +244,14 @@ function Performance(option,fn){try{
                 conf.ajaxLength   = conf.ajaxLength+1;
                 conf.haveAjax   = true
             }
-
-            return _ajax.apply(this, arguments)
+            try {
+                return _ajax.apply(this, arguments)
                 .then(res=>{ 
-                    if(result.report === 'report-data') return;
+                    if(result.report === 'report-data') return res;
                     getAjaxTime('load');
-                    return res
+                    return res;
                 }).catch(err=>{
-                    if(result.report === 'report-data') return;
+                    if(result.report === 'report-data') return res;
                     getAjaxTime('error')
                     //error
                     ajaxResponse({
@@ -261,6 +262,9 @@ function Performance(option,fn){try{
                     })
                     return err
                 })
+            } catch(e){
+                return _ajax.apply(this, arguments).then(res=>{getAjaxTime('load');return res;});
+            };
         }
     }
 
