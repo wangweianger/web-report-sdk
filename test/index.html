@@ -4,7 +4,9 @@
 	<meta charset="UTF-8">
 	<title>performance test</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
-	<script src="../dist/performance-report.js"></script>
+	<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+	<!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
+	<script src="../dist/performance-report-jquery.js"></script>
 	<script>
 		Performance({
 		    domain:'/api',
@@ -20,9 +22,7 @@
 				age:20
 			}
 		})
-
 	</script>
-	<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
 	<div>performance test</div>
@@ -44,35 +44,65 @@
 		<img src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=295864288,1887240069&fm=27&gp=0.jpg" id="img1">
 	</div>
 	<script>
-		$(function(){
 
-			$.ajax({
-				type:'get',
-				url:'http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInf',
-				success:data=>{
-					// console.log(data)
-				}
-			})
+		// axios({
+		// 	  method: 'post',
+		// 	  url: 'http://mock-api.seosiwei.com/guest/order/api/order/getOrde1',
+		// }).then(function(response) {
+		// 	console.log(response)
+		// });
+		// axios.request({
+		// 	method: 'post',
+		// 	  url: 'http://mock-api.seosiwei.com/guest/order/api/order/getOrde2',
+		// }).then(function(response) {
+		// 	console.log(response)
+		// });
 
-			fetch('http://mock-api.seosiwei.com/guest/order/api/order/getOrde',{
-				method: 'POST',
-			}).then(function(response){
-				console.log('++++')
-			})
+		// axios.get('/user?ID=12345')
+		//   .then(function (response) {
+		//     console.log(response);
+		//   })
+		//   .catch(function (error) {
+		//     console.log(error);
+		//   });
 
-			var req = new Request('http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInfo', {method: 'GET', cache: 'reload'});
-			fetch(req).then(function(response){
-				console.log('-----')
-			})
-
-			$.ajax({
-				type:'post',
-				url:'http://mock-api.seosiwei.com/guest/order/api/order/getOrder',
-				success:data=>{
-					// console.log(data)
-				}
-			})
+		$.ajax({
+			type:'get',
+			report:'report-data',
+			url:'http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInf',
+			success:data=>{
+				// console.log(data)
+			}
 		})
+
+		// $.ajax({
+		// 	type:'post',
+		// 	url:'http://mock-api.seosiwei.com/guest/order/api/order/getOrder',
+		// 	success:data=>{
+		// 		// console.log(data)
+		// 	}
+		// })
+
+		// $.ajax({
+		// 	type:'post',
+		// 	url:'http://mock-api.seosiwei.com/guest/order/api/order/getOrder',
+		// 	success:data=>{
+		// 		// console.log(data)
+		// 	}
+		// })
+
+		// fetch('http://mock-api.seosiwei.com/guest/order/api/order/getOrde',{
+		// 	method: 'POST',
+		// }).then(function(response){
+		// 	console.log('++++')
+		// })
+
+		// var req = new Request('http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInfo', {method: 'GET', cache: 'reload'});
+		// fetch(req).then(function(response){
+		// 	console.log('-----')
+		// })
+
+			
 
 		console.log(wangwei)
 

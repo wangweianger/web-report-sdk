@@ -38,7 +38,7 @@ gulp.task('default', ['connect', 'watch','babel']);
 
 
 gulp.task('test', () =>
-    gulp.src('./src/performance-report.js')
+    gulp.src('./src/*.js')
         .pipe(gulp.dest('./dist'))
         .pipe(stripDebug())
         .pipe(babel({
@@ -49,7 +49,7 @@ gulp.task('test', () =>
 );
 
 gulp.task('build', () =>
-    gulp.src('./src/performance-report.js')
+    gulp.src('./src/*.js')
         .pipe(gulp.dest('./dist'))
         .pipe(stripDebug())
         .pipe(babel({

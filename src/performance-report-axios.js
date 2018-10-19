@@ -110,121 +110,8 @@ function Performance(option,fn){try{
     // 执行fetch重写
     if(opt.isAjax || opt.isError) _fetch();
 
-    // ajax重写
-    function _Ajax (proxy) {
-        window._ahrealxhr = window._ahrealxhr || XMLHttpRequest
-        XMLHttpRequest = function () {
-            this.xhr = new window._ahrealxhr;
-            for (var attr in this.xhr) {
-                var type = "";
-                try {
-                    type = typeof this.xhr[attr]
-                } catch (e) {}
-                if (type === "function") {
-                    this[attr] = hookfun(attr);
-                } else {
-                    Object.defineProperty(this, attr, {
-                        get: getFactory(attr),
-                        set: setFactory(attr)
-                    })
-                }
-            }
-        }
-
-        function getFactory(attr) {
-            return function () {
-                var v= this.hasOwnProperty(attr + "_")?this[attr + "_"]:this.xhr[attr];
-                var attrGetterHook=(proxy[attr]||{})["getter"]
-                return attrGetterHook&&attrGetterHook(v,this)||v
-            }
-        }
-
-        function setFactory(attr) {
-            return function (v) {
-                var xhr = this.xhr;
-                var that = this;
-                var hook=proxy[attr];
-                if (typeof hook==="function") {
-                    xhr[attr] = function () {
-                        proxy[attr](that) || v.apply(xhr, arguments);
-                    }
-                } else {
-                    var attrSetterHook=(hook||{})["setter"];
-                    v=attrSetterHook&&attrSetterHook(v,that)||v
-                    try {
-                        xhr[attr] = v;
-                    }catch(e) {
-                        this[attr + "_"] = v;
-                    }
-                }
-            }
-        }
-
-        function hookfun(fun) {
-            return function () {
-                var args = [].slice.call(arguments)
-                if (proxy[fun] && proxy[fun].call(this, args, this.xhr)) {
-                    return;
-                }
-                return this.xhr[fun].apply(this.xhr, args);
-            }
-        }
-        return window._ahrealxhr;
-    }
-
     //  拦截ajax
-    if(opt.isAjax || opt.isError) _Ajax({
-        onreadystatechange:function(xhr){
-            if(xhr.readyState === 4){
-                setTimeout(()=>{
-                    if(conf.goingType === 'load') return;
-                    conf.goingType = 'readychange';
-
-                    getAjaxTime('readychange')
-
-                    if (xhr.status < 200 || xhr.status > 300) {
-                        xhr.method = xhr.args.method
-                        ajaxResponse(xhr)
-                    }
-                },600)
-            }
-        },
-        onerror:function(xhr){
-            getAjaxTime('error')
-            if(xhr.args){
-                xhr.method = xhr.args.method
-                xhr.responseURL = xhr.args.url
-                xhr.statusText = 'ajax request error'
-            }
-            ajaxResponse(xhr)
-        },
-        onload:function(xhr){
-            if(xhr.readyState === 4){
-                if(conf.goingType === 'readychange') return;
-                conf.goingType = 'load';
-                getAjaxTime('load');
-                if (xhr.status < 200 || xhr.status > 300) {
-                    xhr.method = xhr.args.method
-                    ajaxResponse(xhr)
-                }
-            }
-        },
-        open:function(arg,xhr){
-            if(opt.filterUrl&&opt.filterUrl.length){
-                let begin = false;
-                opt.filterUrl.forEach(item=>{ if(arg[1].indexOf(item)!=-1) begin = true; })
-                if(begin) return;
-            }
-
-            let result = { url:arg[1], method: arg[0]||'GET' ,type:'xmlhttprequest' }
-            this.args = result
-
-            clearPerformance()
-            conf.ajaxMsg.push(result)
-            conf.ajaxLength   = conf.ajaxLength+1;
-            conf.haveAjax     = true
-        }
-    })
+    if(opt.isAjax || opt.isError) _Axios()
 
     // report date
     function reportData(){
@@ -341,6 +228,83 @@ function Performance(option,fn){try{
             resourceList.push(json)
         })
         conf.resourceList = resourceList
+    }
+
+    // ajax重写
+    function _Axios(){
+        if(!window.axios) return;
+
+        let _axios     = window.axios
+
+        let List = ['axios','request','get','delete','head','options','put','post','patch']
+        List.forEach(item=>{
+            _reseat(item)
+        })
+
+        function _reseat(item){
+            let _key = null;
+            if(item === 'axios'){
+                window['axios'] = resetFn;
+                _key = _axios
+            }else if(item === 'request'){
+                window['axios']['request'] = resetFn;
+                _key = _axios['request'];
+            }else{
+                window['axios'][item] = resetFn;
+                _key = _axios[item];
+            }
+            function resetFn(){
+                let _arg   = arguments
+                let result = ajaxArg(_arg,item)
+
+                console.log(result)
+
+                if(result.type !== 'report-data'){
+                    clearPerformance()
+                    conf.ajaxMsg.push(result)
+                    conf.ajaxLength   = conf.ajaxLength+1;
+                    conf.haveAjax   = true
+                }
+                return _key.apply(this, arguments)
+                    .then((res)=>{ 
+                        if(result.type === 'report-data') return;
+                        getAjaxTime('load');
+                        return res
+                    })
+                    .catch((err)=>{ 
+                        if(result.type === 'report-data') return;
+                        getAjaxTime('error')
+                        //error
+                        ajaxResponse({
+                            statusText:err.message,
+                            method:result.method,
+                            responseURL:result.url,
+                            status:err.response?err.response.status:0,
+                        })
+                        return err
+                    })
+            }
+
+        }
+
+    }
+
+    // Ajax arguments
+    function ajaxArg(arg,item){
+        let result={ method:'GET',type:'xmlhttprequest',report:''}
+        let args = Array.prototype.slice.apply(arg)
+        console.log(args)
+        try{
+            if(item == 'axios'||item == 'request'){
+                result.url      = args[0].url
+                result.method   = args[0].method
+            }else{
+                result.url      = args[0]
+                result.method   = item
+            }
+            result.report   = args[0].report
+        }catch(err){}
+        return result;
     }
 
     // 拦截fetch请求

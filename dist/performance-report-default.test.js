@@ -174,7 +174,7 @@ function Performance(option, fn) {
         // ajax重写
 
 
-        var _Ajax = function _Ajax(funs) {
+        var _Ajax = function _Ajax(proxy) {
             window._ahrealxhr = window._ahrealxhr || XMLHttpRequest;
             XMLHttpRequest = function XMLHttpRequest() {
                 this.xhr = new window._ahrealxhr();
@@ -193,32 +193,40 @@ function Performance(option, fn) {
                     }
                 }
             };
+
             function getFactory(attr) {
                 return function () {
-                    return this.hasOwnProperty(attr + "_") ? this[attr + "_"] : this.xhr[attr];
+                    var v = this.hasOwnProperty(attr + "_") ? this[attr + "_"] : this.xhr[attr];
+                    var attrGetterHook = (proxy[attr] || {})["getter"];
+                    return attrGetterHook && attrGetterHook(v, this) || v;
                 };
             }
+
             function setFactory(attr) {
-                return function (f) {
+                return function (v) {
                     var xhr = this.xhr;
                     var that = this;
-                    if (attr.indexOf("on") != 0) {
-                        this[attr + "_"] = f;
-                        return;
-                    }
-                    if (funs[attr]) {
+                    var hook = proxy[attr];
+                    if (typeof hook === "function") {
                         xhr[attr] = function () {
-                            funs[attr](that) || f.apply(xhr, arguments);
+                            proxy[attr](that) || v.apply(xhr, arguments);
                         };
                     } else {
-                        xhr[attr] = f;
+                        var attrSetterHook = (hook || {})["setter"];
+                        v = attrSetterHook && attrSetterHook(v, that) || v;
+                        try {
+                            xhr[attr] = v;
+                        } catch (e) {
+                            this[attr + "_"] = v;
+                        }
                     }
                 };
             }
+
             function hookfun(fun) {
                 return function () {
                     var args = [].slice.call(arguments);
-                    if (funs[fun] && funs[fun].call(this, args, this.xhr)) {
+                    if (proxy[fun] && proxy[fun].call(this, args, this.xhr)) {
                         return;
                     }
                     return this.xhr[fun].apply(this.xhr, args);
