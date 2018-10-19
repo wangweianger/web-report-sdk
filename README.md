@@ -4,7 +4,7 @@
 
 ### 上报sdk有三种
 >  * 一 ：所有类型通用的上报SDK 即：performance-report-default.js
->  * 二 ：针对于使用Jquery ajax的上报SDK 即：performance-report-jquery.js
+>  * 二 ：针对于使用Jquery ajax的上报SDK 即：performance-report-jquery.js (jquery请使用3.0以上版本)
 >  * 一 ：针对于使用Axios ajax的上报SDK 即：performance-report-axios.js
 
 * 至于三种sdk的选择可酌情选择。通常来说转库专用会更好，因此使用jquery的推荐第二种，使用Axios的推荐第三种，其他所有的使用通用版本第一种
