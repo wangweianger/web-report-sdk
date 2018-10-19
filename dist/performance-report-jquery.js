@@ -192,7 +192,7 @@ function Performance(option, fn) {
                     getAjaxTime('load');
                     return res;
                 }).catch(function (err) {
-                    if (result.type === 'report-data') return;
+                    if (result.report === 'report-data') return;
                     getAjaxTime('error');
                     //error
                     ajaxResponse({

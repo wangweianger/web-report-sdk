@@ -259,7 +259,7 @@ function Performance(option,fn){try{
 
                 console.log(result)
 
-                if(result.type !== 'report-data'){
+                if(result.report !== 'report-data'){
                     clearPerformance()
                     conf.ajaxMsg.push(result)
                     conf.ajaxLength   = conf.ajaxLength+1;
@@ -267,12 +267,12 @@ function Performance(option,fn){try{
                 }
                 return _key.apply(this, arguments)
                     .then((res)=>{ 
-                        if(result.type === 'report-data') return;
+                        if(result.report === 'report-data') return;
                         getAjaxTime('load');
                         return res
                     })
                     .catch((err)=>{ 
-                        if(result.type === 'report-data') return;
+                        if(result.report === 'report-data') return;
                         getAjaxTime('error')
                         //error
                         ajaxResponse({

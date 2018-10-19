@@ -2,8 +2,6 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 /*!
  * performance-report Javascript Library 0.0.1
  * https://github.com/wangweianger/web-performance-report
@@ -194,16 +192,16 @@ function Performance(option, fn) {
                     getAjaxTime('load');
                     return res;
                 }).catch(function (err) {
-                    var _ajaxResponse;
-
                     if (result.type === 'report-data') return;
                     getAjaxTime('error');
                     //error
-                    ajaxResponse((_ajaxResponse = {
+                    ajaxResponse({
                         statusText: err.statusText,
                         method: result.method,
-                        responseURL: result.url
-                    }, _defineProperty(_ajaxResponse, "statusText", err.statusText), _defineProperty(_ajaxResponse, "status", err.status), _ajaxResponse));
+                        responseURL: result.url,
+                        status: err.status
+                    });
+                    return err;
                 });
             };
         };

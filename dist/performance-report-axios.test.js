@@ -93,16 +93,16 @@ function Performance(option, fn) {
 
         var getLargeTime = function getLargeTime() {
             if (conf.haveAjax && conf.haveFetch && loadTime && ajaxTime && fetchTime) {
-                console.log("loadTime:" + loadTime + ",ajaxTime:" + ajaxTime + ",fetchTime:" + fetchTime);
+                void 0;
                 reportData();
             } else if (conf.haveAjax && !conf.haveFetch && loadTime && ajaxTime) {
-                console.log("loadTime:" + loadTime + ",ajaxTime:" + ajaxTime);
+                void 0;
                 reportData();
             } else if (!conf.haveAjax && conf.haveFetch && loadTime && fetchTime) {
-                console.log("loadTime:" + loadTime + ",fetchTime:" + fetchTime);
+                void 0;
                 reportData();
             } else if (!conf.haveAjax && !conf.haveFetch && loadTime) {
-                console.log("loadTime:" + loadTime);
+                void 0;
                 reportData();
             }
         };
@@ -200,20 +200,20 @@ function Performance(option, fn) {
                     var _arg = arguments;
                     var result = ajaxArg(_arg, item);
 
-                    console.log(result);
+                    void 0;
 
-                    if (result.report !== 'report-data') {
+                    if (result.type !== 'report-data') {
                         clearPerformance();
                         conf.ajaxMsg.push(result);
                         conf.ajaxLength = conf.ajaxLength + 1;
                         conf.haveAjax = true;
                     }
                     return _key.apply(this, arguments).then(function (res) {
-                        if (result.report === 'report-data') return;
+                        if (result.type === 'report-data') return;
                         getAjaxTime('load');
                         return res;
                     }).catch(function (err) {
-                        if (result.report === 'report-data') return;
+                        if (result.type === 'report-data') return;
                         getAjaxTime('error');
                         //error
                         ajaxResponse({
@@ -234,7 +234,7 @@ function Performance(option, fn) {
         var ajaxArg = function ajaxArg(arg, item) {
             var result = { method: 'GET', type: 'xmlhttprequest', report: '' };
             var args = Array.prototype.slice.apply(arg);
-            console.log(args);
+            void 0;
             try {
                 if (item == 'axios' || item == 'request') {
                     result.url = args[0].url;
@@ -372,9 +372,9 @@ function Performance(option, fn) {
             conf.fetchNum += 1;
             if (conf.fetLength === conf.fetchNum) {
                 if (type == 'success') {
-                    console.log('走了 fetch success 方法');
+                    void 0;
                 } else {
-                    console.log('走了 fetch error 方法');
+                    void 0;
                 }
                 conf.fetchNum = conf.fetLength = 0;
                 fetchTime = new Date().getTime() - beginTime;
@@ -389,11 +389,11 @@ function Performance(option, fn) {
             conf.loadNum += 1;
             if (conf.loadNum === conf.ajaxLength) {
                 if (type == 'load') {
-                    console.log('走了AJAX onload 方法');
+                    void 0;
                 } else if (type == 'readychange') {
-                    console.log('走了AJAX onreadystatechange 方法');
+                    void 0;
                 } else {
-                    console.log('走了 error 方法');
+                    void 0;
                 }
                 conf.ajaxLength = conf.loadNum = 0;
                 ajaxTime = new Date().getTime() - beginTime;
