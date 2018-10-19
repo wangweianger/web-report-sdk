@@ -35,6 +35,9 @@ https://www.npmjs.com/package/performance-report
 * jquery 和 axios 版本需要放在jquery 或 axios之后，不然ajax错误性信息无法采集
 * 通用版本不受影响，可以在其之前之后引入都OK
 
+### 单页面程序上报处理
+* 单页面应用程序主要资源只会加载一次，因此插件只统计第一次进入页面的资源性能详情，路由切换时是不需要再上报单页面已经加载的资源性能信息，因此此SDK鉴于此考虑，路由切换时只上报按需加载的资源信息和请求的页面ajax信息，触发条件为此页面是否有ajax，有则触发，无则不触发。
+
 ### 浏览器页面直接引用资源方式：
 >  * 1、下载 dist/performance-report-default.min.js 到本地
 >  * 2、使用script标签引入到html的头部（备注：放到所有js资源之前）
