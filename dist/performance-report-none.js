@@ -342,6 +342,7 @@ function Performance(option, fn) {
                         body: JSON.stringify(result)
                     });
                 }
+                clear();
             }, opt.outtime);
         };
     } catch (err) {}

@@ -136,6 +136,7 @@ function Performance(option,fn){try{
                     body:JSON.stringify(result)
                 })
             }
+            clear();
         },opt.outtime)
     }
 
