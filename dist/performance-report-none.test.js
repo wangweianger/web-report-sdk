@@ -93,16 +93,16 @@ function Performance(option, fn) {
 
         var getLargeTime = function getLargeTime() {
             if (conf.haveAjax && conf.haveFetch && loadTime && ajaxTime && fetchTime) {
-                console.log("loadTime:" + loadTime + ",ajaxTime:" + ajaxTime + ",fetchTime:" + fetchTime);
+                void 0;
                 reportData();
             } else if (conf.haveAjax && !conf.haveFetch && loadTime && ajaxTime) {
-                console.log("loadTime:" + loadTime + ",ajaxTime:" + ajaxTime);
+                void 0;
                 reportData();
             } else if (!conf.haveAjax && conf.haveFetch && loadTime && fetchTime) {
-                console.log("loadTime:" + loadTime + ",fetchTime:" + fetchTime);
+                void 0;
                 reportData();
             } else if (!conf.haveAjax && !conf.haveFetch && loadTime) {
-                console.log("loadTime:" + loadTime);
+                void 0;
                 reportData();
             }
         };
@@ -169,61 +169,6 @@ function Performance(option, fn) {
                 resourceList.push(json);
             });
             conf.resourceList = resourceList;
-        };
-
-        // ajax重写
-
-
-        var _Ajax = function _Ajax() {
-            if (!window.$.ajax) return;
-            var _ajax = window.$.ajax;
-
-            window.$.ajax = function () {
-                var _arg = arguments;
-                var result = ajaxArg(_arg);
-                if (result.report !== 'report-data') {
-                    clearPerformance();
-                    conf.ajaxMsg.push(result);
-                    conf.ajaxLength = conf.ajaxLength + 1;
-                    conf.haveAjax = true;
-                }
-                try {
-                    return _ajax.apply(this, arguments).then(function (res) {
-                        if (result.report === 'report-data') return res;
-                        getAjaxTime('load');
-                        return res;
-                    }).catch(function (err) {
-                        if (result.report === 'report-data') return res;
-                        getAjaxTime('error');
-                        //error
-                        ajaxResponse({
-                            statusText: err.statusText,
-                            method: result.method,
-                            responseURL: result.url,
-                            status: err.status
-                        });
-                        return err;
-                    });
-                } catch (e) {
-                    return _ajax.apply(this, arguments).then(function (res) {
-                        getAjaxTime('load');return res;
-                    });
-                };
-            };
-        };
-
-        // Ajax arguments
-
-
-        var ajaxArg = function ajaxArg(arg) {
-            var result = { method: 'GET', type: 'xmlhttprequest', report: '' };
-            var args = Array.prototype.slice.apply(arg);
-            try {
-                result.url = args[0].url;
-                result.method = args[0].type;
-                result.report = args[0].report;
-            } catch (err) {}
-            return result;
         };
 
         // 拦截fetch请求
@@ -350,9 +295,9 @@ function Performance(option, fn) {
             conf.fetchNum += 1;
             if (conf.fetLength === conf.fetchNum) {
                 if (type == 'success') {
-                    console.log('走了 fetch success 方法');
+                    void 0;
                 } else {
-                    console.log('走了 fetch error 方法');
+                    void 0;
                 }
                 conf.fetchNum = conf.fetLength = 0;
                 fetchTime = new Date().getTime() - beginTime;
@@ -367,11 +312,11 @@ function Performance(option, fn) {
             conf.loadNum += 1;
             if (conf.loadNum === conf.ajaxLength) {
                 if (type == 'load') {
-                    console.log('走了AJAX onload 方法');
+                    void 0;
                 } else if (type == 'readychange') {
-                    console.log('走了AJAX onreadystatechange 方法');
+                    void 0;
                 } else {
-                    console.log('走了 error 方法');
+                    void 0;
                 }
                 conf.ajaxLength = conf.loadNum = 0;
                 ajaxTime = new Date().getTime() - beginTime;
@@ -469,8 +414,5 @@ function Performance(option, fn) {
 
         // 执行fetch重写
         if (opt.isAjax || opt.isError) _fetch();
-
-        //  拦截ajax
-        if (opt.isAjax || opt.isError) _Ajax();
     } catch (err) {}
 }

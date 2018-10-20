@@ -177,6 +177,7 @@ function Performance(option, fn) {
         var _Ajax = function _Ajax() {
             if (!window.$.ajax) return;
             var _ajax = window.$.ajax;
+
             window.$.ajax = function () {
                 var _arg = arguments;
                 var result = ajaxArg(_arg);
@@ -186,23 +187,28 @@ function Performance(option, fn) {
                     conf.ajaxLength = conf.ajaxLength + 1;
                     conf.haveAjax = true;
                 }
-
-                return _ajax.apply(this, arguments).then(function (res) {
-                    if (result.report === 'report-data') return;
-                    getAjaxTime('load');
-                    return res;
-                }).catch(function (err) {
-                    if (result.type === 'report-data') return;
-                    getAjaxTime('error');
-                    //error
-                    ajaxResponse({
-                        statusText: err.statusText,
-                        method: result.method,
-                        responseURL: result.url,
-                        status: err.status
+                try {
+                    return _ajax.apply(this, arguments).then(function (res) {
+                        if (result.report === 'report-data') return res;
+                        getAjaxTime('load');
+                        return res;
+                    }).catch(function (err) {
+                        if (result.report === 'report-data') return res;
+                        getAjaxTime('error');
+                        //error
+                        ajaxResponse({
+                            statusText: err.statusText,
+                            method: result.method,
+                            responseURL: result.url,
+                            status: err.status
+                        });
+                        return err;
                     });
-                    return err;
-                });
+                } catch (e) {
+                    return _ajax.apply(this, arguments).then(function (res) {
+                        getAjaxTime('load');return res;
+                    });
+                };
             };
         };
 

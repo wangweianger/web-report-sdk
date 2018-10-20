@@ -202,18 +202,18 @@ function Performance(option, fn) {
 
                     void 0;
 
-                    if (result.type !== 'report-data') {
+                    if (result.report !== 'report-data') {
                         clearPerformance();
                         conf.ajaxMsg.push(result);
                         conf.ajaxLength = conf.ajaxLength + 1;
                         conf.haveAjax = true;
                     }
                     return _key.apply(this, arguments).then(function (res) {
-                        if (result.type === 'report-data') return;
+                        if (result.report === 'report-data') return res;
                         getAjaxTime('load');
                         return res;
                     }).catch(function (err) {
-                        if (result.type === 'report-data') return;
+                        if (result.report === 'report-data') return res;
                         getAjaxTime('error');
                         //error
                         ajaxResponse({
