@@ -43,67 +43,25 @@ function randomString(len) {
     }
     return pwd + new Date().getTime();
 }
-
+window.ReportData = null;
 // web msgs report function
 function Performance(option, fn) {
     try {
 
-        // report date
-        var reportData = function reportData() {
-            setTimeout(function () {
-                if (opt.isPage) perforPage();
-                if (opt.isResource || opt.isAjax) perforResource();
-                if (ERRORLIST && ERRORLIST.length) conf.errorList = conf.errorList.concat(ERRORLIST);
-                var w = document.documentElement.clientWidth || document.body.clientWidth;
-                var h = document.documentElement.clientHeight || document.body.clientHeight;
-
-                var markUser = sessionStorage.getItem('markUser') || '';
-                if (!markUser) {
-                    markUser = randomString();
-                    sessionStorage.setItem('markUser', markUser);
-                }
-
-                var result = {
-                    time: new Date().getTime(),
-                    preUrl: conf.preUrl,
-                    errorList: conf.errorList,
-                    performance: conf.performance,
-                    resourceList: conf.resourceList,
-                    addData: ADDDATA,
-                    markPage: randomString(),
-                    markUser: markUser,
-                    screenwidth: w,
-                    screenheight: h
-                };
-                result = Object.assign(result, opt.add);
-                fn && fn(result);
-                if (!fn && window.fetch) {
-                    fetch(opt.domain, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        type: 'report-data',
-                        body: JSON.stringify(result)
-                    });
-                }
-            }, opt.outtime);
-        };
-
         //比较onload与ajax时间长度
-
-
         var getLargeTime = function getLargeTime() {
             if (conf.haveAjax && conf.haveFetch && loadTime && ajaxTime && fetchTime) {
                 void 0;
-                reportData();
+                ReportData();
             } else if (conf.haveAjax && !conf.haveFetch && loadTime && ajaxTime) {
                 void 0;
-                reportData();
+                ReportData();
             } else if (!conf.haveAjax && conf.haveFetch && loadTime && fetchTime) {
                 void 0;
-                reportData();
+                ReportData();
             } else if (!conf.haveAjax && !conf.haveFetch && loadTime) {
                 void 0;
-                reportData();
+                ReportData();
             }
         };
 
@@ -350,7 +308,7 @@ function Performance(option, fn) {
             // 上报地址
             domain: 'http://localhost/api',
             // 脚本延迟上报时间
-            outtime: 300,
+            outtime: 500,
             // ajax请求时需要过滤的url信息
             filterUrl: ['http://localhost:35729/livereload.js?snipver=1', 'http://localhost:8000/sockjs-node/info'],
             // 是否上报页面性能数据
@@ -414,5 +372,45 @@ function Performance(option, fn) {
 
         // 执行fetch重写
         if (opt.isAjax || opt.isError) _fetch();
+
+        // report date
+        ReportData = function ReportData() {
+            setTimeout(function () {
+                if (opt.isPage) perforPage();
+                if (opt.isResource || opt.isAjax) perforResource();
+                if (ERRORLIST && ERRORLIST.length) conf.errorList = conf.errorList.concat(ERRORLIST);
+                var w = document.documentElement.clientWidth || document.body.clientWidth;
+                var h = document.documentElement.clientHeight || document.body.clientHeight;
+
+                var markUser = sessionStorage.getItem('markUser') || '';
+                if (!markUser) {
+                    markUser = randomString();
+                    sessionStorage.setItem('markUser', markUser);
+                }
+
+                var result = {
+                    time: new Date().getTime(),
+                    preUrl: conf.preUrl,
+                    errorList: conf.errorList,
+                    performance: conf.performance,
+                    resourceList: conf.resourceList,
+                    addData: ADDDATA,
+                    markPage: randomString(),
+                    markUser: markUser,
+                    screenwidth: w,
+                    screenheight: h
+                };
+                result = Object.assign(result, opt.add);
+                fn && fn(result);
+                if (!fn && window.fetch) {
+                    fetch(opt.domain, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        type: 'report-data',
+                        body: JSON.stringify(result)
+                    });
+                }
+            }, opt.outtime);
+        };
     } catch (err) {}
 }

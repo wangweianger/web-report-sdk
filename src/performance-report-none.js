@@ -27,8 +27,6 @@ Performance.addError=function(err){
 }
 Performance.addData = function(fn){fn&&fn(ADDDATA)};
 
-
-
 function randomString(len) {
 　　len = len || 19;
 　　var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz123456789';
@@ -95,19 +93,8 @@ function Performance(option,fn){try{
         data:{}
     };
 
-    let beginTime   = new Date().getTime()
-    let loadTime    = 0
-    let ajaxTime    = 0
-    let fetchTime   = 0
-
     // error上报
     if(opt.isError) _error();
-
-    // 绑定onload事件
-    addEventListener("load",function(){
-        loadTime = new Date().getTime()-beginTime
-        getLargeTime();
-    },false);
 
     // 执行fetch重写
     if(opt.isAjax || opt.isError) _fetch();
@@ -150,23 +137,6 @@ function Performance(option,fn){try{
                 })
             }
         },opt.outtime)
-    }
-
-    //比较onload与ajax时间长度
-    function getLargeTime (){
-        if(conf.haveAjax&&conf.haveFetch&&loadTime&&ajaxTime&&fetchTime){
-            console.log(`loadTime:${loadTime},ajaxTime:${ajaxTime},fetchTime:${fetchTime}`)
-            ReportData()
-        }else if(conf.haveAjax&&!conf.haveFetch&&loadTime&&ajaxTime){
-            console.log(`loadTime:${loadTime},ajaxTime:${ajaxTime}`)
-            ReportData()
-        }else if(!conf.haveAjax&&conf.haveFetch&&loadTime&&fetchTime){
-            console.log(`loadTime:${loadTime},fetchTime:${fetchTime}`)
-            ReportData()
-        }else if(!conf.haveAjax&&!conf.haveFetch&&loadTime){
-            console.log(`loadTime:${loadTime}`)
-            ReportData()
-        }
     }
 
     // 统计页面性能
@@ -325,21 +295,6 @@ function Performance(option,fn){try{
         };
     }
 
-    // ajax统一上报入口
-    function ajaxResponse(xhr,type){
-        let defaults    = Object.assign({},errordefo);
-        defaults.t      = new Date().getTime();
-        defaults.n      = 'ajax'
-        defaults.msg    = xhr.statusText || 'ajax request error';
-        defaults.method = xhr.method
-        defaults.data   = {
-            resourceUrl:xhr.responseURL,
-            text:xhr.statusText,
-            status:xhr.status
-        }
-        conf.errorList.push(defaults)
-    }
-
     // fetch get time
     function getFetchTime(type){
         conf.fetchNum+=1
@@ -350,25 +305,6 @@ function Performance(option,fn){try{
                 console.log('走了 fetch error 方法')
             }
             conf.fetchNum = conf.fetLength = 0
-            fetchTime = new Date().getTime()-beginTime
-            getLargeTime();
-        }
-    }
-
-    // ajax get time
-    function getAjaxTime(type){
-        conf.loadNum+=1
-        if(conf.loadNum === conf.ajaxLength){
-            if(type=='load'){
-                console.log('走了AJAX onload 方法')
-            }else if(type=='readychange'){
-                console.log('走了AJAX onreadystatechange 方法')
-            }else{
-                console.log('走了 error 方法')
-            }
-            conf.ajaxLength = conf.loadNum = 0
-            ajaxTime = new Date().getTime()-beginTime
-            getLargeTime();
         }
     }
 
