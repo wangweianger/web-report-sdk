@@ -233,7 +233,7 @@ function Performance(option,fn){try{
     // ajax重写
     function _Ajax(){
         if(!window.$.ajax) return;
-        let _ajax  = window.$.ajax 
+        window._ajax  = window.$.ajax 
         
         window.$.ajax = function(){
             let _arg   = arguments
@@ -245,7 +245,7 @@ function Performance(option,fn){try{
                 conf.haveAjax   = true
             }
             try {
-                return _ajax.apply(this, arguments)
+                return _ajax.apply(_ajax, arguments)
                 .then(res=>{ 
                     if(result.report === 'report-data') return res;
                     getAjaxTime('load');
@@ -263,7 +263,7 @@ function Performance(option,fn){try{
                     return err
                 })
             } catch(e){
-                return _ajax.apply(this, arguments).then(res=>{getAjaxTime('load');return res;});
+                return _ajax.apply(_ajax, arguments).then(res=>{getAjaxTime('load');return res;});
             };
         }
     }

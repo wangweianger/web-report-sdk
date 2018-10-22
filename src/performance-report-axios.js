@@ -265,7 +265,7 @@ function Performance(option,fn){try{
                     conf.ajaxLength   = conf.ajaxLength+1;
                     conf.haveAjax   = true
                 }
-                return _key.apply(this, arguments)
+                return _key.apply(_axios, arguments)
                     .then((res)=>{ 
                         if(result.report === 'report-data') return res;
                         getAjaxTime('load');
