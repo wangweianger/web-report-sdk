@@ -166,10 +166,10 @@ function Performance(option,fn){try{
 
     // 获得markpage
     function markUser(){
-        let markUser = sessionStorage.getItem('markUser')||'';
+        let markUser = sessionStorage.getItem('ps_markUser')||'';
         if(!markUser){
             markUser = randomString();
-            sessionStorage.setItem('markUser',markUser);
+            sessionStorage.setItem('ps_markUser',markUser);
         }
         return markUser;
     }
@@ -177,17 +177,13 @@ function Performance(option,fn){try{
     // 获得Uv
     function markUv(){
         const date = new Date();
-        let markUv = localStorage.getItem('markUv')||'';
-        if(!markUv){
+        let markUv = localStorage.getItem('ps_markUv')||'';
+        const datatime = localStorage.getItem('ps_markUvTime')||'';
+        const today = date.getFullYear()+'/'+(date.getMonth()+1)+'/'+date.getDate()+' 23:59:59';
+        if( (!markUv && !datatime) || (date.getTime() > datatime*1) ){
             markUv = randomString();
-            localStorage.setItem('markUv',markUv);
-        }else{
-            const today = date.getFullYear()+'/'+(date.getMonth()+1)+'/'+date.getDate()+' 23:59:59';
-            const datatime = new Date(today).getTime();
-            if(date.getTime() > datatime){
-                markUv = randomString();
-                localStorage.setItem('markUv',markUv);
-            }
+            localStorage.setItem('ps_markUv',markUv);
+            localStorage.setItem('ps_markUvTime',new Date(today).getTime());
         }
         return markUv;
     }

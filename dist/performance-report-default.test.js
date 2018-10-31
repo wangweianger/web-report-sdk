@@ -50,10 +50,10 @@ function Performance(option, fn) {
 
         // 获得markpage
         var markUser = function markUser() {
-            var markUser = sessionStorage.getItem('markUser') || '';
+            var markUser = sessionStorage.getItem('ps_markUser') || '';
             if (!markUser) {
                 markUser = randomString();
-                sessionStorage.setItem('markUser', markUser);
+                sessionStorage.setItem('ps_markUser', markUser);
             }
             return markUser;
         };
@@ -63,17 +63,13 @@ function Performance(option, fn) {
 
         var markUv = function markUv() {
             var date = new Date();
-            var markUv = localStorage.getItem('markUv') || '';
-            if (!markUv) {
+            var markUv = localStorage.getItem('ps_markUv') || '';
+            var datatime = localStorage.getItem('ps_markUvTime') || '';
+            var today = date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate() + ' 23:59:59';
+            if (!markUv && !datatime || date.getTime() > datatime * 1) {
                 markUv = randomString();
-                localStorage.setItem('markUv', markUv);
-            } else {
-                var today = date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate() + ' 23:59:59';
-                var datatime = new Date(today).getTime();
-                if (date.getTime() > datatime) {
-                    markUv = randomString();
-                    localStorage.setItem('markUv', markUv);
-                }
+                localStorage.setItem('ps_markUv', markUv);
+                localStorage.setItem('ps_markUvTime', new Date(today).getTime());
             }
             return markUv;
         };
