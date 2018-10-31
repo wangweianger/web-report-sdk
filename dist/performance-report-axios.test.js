@@ -34,7 +34,7 @@ Performance.addData = function (fn) {
 };
 
 function randomString(len) {
-    len = len || 19;
+    len = len || 10;
     var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz123456789';
     var maxPos = $chars.length;
     var pwd = '';
@@ -48,7 +48,39 @@ function randomString(len) {
 function Performance(option, fn) {
     try {
 
+        // 获得markpage
+        var markUser = function markUser() {
+            var markUser = sessionStorage.getItem('markUser') || '';
+            if (!markUser) {
+                markUser = randomString();
+                sessionStorage.setItem('markUser', markUser);
+            }
+            return markUser;
+        };
+
+        // 获得Uv
+
+
+        var markUv = function markUv() {
+            var date = new Date();
+            var markUv = localStorage.getItem('markUv') || '';
+            if (!markUv) {
+                markUv = randomString();
+                localStorage.setItem('markUv', markUv);
+            } else {
+                var today = date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate() + ' 23:59:59';
+                var datatime = new Date(today).getTime();
+                if (date.getTime() > datatime) {
+                    markUv = randomString();
+                    localStorage.setItem('markUv', markUv);
+                }
+            }
+            return markUv;
+        };
+
         // report date
+
+
         var reportData = function reportData() {
             setTimeout(function () {
                 if (opt.isPage) perforPage();
@@ -70,8 +102,8 @@ function Performance(option, fn) {
                     performance: conf.performance,
                     resourceList: conf.resourceList,
                     addData: ADDDATA,
-                    markPage: randomString(),
-                    markUser: markUser,
+                    markUser: markUser(),
+                    markUv: markUv(),
                     screenwidth: w,
                     screenheight: h
                 };
@@ -208,7 +240,7 @@ function Performance(option, fn) {
                         conf.ajaxLength = conf.ajaxLength + 1;
                         conf.haveAjax = true;
                     }
-                    return _key.apply(this, arguments).then(function (res) {
+                    return _key.apply(_axios, arguments).then(function (res) {
                         if (result.report === 'report-data') return res;
                         getAjaxTime('load');
                         return res;

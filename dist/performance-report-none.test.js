@@ -34,7 +34,7 @@ Performance.addData = function (fn) {
 };
 
 function randomString(len) {
-    len = len || 19;
+    len = len || 10;
     var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz123456789';
     var maxPos = $chars.length;
     var pwd = '';
@@ -47,6 +47,39 @@ window.ReportData = null;
 // web msgs report function
 function Performance(option, fn) {
     try {
+
+        // 获得markpage
+        var markUser = function markUser() {
+            var markUser = sessionStorage.getItem('markUser') || '';
+            if (!markUser) {
+                markUser = randomString();
+                sessionStorage.setItem('markUser', markUser);
+            }
+            return markUser;
+        };
+
+        // 获得Uv
+
+
+        var markUv = function markUv() {
+            var date = new Date();
+            var markUv = localStorage.getItem('markUv') || '';
+            if (!markUv) {
+                markUv = randomString();
+                localStorage.setItem('markUv', markUv);
+            } else {
+                var today = date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate() + ' 23:59:59';
+                var datatime = new Date(today).getTime();
+                if (date.getTime() > datatime) {
+                    markUv = randomString();
+                    localStorage.setItem('markUv', markUv);
+                }
+            }
+            return markUv;
+        };
+
+        // report date
+
 
         // 统计页面性能
         var perforPage = function perforPage() {
@@ -110,70 +143,6 @@ function Performance(option, fn) {
             conf.resourceList = resourceList;
         };
 
-        // 拦截fetch请求
-
-
-        var _fetch = function _fetch() {
-            if (!window.fetch) return;
-            var _fetch = fetch;
-            window.fetch = function () {
-                var _arg = arguments;
-                var result = fetArg(_arg);
-                if (result.type !== 'report-data') {
-                    clearPerformance();
-                    conf.ajaxMsg.push(result);
-                    conf.fetLength = conf.fetLength + 1;
-                    conf.haveFetch = true;
-                }
-                return _fetch.apply(this, arguments).then(function (res) {
-                    if (result.type === 'report-data') return;
-                    getFetchTime('success');
-                    return res;
-                }).catch(function (err) {
-                    if (result.type === 'report-data') return;
-                    getFetchTime('error');
-                    //error
-                    var defaults = Object.assign({}, errordefo);
-                    defaults.t = new Date().getTime();
-                    defaults.n = 'fetch';
-                    defaults.msg = 'fetch request error';
-                    defaults.method = result.method;
-                    defaults.data = {
-                        resourceUrl: result.url,
-                        text: err.stack || err,
-                        status: 0
-                    };
-                    conf.errorList.push(defaults);
-                    return err;
-                });
-            };
-        };
-
-        // fetch arguments
-
-
-        var fetArg = function fetArg(arg) {
-            var result = { method: 'GET', type: 'fetchrequest' };
-            var args = Array.prototype.slice.apply(arg);
-
-            if (!args || !args.length) return result;
-            try {
-                if (args.length === 1) {
-                    if (typeof args[0] === 'string') {
-                        result.url = args[0];
-                    } else if (_typeof(args[0]) === 'object') {
-                        result.url = args[0].url;
-                        result.method = args[0].method;
-                    }
-                } else {
-                    result.url = args[0];
-                    result.method = args[1].method;
-                    result.type = args[1].type;
-                }
-            } catch (err) {}
-            return result;
-        };
-
         // 拦截js error信息
 
 
@@ -210,21 +179,6 @@ function Performance(option, fn) {
             };
         };
 
-        // fetch get time
-
-
-        var getFetchTime = function getFetchTime(type) {
-            conf.fetchNum += 1;
-            if (conf.fetLength === conf.fetchNum) {
-                if (type == 'success') {
-                    void 0;
-                } else {
-                    void 0;
-                }
-                conf.fetchNum = conf.fetLength = 0;
-            }
-        };
-
         var clearPerformance = function clearPerformance(type) {
             if (!window.performance && !window.performance.clearResourceTimings) return;
             if (conf.haveAjax && conf.haveFetch && conf.ajaxLength == 0 && conf.fetLength == 0) {
@@ -237,6 +191,7 @@ function Performance(option, fn) {
         };
 
         var clear = function clear() {
+            if (!window.performance && !window.performance.clearResourceTimings) return;
             performance.clearResourceTimings();
             conf.performance = {};
             conf.errorList = [];
@@ -251,7 +206,7 @@ function Performance(option, fn) {
             // 上报地址
             domain: 'http://localhost/api',
             // 脚本延迟上报时间
-            outtime: 500,
+            outtime: 600,
             // ajax请求时需要过滤的url信息
             filterUrl: ['http://localhost:35729/livereload.js?snipver=1', 'http://localhost:8000/sockjs-node/info'],
             // 是否上报页面性能数据
@@ -300,25 +255,13 @@ function Performance(option, fn) {
         };
 
         // error上报
-        if (opt.isError) _error();
-
-        // 执行fetch重写
-        if (opt.isAjax || opt.isError) _fetch();
-
-        // report date
-        ReportData = function ReportData() {
+        if (opt.isError) _error();ReportData = function ReportData() {
             setTimeout(function () {
                 if (opt.isPage) perforPage();
                 if (opt.isResource || opt.isAjax) perforResource();
                 if (ERRORLIST && ERRORLIST.length) conf.errorList = conf.errorList.concat(ERRORLIST);
                 var w = document.documentElement.clientWidth || document.body.clientWidth;
                 var h = document.documentElement.clientHeight || document.body.clientHeight;
-
-                var markUser = sessionStorage.getItem('markUser') || '';
-                if (!markUser) {
-                    markUser = randomString();
-                    sessionStorage.setItem('markUser', markUser);
-                }
 
                 var result = {
                     time: new Date().getTime(),
@@ -327,8 +270,8 @@ function Performance(option, fn) {
                     performance: conf.performance,
                     resourceList: conf.resourceList,
                     addData: ADDDATA,
-                    markPage: randomString(),
-                    markUser: markUser,
+                    markUser: markUser(),
+                    markUv: markUv(),
                     screenwidth: w,
                     screenheight: h
                 };
@@ -342,6 +285,7 @@ function Performance(option, fn) {
                         body: JSON.stringify(result)
                     });
                 }
+                clear();
             }, opt.outtime);
         };
     } catch (err) {}

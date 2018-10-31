@@ -19,8 +19,8 @@
 >  * performance    页面性能数据详情，字段含义详情请参考后面内容
 >  * errorList      页面错误信息详情，包含js,img,ajax,fetch等所有错误信息，字段含义详情请参考后面内容
 >  * resoruceList   页面性能数据详情，当前页面所有资源性能详情信息，字段含义详情请参考后面内容
->  * markPage       每次请求都会change，可以用来标识页面，或者关联表字段查询
->  * markUser       从用户进入网站开始标识，直到用户离开销毁，可以用来做UV统计
+>  * markUv         统计uv标识
+>  * markUser       从用户进入网站开始标识，直到用户离开销毁，可以用来做用户漏斗分析
 >  * time           当前上报时间
 >  * screenwidth    屏幕宽度
 >  * screenheight   屏幕高度
@@ -270,7 +270,7 @@ http://localhost:8080/test/
 
 | parameter name | describe | explain |
 | --- | --- | --- |
-| markPage | 当前页面标识 |  |
+| markUv | 统计uv标识 |  |
 | markUser | 用户标识  | 可用来做UV统计，和用户行为漏斗分析 |
 | screenwidth | 屏幕宽度  |  |
 | screenheight | 屏幕高度  |  |
@@ -313,7 +313,7 @@ http://localhost:8080/test/
   "time": 1524136760783, 
   "preUrl": "", 
   "appId":"123456789",
-  "markPage": "hzYyTkk2TzJ2M3dE1aR1539930145705"
+  "markUv": "hzYyTkk2TzJ2M3dE1aR1539930145705"
   "markUser": "FtJ7BykWAPc3SyXQayd1539917250089"
   "errorList": [
     {

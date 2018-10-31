@@ -28,7 +28,7 @@ Performance.addError=function(err){
 Performance.addData = function(fn){fn&&fn(ADDDATA)};
 
 function randomString(len) {
-　　len = len || 19;
+　　len = len || 10;
 　　var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz123456789';
 　　var maxPos = $chars.length;
 　　var pwd = '';

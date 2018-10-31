@@ -34,7 +34,7 @@ Performance.addData = function (fn) {
 };
 
 function randomString(len) {
-    len = len || 19;
+    len = len || 10;
     var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz123456789';
     var maxPos = $chars.length;
     var pwd = '';
@@ -48,7 +48,39 @@ function randomString(len) {
 function Performance(option, fn) {
     try {
 
+        // 获得markpage
+        var markUser = function markUser() {
+            var markUser = sessionStorage.getItem('markUser') || '';
+            if (!markUser) {
+                markUser = randomString();
+                sessionStorage.setItem('markUser', markUser);
+            }
+            return markUser;
+        };
+
+        // 获得Uv
+
+
+        var markUv = function markUv() {
+            var date = new Date();
+            var markUv = localStorage.getItem('markUv') || '';
+            if (!markUv) {
+                markUv = randomString();
+                localStorage.setItem('markUv', markUv);
+            } else {
+                var today = date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate() + ' 23:59:59';
+                var datatime = new Date(today).getTime();
+                if (date.getTime() > datatime) {
+                    markUv = randomString();
+                    localStorage.setItem('markUv', markUv);
+                }
+            }
+            return markUv;
+        };
+
         // report date
+
+
         var reportData = function reportData() {
             setTimeout(function () {
                 if (opt.isPage) perforPage();
@@ -57,12 +89,6 @@ function Performance(option, fn) {
                 var w = document.documentElement.clientWidth || document.body.clientWidth;
                 var h = document.documentElement.clientHeight || document.body.clientHeight;
 
-                var markUser = sessionStorage.getItem('markUser') || '';
-                if (!markUser) {
-                    markUser = randomString();
-                    sessionStorage.setItem('markUser', markUser);
-                }
-
                 var result = {
                     time: new Date().getTime(),
                     preUrl: conf.preUrl,
@@ -70,8 +96,8 @@ function Performance(option, fn) {
                     performance: conf.performance,
                     resourceList: conf.resourceList,
                     addData: ADDDATA,
-                    markPage: randomString(),
-                    markUser: markUser,
+                    markUser: markUser(),
+                    markUv: markUv(),
                     screenwidth: w,
                     screenheight: h
                 };
@@ -176,7 +202,7 @@ function Performance(option, fn) {
 
         var _Ajax = function _Ajax() {
             if (!window.$.ajax) return;
-            var _ajax = window.$.ajax;
+            window._ajax = window.$.ajax;
 
             window.$.ajax = function () {
                 var _arg = arguments;
@@ -188,7 +214,7 @@ function Performance(option, fn) {
                     conf.haveAjax = true;
                 }
                 try {
-                    return _ajax.apply(this, arguments).then(function (res) {
+                    return _ajax.apply(_ajax, arguments).then(function (res) {
                         if (result.report === 'report-data') return res;
                         getAjaxTime('load');
                         return res;
@@ -205,7 +231,7 @@ function Performance(option, fn) {
                         return err;
                     });
                 } catch (e) {
-                    return _ajax.apply(this, arguments).then(function (res) {
+                    return _ajax.apply(_ajax, arguments).then(function (res) {
                         getAjaxTime('load');return res;
                     });
                 };
