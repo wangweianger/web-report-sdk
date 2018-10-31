@@ -242,6 +242,7 @@ function Performance(option,fn){try{
         }
     } 
     function clear(){
+        if(!window.performance && !window.performance.clearResourceTimings) return;
         performance.clearResourceTimings();
         conf.performance    = {}
         conf.errorList      = []

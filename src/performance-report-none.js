@@ -96,6 +96,34 @@ function Performance(option,fn){try{
     // error上报
     if(opt.isError) _error();
 
+    // 获得markpage
+    function markUser(){
+        let markUser = sessionStorage.getItem('markUser')||'';
+        if(!markUser){
+            markUser = randomString();
+            sessionStorage.setItem('markUser',markUser);
+        }
+        return markUser;
+    }
+
+    // 获得Uv
+    function markUv(){
+        const date = new Date();
+        let markUv = localStorage.getItem('markUv')||'';
+        if(!markUv){
+            markUv = randomString();
+            localStorage.setItem('markUv',markUv);
+        }else{
+            const today = date.getFullYear()+'/'+(date.getMonth()+1)+'/'+date.getDate()+' 23:59:59';
+            const datatime = new Date(today).getTime();
+            if(date.getTime() > datatime){
+                markUv = randomString();
+                localStorage.setItem('markUv',markUv);
+            }
+        }
+        return markUv;
+    }
+
     // report date
     ReportData =function(){
         setTimeout(()=>{
@@ -105,12 +133,6 @@ function Performance(option,fn){try{
             let w = document.documentElement.clientWidth || document.body.clientWidth;
             let h = document.documentElement.clientHeight || document.body.clientHeight;
 
-            let markUser = sessionStorage.getItem('markUser')||'';
-            if(!markUser){
-                markUser = randomString();
-                sessionStorage.setItem('markUser',markUser);
-            }  
-
             let result = {
                 time:new Date().getTime(),
                 preUrl:conf.preUrl,
@@ -118,8 +140,8 @@ function Performance(option,fn){try{
                 performance:conf.performance,
                 resourceList:conf.resourceList,
                 addData:ADDDATA,
-                markPage:randomString(),
-                markUser:markUser,
+                markUser:markUser(),
+                markUv:markUv(),
                 screenwidth:w,
                 screenheight:h,
             }
