@@ -175,20 +175,8 @@ function Performance(option, fn) {
             };
         };
 
-        var clearPerformance = function clearPerformance(type) {
-            if(window.performance && window.performance.clearResourceTimings){
-                if (conf.haveAjax && conf.haveFetch && conf.ajaxLength == 0 && conf.fetLength == 0) {
-                    clear();
-                } else if (!conf.haveAjax && conf.haveFetch && conf.fetLength == 0) {
-                    clear();
-                } else if (conf.haveAjax && !conf.haveFetch && conf.ajaxLength == 0) {
-                    clear();
-                }
-            }
-        };
-
         var clear = function clear() {
-            if(window.performance && window.performance.clearResourceTimings){
+            if (window.performance && window.performance.clearResourceTimings) {
                 performance.clearResourceTimings();
                 conf.performance = {};
                 conf.errorList = [];

@@ -248,26 +248,16 @@ function Performance(option,fn){try{
             },0);
         };
     }
-
-    function clearPerformance(type){
-        if(!window.performance && !window.performance.clearResourceTimings) return;
-        if(conf.haveAjax&&conf.haveFetch&&conf.ajaxLength==0&&conf.fetLength==0){
-            clear()
-        }else if(!conf.haveAjax&&conf.haveFetch&&conf.fetLength==0){
-            clear()
-        }else if(conf.haveAjax&&!conf.haveFetch&&conf.ajaxLength==0){
-            clear()
-        }
-    } 
     function clear(){
-        if(!window.performance && !window.performance.clearResourceTimings) return;
-        performance.clearResourceTimings();
-        conf.performance    = {}
-        conf.errorList      = []
-        conf.preUrl         = ''
-        conf.resourceList   = ''
-        conf.page           = location.href
-        ERRORLIST           = []
-        ADDDATA             = []
+        if(window.performance && window.performance.clearResourceTimings){
+            performance.clearResourceTimings();
+            conf.performance    = {}
+            conf.errorList      = []
+            conf.preUrl         = ''
+            conf.resourceList   = ''
+            conf.page           = location.href
+            ERRORLIST           = []
+            ADDDATA             = []
+        }
     }
 }catch(err){}}
