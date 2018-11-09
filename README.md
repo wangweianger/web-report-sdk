@@ -2,14 +2,15 @@
 
 ###  performance-report 是一款浏览器端页面性能，ajax, fetch ,错误信息，资源性能上报SDK，资源小巧，性能强悍
 
-### 上报sdk有四种
+### 上报sdk有五种
 >  * 一 ：所有类型通用的上报SDK 即：performance-report-default.js
 >  * 二 ：针对于使用Jquery ajax的上报SDK 即：performance-report-jquery.js (jquery请使用3.0以上版本)
 >  * 三 ：针对于使用Axios ajax的上报SDK 即：performance-report-axios.js
 >  * 四 ：针对于业务代码手动触发的上报SDK 即：performance-report-none.js
+>  * 五 ：针对于使用Fetch ajax的上报SDK 即：performance-report-fetch.js
 
-* 至于四种sdk的选择可酌情选择。通常来说转库专用会更好，因此使用jquery的推荐第二种，使用Axios的推荐第三种，其他所有的使用通用版本第一种
-* 当然通用版本适合所有上报，使用jquery和axios的都能够很好的上报
+* 至于四种sdk的选择可酌情选择。通常来说转库专用会更好，因此使用jquery的推荐第二种，使用fetch的推荐第三种,使用Axios的推荐第三种，其他所有的使用通用版本第一种
+* 当然通用版本适合所有上报，使用jquery和axios,fetch的都能够很好的上报(必然带来包的体积最大)
 
 * performance-report SDK只做页面性，错误信息，资源信息，ajax信息等上报，让你不用关心浏览器上报部分，是一个比较完整和健全的数据上报插件。
 * 在此基础上你可以开发任何自己需要的性能上报系统。
