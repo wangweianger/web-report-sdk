@@ -45,8 +45,6 @@ function Performance(option,fn){try{
         domain:'http://localhost/api',
         // 脚本延迟上报时间
         outtime:300,
-        // ajax请求时需要过滤的url信息
-        filterUrl:['http://localhost:35729/livereload.js?snipver=1', 'http://localhost:8000/sockjs-node/info'],
         // 是否上报页面性能数据
         isPage:true,
         // 是否上报ajax性能数据
@@ -66,22 +64,16 @@ function Performance(option,fn){try{
         performance:{},
         // 错误列表
         errorList:[],
-        // 页面fetch数量
-        fetchNum:0,
         // ajax onload数量
         loadNum:0,
         // 页面ajax数量
         ajaxLength:0,
-        // 页面fetch总数量
-        fetLength:0,
         // 页面ajax信息
         ajaxMsg:[],
         // ajax成功执行函数
         goingType:'',
         // 是否有ajax
         haveAjax:false,
-        // 是否有fetch
-        haveFetch:false,
         // 来自域名
         preUrl:document.referrer&&document.referrer!==location.href?document.referrer:'',
     }
@@ -96,7 +88,6 @@ function Performance(option,fn){try{
     let beginTime   = new Date().getTime()
     let loadTime    = 0
     let ajaxTime    = 0
-    let fetchTime   = 0
 
     // error上报
     if(opt.isError) _error();
@@ -106,9 +97,6 @@ function Performance(option,fn){try{
         loadTime = new Date().getTime()-beginTime
         getLargeTime();
     },false);
-
-    // 执行fetch重写
-    if(opt.isAjax || opt.isError) _fetch();
 
     //  拦截ajax
     if(opt.isAjax || opt.isError) _Ajax()
@@ -168,21 +156,16 @@ function Performance(option,fn){try{
                     body:JSON.stringify(result)
                 })
             }
+            clearPerformance()
         },opt.outtime)
     }
 
     //比较onload与ajax时间长度
     function getLargeTime (){
-        if(conf.haveAjax&&conf.haveFetch&&loadTime&&ajaxTime&&fetchTime){
-            console.log(`loadTime:${loadTime},ajaxTime:${ajaxTime},fetchTime:${fetchTime}`)
-            reportData()
-        }else if(conf.haveAjax&&!conf.haveFetch&&loadTime&&ajaxTime){
+        if(conf.haveAjax&&loadTime&&ajaxTime){
             console.log(`loadTime:${loadTime},ajaxTime:${ajaxTime}`)
             reportData()
-        }else if(!conf.haveAjax&&conf.haveFetch&&loadTime&&fetchTime){
-            console.log(`loadTime:${loadTime},fetchTime:${fetchTime}`)
-            reportData()
-        }else if(!conf.haveAjax&&!conf.haveFetch&&loadTime){
+        }else if(loadTime){
             console.log(`loadTime:${loadTime}`)
             reportData()
         }
@@ -240,6 +223,7 @@ function Performance(option,fn){try{
                     if(conf.ajaxMsg[i].url===item.name){
                         json.method = conf.ajaxMsg[i].method||'GET'
                         json.type   = conf.ajaxMsg[i].type || json.type
+                        json.options = conf.ajaxMsg[i].options
                     }
                 }
             }
@@ -250,40 +234,39 @@ function Performance(option,fn){try{
 
     // ajax重写
     function _Ajax(){
-        if(!window.$.ajax) return;
-        window._ajax  = window.$.ajax 
-        
-        window.$.ajax = function(){
-            let _arg   = arguments
-            let result = ajaxArg(_arg)
-            if(result.report !== 'report-data'){
-                clearPerformance()
-                conf.ajaxMsg.push(result)
-                conf.ajaxLength   = conf.ajaxLength+1;
-                conf.haveAjax   = true
+        const ajaxRequest = window.$.ajax;
+        Object.defineProperty(window.$, 'ajax', {
+            configurable: true,
+            enumerable: true,
+            writable: true,
+            value: function () {
+                const config = ajaxArg(arguments)
+                if (config.report !== 'report-data') {
+                    conf.ajaxMsg.push(config)
+                    conf.ajaxLength = conf.ajaxLength + 1;
+                    conf.haveAjax = true
+                }
+                const _complete = arguments[0].complete || function (data) { };
+                arguments[0].complete = function (data) {
+                    if (config.report === 'report-data') return res;
+                    if (data.status === 200 && data.readyState === 4){
+                        getAjaxTime('load');
+                    }else{
+                        getAjaxTime('error')
+                        //error
+                        ajaxResponse({
+                            statusText: data.statusText,
+                            method: config.method || 'GET',
+                            responseURL: config.url,
+                            options: config.options || '',
+                            status: data.status,
+                        })
+                    }
+                    return _complete.apply(this, arguments);
+                }
+                return ajaxRequest.apply(this, arguments);
             }
-            try {
-                return _ajax.apply(_ajax, arguments)
-                .then(res=>{ 
-                    if(result.report === 'report-data') return res;
-                    getAjaxTime('load');
-                    return res;
-                }).catch(err=>{
-                    if(result.report === 'report-data') return res;
-                    getAjaxTime('error')
-                    //error
-                    ajaxResponse({
-                        statusText:err.statusText,
-                        method:result.method,
-                        responseURL:result.url,
-                        status:err.status,
-                    })
-                    return err
-                })
-            } catch(e){
-                return _ajax.apply(_ajax, arguments).then(res=>{getAjaxTime('load');return res;});
-            };
-        }
+        });
     }
 
     // Ajax arguments
@@ -294,68 +277,7 @@ function Performance(option,fn){try{
             result.url      = args[0].url
             result.method   = args[0].type
             result.report   = args[0].report
-        }catch(err){}
-        return result;
-    }
-
-    // 拦截fetch请求
-    function _fetch(){
-        if(!window.fetch) return;
-        let _fetch     = fetch 
-        window.fetch   = function(){
-            let _arg   = arguments
-            let result = fetArg(_arg)
-            if(result.type !== 'report-data'){
-                clearPerformance()
-                conf.ajaxMsg.push(result)
-                conf.fetLength   = conf.fetLength+1;
-                conf.haveFetch   = true
-            }
-            return _fetch.apply(this, arguments)
-            .then((res)=>{ 
-                if(result.type === 'report-data') return;
-                getFetchTime('success')
-                return res 
-            })
-            .catch((err)=>{ 
-                if(result.type === 'report-data') return;
-                getFetchTime('error')
-                //error
-                let defaults    = Object.assign({},errordefo);
-                defaults.t      = new Date().getTime();
-                defaults.n      = 'fetch'
-                defaults.msg    = 'fetch request error';
-                defaults.method = result.method
-                defaults.data   = {
-                    resourceUrl:result.url,
-                    text:err.stack||err,
-                    status:0
-                }
-                conf.errorList.push(defaults)
-                return err  
-            });
-        }
-    }
-
-    // fetch arguments
-    function fetArg(arg){
-        let result={ method:'GET',type:'fetchrequest' }
-        let args = Array.prototype.slice.apply(arg)
-
-        if(!args || !args.length) return result;
-        try{
-            if(args.length === 1){
-                if(typeof(args[0])==='string'){
-                    result.url      = args[0]
-                }else if(typeof(args[0])==='object'){
-                    result.url      = args[0].url
-                    result.method   = args[0].method
-                }
-            }else{
-                result.url      = args[0]
-                result.method   = args[1].method
-                result.type     = args[1].type
-            }
+            result.options  = args[0].data
         }catch(err){}
         return result;
     }
@@ -401,27 +323,13 @@ function Performance(option,fn){try{
         defaults.n      = 'ajax'
         defaults.msg    = xhr.statusText || 'ajax request error';
         defaults.method = xhr.method
+        defaults.options = xhr.options
         defaults.data   = {
             resourceUrl:xhr.responseURL,
             text:xhr.statusText,
             status:xhr.status
         }
         conf.errorList.push(defaults)
-    }
-
-    // fetch get time
-    function getFetchTime(type){
-        conf.fetchNum+=1
-        if(conf.fetLength === conf.fetchNum){
-            if(type=='success'){
-                console.log('走了 fetch success 方法')
-            }else{
-                console.log('走了 fetch error 方法')
-            }
-            conf.fetchNum = conf.fetLength = 0
-            fetchTime = new Date().getTime()-beginTime
-            getLargeTime();
-        }
     }
 
     // ajax get time
@@ -441,25 +349,16 @@ function Performance(option,fn){try{
         }
     }
 
-    function clearPerformance(type){
-        if(window.performance && window.performance.clearResourceTimings){
-            if(conf.haveAjax&&conf.haveFetch&&conf.ajaxLength==0&&conf.fetLength==0){
-                clear()
-            }else if(!conf.haveAjax&&conf.haveFetch&&conf.fetLength==0){
-                clear()
-            }else if(conf.haveAjax&&!conf.haveFetch&&conf.ajaxLength==0){
-                clear()
-            }
-        }    
-    } 
-    function clear(){
-        performance.clearResourceTimings();
-        conf.performance    = {}
-        conf.errorList      = []
-        conf.preUrl         = ''
-        conf.resourceList   = ''
-        conf.page           = location.href
-        ERRORLIST           = []
-        ADDDATA             = []
+    function clearPerformance(){
+        if (window.performance && window.performance.clearResourceTimings) {
+            performance.clearResourceTimings();
+            conf.performance    = {}
+            conf.errorList      = []
+            conf.preUrl         = ''
+            conf.resourceList   = ''
+            conf.page           = location.href
+            ERRORLIST           = []
+            ADDDATA             = []
+        }
     }
 }catch(err){}}

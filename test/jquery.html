@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>performance test</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+	<script src="https://cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
+	<script src="../src/performance-report-jquery.js"></script>
+	<script>
+		Performance({
+		    domain:'/api',
+		    add:{
+		    	appId:'C9B26D11F343B3B9FA903DA858064225'
+		    },
+		})
+
+		Performance.addData((data)=>{
+			data.name = 'wangwei'
+			data.some = {
+				name:'wangwie',
+				age:20
+			}
+		})
+	</script>
+</head>
+<body>
+	<div>performance test</div>
+	<div>
+		<ul>
+			<li>1</li>
+			<li>2</li>
+			<li>3</li>
+			<li>4</li>
+			<li>5</li>
+		</ul>
+		<h1>标题H1</h1>
+		<h2>标题H2</h2>
+		<h3>标题H3</h3>
+		<h4>标题H4</h4>
+		<h5>标题H5</h5>
+		<h6>标题H6</h6>
+		<img src="http://img1.imgtn.bd95510">
+		<img src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=295864288,1887240069&fm=27&gp=0.jpg" id="img1">
+	</div>
+	<script>
+
+		$.ajax({
+			type:'get',
+			url:'http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInf',
+			success:data=>{
+				// console.log(data)
+			}
+		})
+
+		$.get('http://mock-api.seosiwei.com/guest/order/api/order/getOrder0',{ name: "John", time: "2pm" },function(data){
+			console.log(data)
+		})
+		$.post('http://mock-api.seosiwei.com/guest/order/api/order/getOrder', { time: "2pm" }, function (data) {
+				console.log(data)
+			})
+		$.ajax({
+			type:'post',
+			report:'report-data1',
+			url:'http://mock-api.seosiwei.com/guest/order/api/order/getOrder',
+			data:{name:'wangwei'},
+			success:data=>{
+				// console.log('------')
+				// console.log(data)
+				// console.log(data)
+			},
+		})
+
+		console.log(wangwei)
+
+	</script>
+</body>
+</html>
+
+

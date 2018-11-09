@@ -107,7 +107,6 @@ function Performance(option, fn) {
                         body: JSON.stringify(result)
                     });
                 }
-                clearPerformance();
             }, opt.outtime);
         };
 
@@ -115,10 +114,10 @@ function Performance(option, fn) {
 
 
         var getLargeTime = function getLargeTime() {
-            if (conf.haveAjax && loadTime && ajaxTime) {
-                console.log("loadTime:" + loadTime + ",ajaxTime:" + ajaxTime);
+            if (conf.haveFetch && loadTime && fetchTime) {
+                console.log("loadTime:" + loadTime + ",fetchTime:" + fetchTime);
                 reportData();
-            } else if (loadTime) {
+            } else if (!conf.haveFetch && loadTime) {
                 console.log("loadTime:" + loadTime);
                 reportData();
             }
@@ -180,7 +179,6 @@ function Performance(option, fn) {
                         if (conf.ajaxMsg[i].url === item.name) {
                             json.method = conf.ajaxMsg[i].method || 'GET';
                             json.type = conf.ajaxMsg[i].type || json.type;
-                            json.options = conf.ajaxMsg[i].options || '';
                         }
                     }
                 }
@@ -189,81 +187,65 @@ function Performance(option, fn) {
             conf.resourceList = resourceList;
         };
 
-        // ajax重写
+        // 拦截fetch请求
 
 
-        var _Axios = function _Axios() {
-            if (!window.axios) return;
-            var _axios = window.axios;
-            var List = ['axios', 'request', 'get', 'delete', 'head', 'options', 'put', 'post', 'patch'];
-            List.forEach(function (item) {
-                _reseat(item);
-            });
-            function _reseat(item) {
-                var _key = null;
-                if (item === 'axios') {
-                    window['axios'] = resetFn;
-                    _key = _axios;
-                } else if (item === 'request') {
-                    window['axios']['request'] = resetFn;
-                    _key = _axios['request'];
-                } else {
-                    window['axios'][item] = resetFn;
-                    _key = _axios[item];
+        var _fetch = function _fetch() {
+            if (!window.fetch) return;
+            var _fetch = fetch;
+            window.fetch = function () {
+                var result = fetArg(arguments);
+                if (result.type !== 'report-data') {
+                    clearPerformance();
+                    conf.ajaxMsg.push(result);
+                    conf.fetLength = conf.fetLength + 1;
+                    conf.haveFetch = true;
                 }
-                function resetFn() {
-                    var result = ajaxArg(arguments, item);
-                    if (result.report !== 'report-data') {
-                        conf.ajaxMsg.push(result);
-                        conf.ajaxLength = conf.ajaxLength + 1;
-                        conf.haveAjax = true;
-                    }
-                    return _key.apply(this, arguments).then(function (res) {
-                        if (result.report === 'report-data') return res;
-                        getAjaxTime('load');
-                        return res;
-                    }).catch(function (err) {
-                        if (result.report === 'report-data') return res;
-                        getAjaxTime('error');
-                        //error
-                        ajaxResponse({
-                            statusText: err.message,
-                            method: result.method,
-                            responseURL: result.url,
-                            options: result.options,
-                            status: err.response ? err.response.status : 0
-                        });
-                        return err;
-                    });
-                }
-            }
+                return _fetch.apply(this, arguments).then(function (res) {
+                    if (result.type === 'report-data') return;
+                    getFetchTime('success');
+                    return res;
+                }).catch(function (err) {
+                    if (result.type === 'report-data') return;
+                    getFetchTime('error');
+                    //error
+                    var defaults = Object.assign({}, errordefo);
+                    defaults.t = new Date().getTime();
+                    defaults.n = 'fetch';
+                    defaults.msg = 'fetch request error';
+                    defaults.method = result.method;
+                    defaults.data = {
+                        resourceUrl: result.url,
+                        text: err.stack || err,
+                        status: 0
+                    };
+                    conf.errorList.push(defaults);
+                    return err;
+                });
+            };
         };
 
-        // Ajax arguments
+        // fetch arguments
 
 
-        var ajaxArg = function ajaxArg(arg, item) {
-            var result = { method: 'GET', type: 'xmlhttprequest', report: '' };
+        var fetArg = function fetArg(arg) {
+            var result = { method: 'GET', type: 'fetchrequest' };
             var args = Array.prototype.slice.apply(arg);
+
+            if (!args || !args.length) return result;
             try {
-                if (item == 'axios' || item == 'request') {
-                    result.url = args[0].url;
-                    result.method = args[0].method;
-                    result.options = result.method.toLowerCase() == 'get' ? args[0].params : args[0].data;
+                if (args.length === 1) {
+                    if (typeof args[0] === 'string') {
+                        result.url = args[0];
+                    } else if (_typeof(args[0]) === 'object') {
+                        result.url = args[0].url;
+                        result.method = args[0].method;
+                    }
                 } else {
                     result.url = args[0];
-                    result.method = '';
-                    if (args[1]) {
-                        if (args[1].params) {
-                            result.method = 'GET';
-                            result.options = args[1].params;
-                        } else {
-                            result.method = 'POST';
-                            result.options = args[1];
-                        }
-                    }
+                    result.method = args[1].method;
+                    result.type = args[1].type;
                 }
-                result.report = args[0].report;
             } catch (err) {}
             return result;
         };
@@ -304,54 +286,40 @@ function Performance(option, fn) {
             };
         };
 
-        // ajax统一上报入口
+        // fetch get time
 
 
-        var ajaxResponse = function ajaxResponse(xhr, type) {
-            var defaults = Object.assign({}, errordefo);
-            defaults.t = new Date().getTime();
-            defaults.n = 'ajax';
-            defaults.msg = xhr.statusText || 'ajax request error';
-            defaults.method = xhr.method;
-            defaults.options = xhr.options;
-            defaults.data = {
-                resourceUrl: xhr.responseURL,
-                text: xhr.statusText,
-                status: xhr.status
-            };
-            conf.errorList.push(defaults);
-        };
-
-        // ajax get time
-
-
-        var getAjaxTime = function getAjaxTime(type) {
-            conf.loadNum += 1;
-            if (conf.loadNum === conf.ajaxLength) {
-                if (type == 'load') {
-                    console.log('走了AJAX onload 方法');
-                } else if (type == 'readychange') {
-                    console.log('走了AJAX onreadystatechange 方法');
+        var getFetchTime = function getFetchTime(type) {
+            conf.fetchNum += 1;
+            if (conf.fetLength === conf.fetchNum) {
+                if (type == 'success') {
+                    console.log('走了 fetch success 方法');
                 } else {
-                    console.log('走了 error 方法');
+                    console.log('走了 fetch error 方法');
                 }
-                conf.ajaxLength = conf.loadNum = 0;
-                ajaxTime = new Date().getTime() - beginTime;
+                conf.fetchNum = conf.fetLength = 0;
+                fetchTime = new Date().getTime() - beginTime;
                 getLargeTime();
             }
         };
 
-        var clearPerformance = function clearPerformance() {
+        var clearPerformance = function clearPerformance(type) {
             if (window.performance && window.performance.clearResourceTimings) {
-                performance.clearResourceTimings();
-                conf.performance = {};
-                conf.errorList = [];
-                conf.preUrl = '';
-                conf.resourceList = '';
-                conf.page = location.href;
-                ERRORLIST = [];
-                ADDDATA = [];
+                if (conf.haveFetch && conf.fetLength == 0) {
+                    clear();
+                }
             }
+        };
+
+        var clear = function clear() {
+            performance.clearResourceTimings();
+            conf.performance = {};
+            conf.errorList = [];
+            conf.preUrl = '';
+            conf.resourceList = '';
+            conf.page = location.href;
+            ERRORLIST = [];
+            ADDDATA = [];
         };
 
         var opt = {
@@ -359,6 +327,8 @@ function Performance(option, fn) {
             domain: 'http://localhost/api',
             // 脚本延迟上报时间
             outtime: 300,
+            // ajax请求时需要过滤的url信息
+            filterUrl: ['http://localhost:35729/livereload.js?snipver=1', 'http://localhost:8000/sockjs-node/info'],
             // 是否上报页面性能数据
             isPage: true,
             // 是否上报ajax性能数据
@@ -378,16 +348,14 @@ function Performance(option, fn) {
             performance: {},
             // 错误列表
             errorList: [],
-            // ajax onload数量
-            loadNum: 0,
-            // 页面ajax数量
-            ajaxLength: 0,
+            // 页面fetch数量
+            fetchNum: 0,
+            // 页面fetch总数量
+            fetLength: 0,
             // 页面ajax信息
             ajaxMsg: [],
-            // ajax成功执行函数
-            goingType: '',
-            // 是否有ajax
-            haveAjax: false,
+            // 是否有fetch
+            haveFetch: false,
             // 来自域名
             preUrl: document.referrer && document.referrer !== location.href ? document.referrer : ''
             // error default
@@ -400,7 +368,6 @@ function Performance(option, fn) {
 
         var beginTime = new Date().getTime();
         var loadTime = 0;
-        var ajaxTime = 0;
         var fetchTime = 0;
 
         // error上报
@@ -412,7 +379,7 @@ function Performance(option, fn) {
             getLargeTime();
         }, false);
 
-        //  拦截ajax
-        if (opt.isAjax || opt.isError) _Axios();
+        // 执行fetch重写
+        if (opt.isAjax || opt.isError) _fetch();
     } catch (err) {}
 }
