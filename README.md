@@ -1,21 +1,19 @@
-### [**中文**](README.md) | [**英文**](EN-README.md)
-
-###  performance-report 是一款浏览器端页面性能，ajax, fetch ,错误信息，资源性能上报SDK，资源小巧，性能强悍
+###  web-report 是一款浏览器端页面性能，ajax, fetch ,错误信息，资源性能上报SDK，资源小巧，性能强悍
 
 ### 上报sdk有五种
->  * 一 ：所有类型通用的上报SDK 即：performance-report-default.js
->  * 二 ：针对于使用Jquery ajax的上报SDK 即：performance-report-jquery.js (jquery请使用3.0以上版本)
->  * 三 ：针对于使用Axios ajax的上报SDK 即：performance-report-axios.js
->  * 四 ：针对于业务代码手动触发的上报SDK 即：performance-report-none.js
->  * 五 ：针对于使用Fetch ajax的上报SDK 即：performance-report-fetch.js
+>  * 一 ：所有类型通用的上报SDK 即：web-report-default.js
+>  * 二 ：针对于使用Jquery ajax的上报SDK 即：web-report-jquery.js (jquery请使用3.0以上版本)
+>  * 三 ：针对于使用Axios ajax的上报SDK 即：web-report-axios.js
+>  * 四 ：针对于业务代码手动触发的上报SDK 即：web-report-none.js
+>  * 五 ：针对于使用Fetch ajax的上报SDK 即：web-report-fetch.js
 
 * 至于四种sdk的选择可酌情选择。通常来说转库专用会更好，因此使用jquery的推荐第二种，使用fetch的推荐第三种,使用Axios的推荐第三种，其他所有的使用通用版本第一种
 * 当然通用版本适合所有上报，使用jquery和axios,fetch的都能够很好的上报(必然带来包的体积最大)
 
-* performance-report SDK只做页面性，错误信息，资源信息，ajax信息等上报，让你不用关心浏览器上报部分，是一个比较完整和健全的数据上报插件。
+* web-report-sdk 只做页面性，错误信息，资源信息，ajax信息等上报，让你不用关心浏览器上报部分，是一个比较完整和健全的数据上报插件。
 * 在此基础上你可以开发任何自己需要的性能上报系统。
 
-### performance-report SDK主要上报一下性能信息
+### web-report SDK主要上报一下性能信息
 >  * preUrl         来访上一页面URL
 >  * performance    页面性能数据详情，字段含义详情请参考后面内容
 >  * errorList      页面错误信息详情，包含js,img,ajax,fetch等所有错误信息，字段含义详情请参考后面内容
@@ -29,8 +27,8 @@
 ### 以下我根据此SDK开发的一款完整版本前端性能监控系统
 https://github.com/wangweianger/egg-mongoose-performance-system
 
-### SDK npm 地址，npm版本默认default版本，即通用版本，若需要其他版本，请本地引入
-https://www.npmjs.com/package/performance-report
+### SDK npm 地址，npm版本默认default版本，即通用版本，若需要其他版本，请按需引入
+https://www.npmjs.com/package/web-report
 
 ### 注意事项
 * jquery 和 axios 版本需要放在jquery 或 axios之后，不然ajax错误性信息无法采集
@@ -40,7 +38,7 @@ https://www.npmjs.com/package/performance-report
 * 单页面应用程序主要资源只会加载一次，因此插件只统计第一次进入页面的资源性能详情，路由切换时是不需要再上报单页面已经加载的资源性能信息，因此此SDK鉴于此考虑，路由切换时只上报按需加载的资源信息和请求的页面ajax信息，触发条件为此页面是否有ajax，有则触发，无则不触发。
 
 ### 浏览器页面直接引用资源方式：
->  * 1、下载 dist/performance-report-default.min.js 到本地
+>  * 1、下载 dist/web-report-default.min.js 到本地
 >  * 2、使用script标签引入到html的头部（备注：放到所有js资源之前）
 >  * 3、使用performance函数进行数据的监听上报
 
@@ -49,7 +47,7 @@ https://www.npmjs.com/package/performance-report
 <head>
   <meta charset="UTF-8">
   <title>performance test</title>
-  <script src="../dist/performance-report-default.min.js"></script>
+  <script src="../dist/web-report-default.min.js"></script>
   <script>
     Performance({
         domain:'http://some.com/api', //Your API address
@@ -58,18 +56,35 @@ https://www.npmjs.com/package/performance-report
 </head>
 ```
 
+### npm引入方式
+```
+//通用版本引入
+import Performance form 'web-report'
+
+//按需引入
+
+import {
+  axiosReport,
+  defaultReport,
+  fetchReport,
+  jqueryReport,
+  noneReport,
+} rom 'web-report'
+
+```
+
 ### webpack 使用
 ```js
-npm install performance-report --save-dev
+npm install web-report --save-dev
 或者下载SDK到本地进行引入
 ```
 ```js
 //New performance.js file
 //The contents are as follows
 
-import Performance from 'performance-report'
+import { jqueryReport } rom 'web-report'
 
-Performance({ 
+jqueryReport({ 
   domain:'http://some.com/api' 
 })
 ```
@@ -208,7 +223,7 @@ If you use the Vue framework, you can do it like this.
 * 1、Introduce Performance
 * 2、Copy the following code
 ```js
-import Performance from 'performance-report'
+import Performance from 'web-report'
 
 Vue.config.errorHandler = function (err, vm, info) {
     let { message, stack } = err;
@@ -241,7 +256,7 @@ https://reactjs.org/blog/2017/07/26/error-handling-in-react-16.html
 react16之后提供Error Handling处理报错机制，父组件新增componentDidCatch钩子函数，父组件只能监听子组件的异常信息
 ```js
 //Top reference
-import Performance from 'performance-report'
+import Performance from 'web-report'
 
 //Parent component listens for subcomponent error information
 componentDidCatch(error, info) {
@@ -269,7 +284,7 @@ componentDidCatch(error, info) {
 
 ## Runing
 ```js
-git clone https://github.com/wangweianger/performance-report.git
+git clone https://github.com/wangweianger/web-report-sdk.git
 npm install
 
 //Development
@@ -393,7 +408,7 @@ http://localhost:8080/test/
   }, 
   "resourceList": [
     {
-      "name": "http://localhost:8080/dist/performance-report.js", 
+      "name": "http://localhost:8080/dist/web-report.js", 
       "method": "GET", 
       "type": "script", 
       "duration": "73.70", 
