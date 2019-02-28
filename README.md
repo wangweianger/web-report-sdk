@@ -2,7 +2,7 @@
 
 ### 上报sdk有五种
 >  * 一 ：所有类型通用的上报SDK 即：web-report-default.js
->  * 二 ：针对于使用Jquery ajax的上报SDK 即：web-report-jquery.js (jquery请使用3.0以上版本)
+>  * 二 ：针对于使用Jquery ajax的上报SDK 即：web-report-jquery.js (jquery请使用2.0以上版本)
 >  * 三 ：针对于使用Axios ajax的上报SDK 即：web-report-axios.js
 >  * 四 ：针对于业务代码手动触发的上报SDK 即：web-report-none.js
 >  * 五 ：针对于使用Fetch ajax的上报SDK 即：web-report-fetch.js
@@ -13,7 +13,7 @@
 * web-report-sdk 只做页面性，错误信息，资源信息，ajax信息等上报，让你不用关心浏览器上报部分，是一个比较完整和健全的数据上报插件。
 * 在此基础上你可以开发任何自己需要的性能上报系统。
 
-### web-report SDK主要上报一下性能信息
+### web-report SDK主要上报以下性能信息
 >  * preUrl         来访上一页面URL
 >  * performance    页面性能数据详情，字段含义详情请参考后面内容
 >  * errorList      页面错误信息详情，包含js,img,ajax,fetch等所有错误信息，字段含义详情请参考后面内容
