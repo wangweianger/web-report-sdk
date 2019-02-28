@@ -25,7 +25,7 @@
 >  * screenheight   屏幕高度
 
 ### 以下我根据此SDK开发的一款完整版本前端性能监控系统
-https://github.com/wangweianger/egg-mongoose-performance-system
+https://github.com/wangweianger/zanePerfor
 
 ### SDK npm 地址，npm版本默认default版本，即通用版本，若需要其他版本，请按需引入
 https://www.npmjs.com/package/web-report
@@ -57,7 +57,7 @@ https://www.npmjs.com/package/web-report
 ```
 
 ### npm引入方式
-```
+```js
 //通用版本引入
 import Performance form 'web-report'
 
@@ -110,7 +110,7 @@ new htmlWebpackPlugin({
 *  none JDK在程序中使用 window.ReportData();来触发上报
 *  在多页面中可加载插件后调用 window.ReportData() 方法直接上报。
 *  在vue中可如此使用：
-```
+```js
 router.afterEach((to, from, next) => {
   if(from.name){
     try{ window.ReportData(); }catch(e){}
@@ -137,7 +137,7 @@ router.afterEach((to, from, next) => {
 >  * fn         ：自定义上报函数，上报方式可以用ajax可以用fetch (非必填：默认使用fetch,如果使用ajax则必须参数 report:'report-data'，如果是fetch则必须参数：type:'report-data')
 
 * 案例
-```
+```js
 1、最简单最常用的上报
 Performance({
   domain:'http://some.com/api'  //你的api地址
