@@ -314,6 +314,28 @@ function Performance(option,fn){try{
                 conf.errorList.push(defaults)
             },0);
         };
+        window.addEventListener('unhandledrejection', function (e) {
+            const error = e && e.reason
+            const message = error.message || '';
+            const stack = error.stack || '';
+            // Processing error
+            let resourceUrl, col, line;
+            let errs = stack.match(/\(.+?\)/)
+            if (errs && errs.length) errs = errs[0]
+            errs = errs.replace(/\w.+[js|html]/g, $1 => { resourceUrl = $1; return ''; })
+            errs = errs.split(':')
+            if (errs && errs.length > 1) line = parseInt(errs[1] || 0); col = parseInt(errs[2] || 0)
+            let defaults = Object.assign({}, errordefo);
+            defaults.msg = message;
+            defaults.method = 'GET';
+            defaults.t = new Date().getTime();
+            defaults.data = {
+                resourceUrl: resourceUrl,
+                line: col,
+                col: line
+            };
+            conf.errorList.push(defaults)
+        })
     }
 
     // ajax统一上报入口
