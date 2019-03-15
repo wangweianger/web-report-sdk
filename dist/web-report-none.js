@@ -99,11 +99,17 @@ function Performance(option,fn){try{
     // 获得markpage
     function markUser(){
         let markUser = sessionStorage.getItem('ps_markUser')||'';
+        let result = {
+            markUser: markUser,
+            isFristIn: false,
+        };
         if(!markUser){
             markUser = randomString();
             sessionStorage.setItem('ps_markUser',markUser);
+            result.markUser = markUser;
+            result.isFristIn = true;
         }
-        return markUser;
+        return result;
     }
 
     // 获得Uv
@@ -129,6 +135,8 @@ function Performance(option,fn){try{
             let w = document.documentElement.clientWidth || document.body.clientWidth;
             let h = document.documentElement.clientHeight || document.body.clientHeight;
 
+            const markUser = markUser();
+
             let result = {
                 time:new Date().getTime(),
                 preUrl:conf.preUrl,
@@ -136,7 +144,8 @@ function Performance(option,fn){try{
                 performance:conf.performance,
                 resourceList:conf.resourceList,
                 addData:ADDDATA,
-                markUser:markUser(),
+                markUser:markuser.markUser,
+                isFristIn:markuser.isFristIn,
                 markUv:markUv(),
                 screenwidth:w,
                 screenheight:h,
