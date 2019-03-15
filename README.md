@@ -306,6 +306,7 @@ http://localhost:8080/test/
 | --- | --- | --- |
 | markUv | 统计uv标识 |  |
 | markUser | 用户标识  | 可用来做UV统计，和用户行为漏斗分析 |
+| isFristIn | 是否是每次会话的第一次渲染 | 可以用来做首屏渲染性能统计分类 |
 | screenwidth | 屏幕宽度  |  |
 | screenheight | 屏幕高度  |  |
 | preUrl | 上一页面  |  |
