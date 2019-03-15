@@ -155,8 +155,8 @@ Performance({
 Performance({},data=>{
   fetch('http://some.com/api',{
     type:'POST',
+    report:'report-data',
     headers: {'Content-Type': 'application/json'},
-    type:'report-data',
     body:JSON.stringify(data)
   }).then((data)=>{})
 })
@@ -165,6 +165,7 @@ Performance({},data=>{
 Performance({},data=>{
   $.ajax({
     type:'POST',
+    report:'report-data',
     contentType: 'application/json',
     data:{
       data:data
