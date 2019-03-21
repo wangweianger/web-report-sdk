@@ -12,9 +12,9 @@
 	<script src="../src/web-report-default.js"></script>
 	<script>
 		Performance({
-			domain: '/api',
+			domain: 'http://127.0.0.1:7001/api/v1/report/web',
 			add: {
-				appId: 'C9B26D11F343B3B9FA903DA858064225'
+				appId: 'DSHdcTA1548207437671'
 			},
 		})
 
@@ -72,7 +72,7 @@
 			$.ajax({
 				type:'get',
 				report:'report-data',
-				url:'http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInf',
+				url:'http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInfo',
 				success:data=>{
 					// console.log(data)
 				}

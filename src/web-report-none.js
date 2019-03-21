@@ -39,14 +39,15 @@ function randomString(len) {
 }
 window.ReportData = null;
 // web msgs report function
-function Performance(option,fn){try{  
+function Performance(option,fn){try{ 
+    let filterUrl = ['/api/v1/report/web', 'livereload.js?snipver=1', '/sockjs-node/info']; 
     let opt = {
         // 上报地址
         domain:'http://localhost/api',
         // 脚本延迟上报时间
         outtime:600,
         // ajax请求时需要过滤的url信息
-        filterUrl:['http://localhost:35729/livereload.js?snipver=1', 'http://localhost:8000/sockjs-node/info'],
+        filterUrl:[],
         // 是否上报页面性能数据
         isPage:true,
         // 是否上报ajax性能数据
@@ -59,6 +60,7 @@ function Performance(option,fn){try{
         add:{},
     }
     opt = Object.assign(opt,option);
+    opt.filterUrl = opt.filterUrl.concat(filterUrl);
     let conf = {
         //资源列表 
         resourceList:[],
@@ -182,6 +184,26 @@ function Performance(option,fn){try{
         return markUv;
     }
 
+    // 资源过滤
+    function filterResource() {
+        let reslist = conf.resourceList;
+        let filterUrl = opt.filterUrl;
+        let newlist = [];
+        if (reslist && reslist.length && filterUrl && filterUrl.length) {
+            for (let i = 0; i < reslist.length; i++) {
+                let begin = false;
+                for (let j = 0; j < filterUrl.length; j++) {
+                    if (reslist[i]['name'].indexOf(filterUrl[j]) > -1) {
+                        begin = true;
+                        break;
+                    }
+                }
+                if (!begin) newlist.push(reslist[i])
+            }
+        }
+        conf.resourceList = newlist;
+    }
+
     // report date
     // @type  1:页面级性能上报  2:页面ajax性能上报  3：页面内错误信息上报
     ReportData = function (type = 1){
@@ -201,6 +223,10 @@ function Performance(option,fn){try{
                 markUv: markUv(),
                 type: type,
             }
+
+            // 过滤
+            filterResource();
+
             if (type === 1) {
                 // 1:页面级性能上报
                 result = Object.assign(result, {
