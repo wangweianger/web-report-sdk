@@ -84,6 +84,8 @@ function Performance(option,fn){try{
         haveFetch:false,
         // 来自域名
         preUrl:document.referrer&&document.referrer!==location.href?document.referrer:'',
+        // 当前页面
+        page:'',
     }
     // error default
     let errordefo = {
@@ -195,7 +197,8 @@ function Performance(option,fn){try{
     }
 
     // report date
-    function reportData(){
+    // @type  1:页面级性能上报  2:页面ajax性能上报  3：页面内错误信息上报
+    function reportData(type=1){
         setTimeout(()=>{
             if(opt.isPage) perforPage();
             if(opt.isResource || opt.isAjax) perforResource();
@@ -207,44 +210,80 @@ function Performance(option,fn){try{
 
             let result = {
                 time:new Date().getTime(),
-                preUrl:conf.preUrl,
-                errorList:conf.errorList,
-                performance:conf.performance,
-                resourceList:conf.resourceList,
                 addData:ADDDATA,
                 markUser:markuser.markUser,
-                isFristIn:markuser.isFristIn,
                 markUv:markUv(),
-                screenwidth:w,
-                screenheight:h,
+                type: type,
+            }
+            if (type === 1){
+                // 1:页面级性能上报
+                result = Object.assign(result, {
+                    preUrl: conf.preUrl,
+                    errorList: conf.errorList,
+                    performance: conf.performance,
+                    resourceList: conf.resourceList,
+                    isFristIn: markuser.isFristIn,
+                    screenwidth: w,
+                    screenheight: h,
+                })
+            } else if (type === 2){
+                // 2:页面ajax性能上报
+                result = Object.assign(result, {
+                    resourceList: conf.resourceList,
+                    errorList: conf.errorList,
+                    isFristIn: markuser.isFristIn,
+                })
+            } else if (type === 3){
+                // 3：页面内错误信息上报
+                result = Object.assign(result, {
+                    errorList: conf.errorList,
+                    resourceList: conf.resourceList,
+                })
             }
             result = Object.assign(result,opt.add)
             fn&&fn(result)
             if(!fn && window.fetch){
-                fetch(opt.domain,{ 
+                fetch(opt.domain,{
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     type:'report-data',
                     body:JSON.stringify(result)
                 })
             }
+            // 清空无关数据
+            clear();
         },opt.outtime)
     }
 
     //比较onload与ajax时间长度
     function getLargeTime (){
-        if(conf.haveAjax&&conf.haveFetch&&loadTime&&ajaxTime&&fetchTime){
-            console.log(`loadTime:${loadTime},ajaxTime:${ajaxTime},fetchTime:${fetchTime}`)
-            reportData()
-        }else if(conf.haveAjax&&!conf.haveFetch&&loadTime&&ajaxTime){
-            console.log(`loadTime:${loadTime},ajaxTime:${ajaxTime}`)
-            reportData()
-        }else if(!conf.haveAjax&&conf.haveFetch&&loadTime&&fetchTime){
-            console.log(`loadTime:${loadTime},fetchTime:${fetchTime}`)
-            reportData()
-        }else if(!conf.haveAjax&&!conf.haveFetch&&loadTime){
-            console.log(`loadTime:${loadTime}`)
-            reportData()
+        if(conf.page !== location.href){
+            // 页面级性能上报
+            if(conf.haveAjax&&conf.haveFetch&&loadTime&&ajaxTime&&fetchTime){
+                console.log(`loadTime:${loadTime},ajaxTime:${ajaxTime},fetchTime:${fetchTime}`)
+                reportData(1)
+            }else if(conf.haveAjax&&!conf.haveFetch&&loadTime&&ajaxTime){
+                console.log(`loadTime:${loadTime},ajaxTime:${ajaxTime}`)
+                reportData(1)
+            }else if(!conf.haveAjax&&conf.haveFetch&&loadTime&&fetchTime){
+                console.log(`loadTime:${loadTime},fetchTime:${fetchTime}`)
+                reportData(1)
+            }else if(!conf.haveAjax&&!conf.haveFetch&&loadTime){
+                console.log(`loadTime:${loadTime}`)
+                reportData(1)
+            }
+        } else {
+            // 单页面内ajax上报
+            if (conf.haveAjax && conf.haveFetch && ajaxTime && fetchTime){
+                console.log(`ajaxTime:${ajaxTime},fetchTime:${fetchTime}`)
+                reportData(2)
+            } else if (conf.haveAjax && !conf.haveFetch && ajaxTime){
+                console.log(`ajaxTime:${ajaxTime}`)
+                reportData(2)
+            } else if (!conf.haveAjax && conf.haveFetch && fetchTime){
+                console.log(`fetchTime:${fetchTime}`)
+                reportData(2)
+            }
         }
     }
 
@@ -431,7 +470,6 @@ function Performance(option,fn){try{
         }catch(err){}
         return result;
     }
-
     // 拦截js error信息
     function _error(){
         // img,script,css,jsonp
@@ -446,10 +484,13 @@ function Performance(option,fn){try{
                type: e.type,
                resourceUrl:e.target.href || e.target.currentSrc,
             };
-            if(e.target!=window) conf.errorList.push(defaults)
+            if (e.target != window){
+                conf.errorList.push(defaults)
+            }
         },true);
         // js
         window.onerror = function(msg,_url,line,col,error){
+            console.log('-------')
             let defaults        = Object.assign({},errordefo);
             setTimeout(function(){
                 col = col || (window.event && window.event.errorCharacter) || 0;
@@ -462,6 +503,10 @@ function Performance(option,fn){try{
                 };
                 defaults.t      = new Date().getTime();
                 conf.errorList.push(defaults)
+                // 上报错误信息
+                if (conf.page === location.href) {
+                    if (conf.page === location.href) reportData(3);
+                }
             },0);
         };
         window.addEventListener('unhandledrejection', function (e) {
@@ -485,6 +530,7 @@ function Performance(option,fn){try{
                 col: line
             };
             conf.errorList.push(defaults)
+            if (conf.page === location.href) reportData(3)
         })
     }
 
@@ -551,9 +597,13 @@ function Performance(option,fn){try{
         conf.performance    = {}
         conf.errorList      = []
         conf.preUrl         = ''
-        conf.resourceList   = ''
+        conf.resourceList   = []
         conf.page           = location.href
+        conf.haveAjax       = false;
+        conf.haveFetch      = false;
         ERRORLIST           = []
-        ADDDATA             = []
+        ADDDATA             = {}
+        ajaxTime            = 0
+        fetchTime           = 0
     }
 }catch(err){}}

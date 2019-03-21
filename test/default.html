@@ -6,6 +6,7 @@
 	<title>performance test</title>
 	<meta name="viewport"
 		content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+	<link rel="stylesheet" href="001.css">	
 	<script src="https://cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script src="../src/web-report-default.js"></script>
@@ -43,11 +44,40 @@
 		<h4>标题H4</h4>
 		<h5>标题H5</h5>
 		<h6>标题H6</h6>
+		<div class="clice"><button id="button1">同步点击错误上报按钮</button></div>
+		<div class="clice" style="margin-top:20px;"><button id="button2">异步点击错误上报按钮</button></div>
+		<div class="clice" style="margin-top:20px;"><button id="button3">点击按钮Ajax性能上报按钮</button></div>
 		<!-- <img src="http://img1.imgtn.bd95510">
 		<img src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=295864288,1887240069&fm=27&gp=0.jpg" id="img1"> -->
 	</div>
 	<script>
-
+		$('#button1').click(()=>{
+			console.log(zane)
+		})
+		$('#button2').click(() => {
+			Promise.resolve().then(() => {
+				console.log(zane000)
+			})
+		})
+		$('#button3').click(()=>{
+			$.ajax({
+				type: 'post',
+				url: 'http://mock-api.seosiwei.com/guest/order/api/order/getOrde',
+				success: data => {
+					console.log('------')
+					console.log(data)
+					// console.log(data)
+				}
+			})
+			$.ajax({
+				type:'get',
+				report:'report-data',
+				url:'http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInf',
+				success:data=>{
+					// console.log(data)
+				}
+			})
+		})
 		// axios({
 		// 	  method: 'post',
 		// 	  url: 'http://mock-api.seosiwei.com/guest/order/api/order/getOrde1',
