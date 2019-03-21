@@ -417,7 +417,7 @@ function Performance(option,fn){try{
             if (conf.page === location.href && !conf.haveFetch) reportData(3);
         })
     }
-
+ 
     // fetch get time
     function getFetchTime(type){
         conf.fetchNum+=1

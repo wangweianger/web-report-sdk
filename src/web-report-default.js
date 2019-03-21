@@ -585,7 +585,7 @@ function Performance(option,fn){try{
             getLargeTime();
         }
     }
-
+ 
     // ajax get time
     function getAjaxTime(type){
         conf.loadNum+=1

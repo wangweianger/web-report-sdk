@@ -96,7 +96,7 @@ function Performance(option,fn){try{
         msg:'',  
         data:{}
     };
-
+ 
     // error上报
     if(opt.isError) _error();
 

@@ -160,7 +160,6 @@ function Performance(option,fn){try{
     // report date
     // @type  1:页面级性能上报  2:页面ajax性能上报  3：页面内错误信息上报
     function reportData(type = 1){
-        console.log('++++++++++++++')
         setTimeout(()=>{
             if(opt.isPage) perforPage();
             if(opt.isResource || opt.isAjax) perforResource();
