@@ -47,33 +47,32 @@
 
 ### npm引入方式
 ```js
-//通用版本引入
-import Performance form 'web-report'
-
-//按需引入
+npm install web-report --save
 
 import {
+  Performance,
   axiosReport,
   defaultReport,
   fetchReport,
   jqueryReport,
-  noneReport,
-} rom 'web-report'
+  noneReport
+} from 'web-report'
 
 ```
 
 ### webpack 使用
 ```js
-npm install web-report --save-dev
+npm install web-report --save
 或者下载SDK到本地进行引入
 ```
+
 ```js
 //New performance.js file
 //The contents are as follows
 
-import { jqueryReport } rom 'web-report'
+import { Performance } from 'web-report'
 
-jqueryReport({ 
+Performance({ 
   domain:'http://some.com/api' 
 })
 ```
