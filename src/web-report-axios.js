@@ -76,6 +76,8 @@ function Performance(option,fn){try{
         haveAjax:false,
         // 来自域名
         preUrl:document.referrer&&document.referrer!==location.href?document.referrer:'',
+        // 当前页面
+        page: '',
     }
     // error default
     let errordefo = {
@@ -88,7 +90,6 @@ function Performance(option,fn){try{
     let beginTime   = new Date().getTime()
     let loadTime    = 0
     let ajaxTime    = 0
-    let fetchTime   = 0
 
     // error上报
     if(opt.isError) _error();
@@ -133,7 +134,8 @@ function Performance(option,fn){try{
     }
 
     // report date
-    function reportData(){
+    // @type  1:页面级性能上报  2:页面ajax性能上报  3：页面内错误信息上报
+    function reportData(type = 1){
         setTimeout(()=>{
             if(opt.isPage) perforPage();
             if(opt.isResource || opt.isAjax) perforResource();
@@ -144,18 +146,37 @@ function Performance(option,fn){try{
             const markuser = markUser();
 
             let result = {
-                time:new Date().getTime(),
-                preUrl:conf.preUrl,
-                errorList:conf.errorList,
-                performance:conf.performance,
-                resourceList:conf.resourceList,
-                addData:ADDDATA,
-                markUser:markuser.markUser,
-                isFristIn:markuser.isFristIn,
-                markUv:markUv(),
-                screenwidth:w,
-                screenheight:h,
+                time: new Date().getTime(),
+                addData: ADDDATA,
+                markUser: markuser.markUser,
+                markUv: markUv(),
+                type: type,
             }
+            if (type === 1) {
+                // 1:页面级性能上报
+                result = Object.assign(result, {
+                    preUrl: conf.preUrl,
+                    errorList: conf.errorList,
+                    performance: conf.performance,
+                    resourceList: conf.resourceList,
+                    isFristIn: markuser.isFristIn,
+                    screenwidth: w,
+                    screenheight: h,
+                })
+            } else if (type === 2) {
+                // 2:页面ajax性能上报
+                result = Object.assign(result, {
+                    resourceList: conf.resourceList,
+                    errorList: conf.errorList,
+                })
+            } else if (type === 3) {
+                // 3：页面内错误信息上报
+                result = Object.assign(result, {
+                    errorList: conf.errorList,
+                    resourceList: conf.resourceList,
+                })
+            }
+
             result = Object.assign(result,opt.add)
             fn&&fn(result)
             if(!fn && window.fetch){
@@ -166,18 +187,28 @@ function Performance(option,fn){try{
                     body:JSON.stringify(result)
                 })
             }
-            clearPerformance();
+            // 清空无关数据
+            Promise.resolve().then(() => { clear() });
         },opt.outtime)
     }
 
     //比较onload与ajax时间长度
     function getLargeTime (){
-        if(conf.haveAjax&&loadTime&&ajaxTime){
-            console.log(`loadTime:${loadTime},ajaxTime:${ajaxTime}`)
-            reportData()
-        }else if(loadTime){
-            console.log(`loadTime:${loadTime}`)
-            reportData()
+        if (conf.page !== location.href) {
+            // 页面级性能上报
+            if (conf.haveAjax && loadTime && ajaxTime) {
+                console.log(`loadTime:${loadTime},ajaxTime:${ajaxTime}`)
+                reportData(1)
+            } else if (!conf.haveAjax && loadTime) {
+                console.log(`loadTime:${loadTime}`)
+                reportData(1)
+            }
+        }else{
+            // 单页面内ajax上报
+            if (conf.haveAjax && ajaxTime) {
+                console.log(`ajaxTime:${ajaxTime}`)
+                reportData(2)
+            }
         }
     }
 
@@ -348,7 +379,9 @@ function Performance(option,fn){try{
                     col:col
                 };
                 defaults.t      = new Date().getTime();
-                conf.errorList.push(defaults)
+                conf.errorList.push(defaults);
+                // 上报错误信息
+                if (conf.page === location.href && !conf.haveAjax) reportData(3);
             },0);
         };
         window.addEventListener('unhandledrejection', function (e) {
@@ -371,7 +404,8 @@ function Performance(option,fn){try{
                 line: col,
                 col: line
             };
-            conf.errorList.push(defaults)
+            conf.errorList.push(defaults);
+            if (conf.page === location.href && !conf.haveAjax) reportData(3);
         })
     }
 
@@ -408,16 +442,16 @@ function Performance(option,fn){try{
         }
     }
 
-    function clearPerformance(){
-        if (window.performance && window.performance.clearResourceTimings) {
-            performance.clearResourceTimings();
-            conf.performance    = {}
-            conf.errorList      = []
-            conf.preUrl         = ''
-            conf.resourceList   = ''
-            conf.page           = location.href
-            ERRORLIST           = []
-            ADDDATA             = []
-        }
+    function clear(){
+        if (window.performance && window.performance.clearResourceTimings) performance.clearResourceTimings();
+        conf.performance = {}
+        conf.errorList = []
+        conf.preUrl = ''
+        conf.resourceList = []
+        conf.page = location.href
+        conf.haveAjax = false;
+        ERRORLIST = []
+        ADDDATA = {}
+        ajaxTime = 0
     }
 }catch(err){}}

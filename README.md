@@ -358,6 +358,7 @@ http://localhost:8080/test/
   "time": 1524136760783, 
   "preUrl": "", 
   "appId":"123456789",
+  "type": 1,
   "markUv": "hzYyTkk2TzJ2M3dE1aR1539930145705"
   "markUser": "FtJ7BykWAPc3SyXQayd1539917250089"
   "errorList": [

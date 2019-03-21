@@ -1,28 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<title>performance test</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <script src="https://cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script src="../src/web-report-axios.js"></script>
 	<script>
 		Performance({
-		    domain:'/api',
-		    add:{
-		    	appId:'C9B26D11F343B3B9FA903DA858064225'
-		    },
+			domain: '/api',
+			add: {
+				appId: 'C9B26D11F343B3B9FA903DA858064225'
+			},
 		})
 
-		Performance.addData((data)=>{
+		Performance.addData((data) => {
 			data.name = 'wangwei'
 			data.some = {
-				name:'wangwie',
-				age:20
+				name: 'wangwie',
+				age: 20
 			}
 		})
 	</script>
 </head>
+
 <body>
 	<div>performance test</div>
 	<div>
@@ -41,14 +44,34 @@
 		<h6>标题H6</h6>
 		<img src="http://img1.imgtn.bd95510">
 		<img src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=295864288,1887240069&fm=27&gp=0.jpg" id="img1">
+		<div class="clice"><button id="button1">同步点击错误上报按钮</button></div>
+		<div class="clice" style="margin-top:20px;"><button id="button2">异步点击错误上报按钮</button></div>
+		<div class="clice" style="margin-top:20px;"><button id="button3">点击按钮Ajax性能上报按钮</button></div>
 	</div>
 	<script>
-
+		$('#button1').click(() => {
+			console.log(zane)
+		})
+		$('#button2').click(() => {
+			Promise.resolve().then(() => {
+				console.log(zane000)
+			})
+		})
+		$('#button3').click(() => {
+			axios({
+                method: 'post',
+                data: JSON.stringify({ name: 'zane' }),
+                url: 'http://mock-api.seosiwei.com/guest/order/api/order/getOrde1',
+            }).then(function (response) {
+                console.log(response)
+            });
+        })
+        
 		axios({
-			  method: 'post',
-			  data:JSON.stringify({name:'zane'}),
-			  url: 'http://mock-api.seosiwei.com/guest/order/api/order/getOrde1',
-		}).then(function(response) {
+			method: 'post',
+			data: JSON.stringify({ name: 'zane' }),
+			url: 'http://mock-api.seosiwei.com/guest/order/api/order/getOrde1',
+		}).then(function (response) {
 			console.log(response)
 		});
 		axios({
@@ -60,38 +83,39 @@
 		});
 		axios.request({
 			method: 'post',
-			data:{name:'zane'},
+			data: { name: 'zane' },
 			url: 'http://mock-api.seosiwei.com/guest/order/api/order/getOrder',
-		}).then(function(response) {
+		}).then(function (response) {
 			console.log(response)
 		});
-			
+
 		axios.post('/user', {
 			id: 1234,
 			name: 'xiaoming'
 		})
-		.then(function (response) {
-			console.log(response);
-		})
-		.catch(function (error) {
-			console.log(error);
-		});
+			.then(function (response) {
+				console.log(response);
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
 
-		axios.get('/user', { params: {
-					id: 1234,
-					name: 'xiaoming'
-				} })
-		  .then(function (response) {
-		    console.log(response);
-		  })
-		  .catch(function (error) {
-		    console.log(error);
-		  });
+		axios.get('/user', {
+			params: {
+				id: 1234,
+				name: 'xiaoming'
+			}
+		})
+			.then(function (response) {
+				console.log(response);
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
 
 		console.log(wangwei)
 
 	</script>
 </body>
+
 </html>
-
-
