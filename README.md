@@ -23,19 +23,8 @@
 >  * time           当前上报时间
 >  * screenwidth    屏幕宽度
 >  * screenheight   屏幕高度
-
-### 以下我根据此SDK开发的一款完整版本前端性能监控系统
-https://github.com/wangweianger/zanePerfor
-
-### SDK npm 地址，npm版本默认default版本，即通用版本，若需要其他版本，请按需引入
-https://www.npmjs.com/package/web-report
-
-### 注意事项
-* jquery 和 axios 版本需要放在jquery 或 axios之后，不然ajax错误性信息无法采集
-* 通用版本不受影响，可以在其之前之后引入都OK
-
-### 单页面程序上报处理
-* 单页面应用程序主要资源只会加载一次，因此插件只统计第一次进入页面的资源性能详情，路由切换时是不需要再上报单页面已经加载的资源性能信息，因此此SDK鉴于此考虑，路由切换时只上报按需加载的资源信息和请求的页面ajax信息，触发条件为此页面是否有ajax，有则触发，无则不触发。
+>  * isFristIn      是否是某次会话的第一次进入
+>  * type           上报类型  1:页面级性能上报  2:页面ajax性能上报  3：页面内错误信息上报
 
 ### 浏览器页面直接引用资源方式：
 >  * 1、下载 dist/web-report-default.min.js 到本地
@@ -123,8 +112,28 @@ router.afterEach((to, from, next) => {
 ```
 *  在react中也可以使用 withRouter 对路由跳转后进行统一上报。
 
-### 参数说明
 
+### 以下我根据此SDK开发的一款完整版本前端性能监控系统
+https://github.com/wangweianger/zanePerfor
+
+### SDK npm 地址，npm版本默认default版本，即通用版本，若需要其他版本，请按需引入
+https://www.npmjs.com/package/web-report
+
+### 注意事项
+* jquery和axios JDK需要放在jquery 或 axios之后，不然ajax错误性信息无法采集
+* 通用版本不受影响，可以在其之前之后引入都OK
+
+### 单页面程序上报处理
+* 增加每次会话的第一次进入标识：isFristIn，客观的统计用户第一次进入页面性能数据
+* 单页面应用程序路由切换时根据页面是否有ajax请求进行性能的上报
+* 也可以自行使用none类型jdk配合路由钩子进行上报
+
+### 上报参数type值说明（重要）
+* type = 1:  页面级别性能数据上报，即页面加载|路由切换时页面性能数据的上报
+* type = 2:  页面已加载完毕，当进行某些操作请求了ajax信息时，对ajax性能数据的上报（如果ajax报错则上报错误信息）
+* type = 3:  页面已加载完毕，当进行某些操作报错时，对错误信息的上报
+
+### 参数说明
 >  * 同时传入 domain和传入的function ，function优先级更高，也就是说function会执行
 >  * domain     ：上报api接口
 >  * outtime    ：上报延迟时间，保证异步数据的加载 （默认：300ms）
@@ -307,6 +316,7 @@ http://localhost:8080/test/
 | markUv | 统计uv标识 |  |
 | markUser | 用户标识  | 可用来做UV统计，和用户行为漏斗分析 |
 | isFristIn | 是否是每次会话的第一次渲染 | 可以用来做首屏渲染性能统计分类 |
+| type | 上报类型 | 1:页面级性能上报  2:页面ajax性能上报  3：页面内错误信息上报 |
 | screenwidth | 屏幕宽度  |  |
 | screenheight | 屏幕高度  |  |
 | preUrl | 上一页面  |  |
