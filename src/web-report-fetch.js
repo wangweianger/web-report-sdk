@@ -173,6 +173,7 @@ function Performance(option,fn){try{
                 markUser: markuser.markUser,
                 markUv: markUv(),
                 type: type,
+                url:location.href,
             }
 
             // 过滤

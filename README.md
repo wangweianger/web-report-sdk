@@ -14,6 +14,7 @@
 * 在此基础上你可以开发任何自己需要的性能上报系统。
 
 ### web-report SDK主要上报以下性能信息
+>  * url            上报页面地址
 >  * preUrl         来访上一页面URL
 >  * performance    页面性能数据详情，字段含义详情请参考后面内容
 >  * errorList      页面错误信息详情，包含js,img,ajax,fetch等所有错误信息，字段含义详情请参考后面内容
@@ -312,6 +313,7 @@ http://localhost:8080/test/
 
 | parameter name | describe | explain |
 | --- | --- | --- |
+| url | 上报页面地址 |  |
 | markUv | 统计uv标识 |  |
 | markUser | 用户标识  | 可用来做UV统计，和用户行为漏斗分析 |
 | isFristIn | 是否是每次会话的第一次渲染 | 可以用来做首屏渲染性能统计分类 |
@@ -358,8 +360,10 @@ http://localhost:8080/test/
   "preUrl": "", 
   "appId":"123456789",
   "type": 1,
-  "markUv": "hzYyTkk2TzJ2M3dE1aR1539930145705"
-  "markUser": "FtJ7BykWAPc3SyXQayd1539917250089"
+  "isFristIn": true,
+  "markUv": "hzYyTkk2TzJ2M3dE1aR1539930145705",
+  "markUser": "FtJ7BykWAPc3SyXQayd1539917250089",
+  "url":"http://blog.seosiwei.com",
   "errorList": [
     {
       "t": 1524136759597, 
