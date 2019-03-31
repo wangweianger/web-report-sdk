@@ -116,7 +116,7 @@ router.afterEach((to, from, next) => {
 ### 以下我根据此SDK开发的一款完整版本前端性能监控系统
 https://github.com/wangweianger/zanePerfor
 
-### SDK npm 地址，npm版本默认default版本，即通用版本，若需要其他版本，请按需引入
+### SDK npm 地址
 https://www.npmjs.com/package/web-report
 
 ### 注意事项
