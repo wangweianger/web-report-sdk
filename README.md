@@ -121,7 +121,6 @@ https://www.npmjs.com/package/web-report
 
 ### 注意事项
 * jquery和axios JDK需要放在jquery 或 axios之后，不然ajax错误性信息无法采集
-* 通用版本不受影响，可以在其之前之后引入都OK
 
 ### 单页面程序上报处理
 * 增加每次会话的第一次进入标识：isFristIn，客观的统计用户第一次进入页面性能数据
