@@ -2926,6 +2926,11 @@ vinyl@^2.1.0:
     remove-trailing-separator "^1.0.1"
     replace-ext "^1.0.0"
 
+web-report@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.npmjs.org/web-report/-/web-report-1.0.5.tgz#940e6632f3d516286f5964e50a74f2124d45eae2"
+  integrity sha512-71weNGe/kgBgee0nnI+2uc/ksKRchduIb41hnNSdgxuJ9gLm5W8NRWhLiqJYm160MJWE52xEDmYBvvig434Wlw==
+
 websocket-driver@>=0.5.1:
   version "0.7.0"
   resolved "https://registry.npmjs.org/websocket-driver/-/websocket-driver-0.7.0.tgz#0caf9d2d755d93aee049d4bdd0d3fe2cca2a24eb"
