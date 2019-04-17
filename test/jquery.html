@@ -67,7 +67,7 @@
 			$.ajax({
 				type: 'get',
 				report: 'report-data',
-				url: 'http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInf',
+				url: 'http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInfo',
 				success: data => {
 					// console.log(data)
 				}
@@ -77,13 +77,13 @@
 
 		$.ajax({
 			type:'get',
-			url:'http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInf',
+			url:'http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInfo',
 			success:data=>{
 				// console.log(data)
 			}
 		})
 
-		$.get('http://mock-api.seosiwei.com/guest/order/api/order/getOrder0',{ name: "John", time: "2pm" },function(data){
+		$.get('http://mock-api.seosiwei.com/guest/order/api/order/getOrder',{ name: "John", time: "2pm" },function(data){
 			console.log(data)
 		})
 		$.post('http://mock-api.seosiwei.com/guest/order/api/order/getOrder', { time: "2pm" }, function (data) {

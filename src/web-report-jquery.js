@@ -74,7 +74,7 @@ function Performance(option, fn) {
             // 页面ajax数量
             ajaxLength: 0,
             // 页面ajax信息
-            ajaxMsg: [],
+            ajaxMsg: {},
             // ajax成功执行函数
             goingType: '',
             // 是否有ajax
@@ -289,14 +289,12 @@ function Performance(option, fn) {
                     decodedBodySize: item.decodedBodySize || 0,
                     nextHopProtocol: item.nextHopProtocol,
                 }
-                if (conf.ajaxMsg && conf.ajaxMsg.length) {
-                    for (let i = 0, len = conf.ajaxMsg.length; i < len; i++) {
-                        if (conf.ajaxMsg[i].url === item.name) {
-                            json.method = conf.ajaxMsg[i].method || 'GET'
-                            json.type = conf.ajaxMsg[i].type || json.type
-                            json.options = conf.ajaxMsg[i].options
-                        }
-                    }
+                const name = item.name ? item.name.split('?')[0]:'';
+                const ajaxMsg = conf.ajaxMsg[name] || '';
+                if (ajaxMsg) {
+                    json.method = ajaxMsg.method || 'GET'
+                    json.type = ajaxMsg.type || json.type
+                    json.decodedBodySize = json.decodedBodySize || ajaxMsg.decodedBodySize;
                 }
                 resourceList.push(json)
             })
@@ -313,14 +311,17 @@ function Performance(option, fn) {
                 value: function() {
                     const config = ajaxArg(arguments)
                     if (config.report !== 'report-data') {
-                        conf.ajaxMsg.push(config)
+                        const url = config.url ? config.url.split('?')[0] : '';
+                        conf.ajaxMsg[url] = config;
                         conf.ajaxLength = conf.ajaxLength + 1;
                         conf.haveAjax = true
                     }
                     const _complete = arguments[0].complete || function(data) {};
                     arguments[0].complete = function(data) {
-                        if (config.report === 'report-data') return res;
+                        if (this.report === 'report-data') return res;
                         if (data.status === 200 && data.readyState === 4) {
+                            const url = this.url ? this.url.split('?')[0] : '';
+                            try { if (conf.ajaxMsg[url]) conf.ajaxMsg[url]['decodedBodySize'] = data.responseText.length; } catch (e) { };
                             getAjaxTime('load');
                         } else {
                             getAjaxTime('error');
@@ -454,6 +455,7 @@ function Performance(option, fn) {
             conf.resourceList = []
             conf.page = location.href
             conf.haveAjax = false;
+            conf.ajaxMsg = {};
             ERRORLIST = []
             ADDDATA = {}
             ajaxTime = 0

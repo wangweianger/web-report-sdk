@@ -78,7 +78,7 @@ function Performance(option, fn) {
             // 页面fetch总数量
             fetLength: 0,
             // 页面ajax信息
-            ajaxMsg: [],
+            ajaxMsg: {},
             // ajax成功执行函数
             goingType: '',
             // 是否有ajax
@@ -122,9 +122,11 @@ function Performance(option, fn) {
                     setTimeout(() => {
                         if (conf.goingType === 'load') return;
                         conf.goingType = 'readychange';
-
                         getAjaxTime('readychange')
-
+                        try { 
+                            const responseURL = xhr.xhr.responseURL ? xhr.xhr.responseURL.split('?')[0] : '';
+                            if (conf.ajaxMsg[responseURL]) conf.ajaxMsg[responseURL]['decodedBodySize'] = xhr.xhr.responseText.length; 
+                        } catch (err) { }
                         if (xhr.status < 200 || xhr.status > 300) {
                             xhr.method = xhr.args.method
                             ajaxResponse(xhr)
@@ -146,6 +148,10 @@ function Performance(option, fn) {
                     if (conf.goingType === 'readychange') return;
                     conf.goingType = 'load';
                     getAjaxTime('load');
+                    try {
+                        const responseURL = xhr.xhr.responseURL ? xhr.xhr.responseURL.split('?')[0] : '';
+                        if (conf.ajaxMsg[responseURL]) conf.ajaxMsg[responseURL]['decodedBodySize'] = xhr.xhr.responseText.length;
+                    } catch (err) { }
                     if (xhr.status < 200 || xhr.status > 300) {
                         xhr.method = xhr.args.method
                         ajaxResponse(xhr)
@@ -163,7 +169,7 @@ function Performance(option, fn) {
                 this.args = result
 
                 clearPerformance()
-                conf.ajaxMsg.push(result)
+                conf.ajaxMsg[result.url] = result;
                 conf.ajaxLength = conf.ajaxLength + 1;
                 conf.haveAjax = true
             }
@@ -362,13 +368,12 @@ function Performance(option, fn) {
                     decodedBodySize: item.decodedBodySize || 0,
                     nextHopProtocol: item.nextHopProtocol,
                 }
-                if (conf.ajaxMsg && conf.ajaxMsg.length) {
-                    for (let i = 0, len = conf.ajaxMsg.length; i < len; i++) {
-                        if (conf.ajaxMsg[i].url === item.name) {
-                            json.method = conf.ajaxMsg[i].method || 'GET'
-                            json.type = conf.ajaxMsg[i].type || json.type
-                        }
-                    }
+                const name = item.name ? item.name.split('?')[0] : '';
+                const ajaxMsg = conf.ajaxMsg[name] || '';
+                if (ajaxMsg){
+                    json.method = ajaxMsg.method || 'GET'
+                    json.type = ajaxMsg.type || json.type
+                    json.decodedBodySize = json.decodedBodySize || ajaxMsg.decodedBodySize;
                 }
                 resourceList.push(json)
             })
@@ -442,18 +447,22 @@ function Performance(option, fn) {
             if (!window.fetch) return;
             let _fetch = fetch
             window.fetch = function() {
-                let _arg = arguments
-                let result = fetArg(_arg)
-
+                const _arg = arguments
+                const result = fetArg(_arg)
                 if (result.type !== 'report-data') {
                     clearPerformance()
-                    conf.ajaxMsg.push(result)
+                    const url = result.url ? result.url.split('?')[0] : '';
+                    conf.ajaxMsg[url] = result;
                     conf.fetLength = conf.fetLength + 1;
                     conf.haveFetch = true
                 }
                 return _fetch.apply(this, arguments)
                     .then((res) => {
                         if (result.type === 'report-data') return;
+                        try { 
+                            const url = res.url ? res.url.split('?')[0] : '';
+                            res.text().then(data => { if (conf.ajaxMsg[url]) conf.ajaxMsg[url]['decodedBodySize'] = data.length; })
+                        }catch(e){}
                         getFetchTime('success')
                         return res
                     })
@@ -493,8 +502,8 @@ function Performance(option, fn) {
                     }
                 } else {
                     result.url = args[0]
-                    result.method = args[1].method
-                    result.type = args[1].type
+                    result.method = args[1].method || 'GET'
+                    result.type = args[1].type || 'fetchrequest'
                 }
             } catch (err) {}
             return result;
@@ -627,6 +636,7 @@ function Performance(option, fn) {
             conf.page = type === 0 ? location.href : '';
             conf.haveAjax = false;
             conf.haveFetch = false;
+            conf.ajaxMsg = {};
             ERRORLIST = []
             ADDDATA = {}
             ajaxTime = 0

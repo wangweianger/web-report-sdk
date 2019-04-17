@@ -74,7 +74,7 @@ function Performance(option, fn) {
             // 页面fetch总数量
             fetLength: 0,
             // 页面ajax信息
-            ajaxMsg: [],
+            ajaxMsg: {},
             // 是否有fetch
             haveFetch: false,
             // 来自域名
@@ -287,13 +287,12 @@ function Performance(option, fn) {
                     decodedBodySize: item.decodedBodySize || 0,
                     nextHopProtocol: item.nextHopProtocol,
                 }
-                if (conf.ajaxMsg && conf.ajaxMsg.length) {
-                    for (let i = 0, len = conf.ajaxMsg.length; i < len; i++) {
-                        if (conf.ajaxMsg[i].url === item.name) {
-                            json.method = conf.ajaxMsg[i].method || 'GET'
-                            json.type = conf.ajaxMsg[i].type || json.type
-                        }
-                    }
+                const name = item.name ? item.name.split('?')[0] : '';
+                const ajaxMsg = conf.ajaxMsg[name] || '';
+                if (ajaxMsg) {
+                    json.method = ajaxMsg.method || 'GET'
+                    json.type = ajaxMsg.type || json.type
+                    json.decodedBodySize = json.decodedBodySize || ajaxMsg.decodedBodySize;
                 }
                 resourceList.push(json)
             })
@@ -308,7 +307,8 @@ function Performance(option, fn) {
                 const result = fetArg(arguments)
                 if (result.type !== 'report-data') {
                     clearPerformance()
-                    conf.ajaxMsg.push(result)
+                    const url = result.url ? result.url.split('?')[0] : '';
+                    conf.ajaxMsg[url] = result;
                     conf.fetLength = conf.fetLength + 1;
                     conf.haveFetch = true
                 }
@@ -316,6 +316,10 @@ function Performance(option, fn) {
                     .then((res) => {
                         if (result.type === 'report-data') return;
                         getFetchTime('success')
+                        try { 
+                            const url = res.url ? res.url.split('?')[0] : '';
+                            res.text().then(data => { if (conf.ajaxMsg[url]) conf.ajaxMsg[url]['decodedBodySize'] = data.length; }) 
+                        } catch (e) { }
                         return res
                     })
                     .catch((err) => {
@@ -354,8 +358,8 @@ function Performance(option, fn) {
                     }
                 } else {
                     result.url = args[0]
-                    result.method = args[1].method
-                    result.type = args[1].type
+                    result.method = args[1].method || 'GET'
+                    result.type = args[1].type || 'fetchrequest'
                 }
             } catch (err) {}
             return result;
@@ -451,6 +455,7 @@ function Performance(option, fn) {
             conf.preUrl = ''
             conf.resourceList = []
             conf.haveFetch = false;
+            conf.ajaxMsg = {};
             ERRORLIST = []
             ADDDATA = {}
             fetchTime = 0

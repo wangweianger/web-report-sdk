@@ -7,7 +7,7 @@
 	<meta name="viewport"
 		content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
 	<link rel="stylesheet" href="001.css">	
-	<script src="https://cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
+	<script src="https://cdn.bootcss.com/jquery/1.12.0/jquery.min.js"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script src="../src/web-report-default.js"></script>
 	<script>
@@ -65,7 +65,6 @@
 				url: 'http://mock-api.seosiwei.com/guest/order/api/order/getOrder',
 				success: data => {
 					console.log('------')
-					console.log(data)
 				}
 			})
 			$.ajax({
@@ -109,11 +108,9 @@
 
 		$.ajax({
 			type: 'post',
-			url: 'http://mock-api.seosiwei.com/guest/order/api/order/getOrder',
+			url: 'http://mock-api.seosiwei.com/guest/order/api/order/getOrder?time=123456',
 			success: data => {
 				console.log('------')
-				console.log(data)
-				// console.log(data)
 			}
 		})
 
@@ -125,11 +122,11 @@
 		// 	}
 		// })
 
-		// fetch('http://mock-api.seosiwei.com/guest/order/api/order/getOrde', {
-		// 	method: 'POST',
-		// }).then(function (response) {
-		// 	console.log('++++')
-		// })
+		fetch('http://mock-api.seosiwei.com/guest/order/api/order/getOrder', {
+			method: 'POST',
+		}).then(function (response) {
+			console.log('++++')
+		})
 
 		// var req = new Request('http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInfo', { method: 'GET', cache: 'reload' });
 		// fetch(req).then(function (response) {

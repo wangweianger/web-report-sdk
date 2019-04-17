@@ -83,6 +83,7 @@
 		});
 		axios.request({
 			method: 'post',
+			type:'report-data',
 			data: { name: 'zane' },
 			url: 'http://mock-api.seosiwei.com/guest/order/api/order/getOrder',
 		}).then(function (response) {
