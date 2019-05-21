@@ -232,7 +232,7 @@ If you use the Vue framework, you can do it like this.
 * 1、Introduce Performance
 * 2、Copy the following code
 ```js
-import Performance from 'web-report'
+import { Performance } from 'web-report'
 
 Vue.config.errorHandler = function (err, vm, info) {
     let { message, stack } = err;
@@ -265,7 +265,7 @@ https://reactjs.org/blog/2017/07/26/error-handling-in-react-16.html
 react16之后提供Error Handling处理报错机制，父组件新增componentDidCatch钩子函数，父组件只能监听子组件的异常信息
 ```js
 //Top reference
-import Performance from 'web-report'
+import { Performance } from 'web-report'
 
 //Parent component listens for subcomponent error information
 componentDidCatch(error, info) {
