@@ -224,11 +224,17 @@ function Performance(option, fn) {
         };
 
         // 统计页面资源性能
+<<<<<<< HEAD
 
 
         var perforResource = function perforResource() {
             if (!window.performance && !window.performance.getEntries) return false;
             var resource = performance.getEntriesByType('resource');
+=======
+        function perforResource() {
+            if (!window.performance || !window.performance.getEntries) return false;
+            let resource = performance.getEntriesByType('resource')
+>>>>>>> ef1afc85baee53ccdc683c920256f1bb9f1026f2
 
             var resourceList = [];
             if (!resource && !resource.length) return resourceList;

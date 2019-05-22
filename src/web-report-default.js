@@ -351,7 +351,7 @@ function Performance(option, fn) {
 
         // 统计页面资源性能
         function perforResource() {
-            if (!window.performance && !window.performance.getEntries) return false;
+            if (!window.performance || !window.performance.getEntries) return false;
             let resource = performance.getEntriesByType('resource')
 
             let resourceList = [];
