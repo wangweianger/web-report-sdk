@@ -358,8 +358,8 @@ function Performance(option, fn) {
             if (!resource && !resource.length) return resourceList;
 
             resource.forEach((item) => {
-                if (!opt.isAjax && (item.initiatorType == 'xmlhttprequest' || item.initiatorType == 'fetchrequest')) return;
-                if (!opt.isResource && (item.initiatorType != 'xmlhttprequest' && item.initiatorType !== 'fetchrequest')) return;
+                if (!opt.isAjax && (item.initiatorType == 'xmlhttprequest' || item.initiatorType == 'fetch')) return;
+                if (!opt.isResource && (item.initiatorType != 'xmlhttprequest' && item.initiatorType !== 'fetch')) return;
                 let json = {
                     name: item.name,
                     method: 'GET',
