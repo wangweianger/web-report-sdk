@@ -1,6 +1,6 @@
 /*!
- * performance-report Javascript Library 0.0.1
- * https://github.com/wangweianger/web-performance-report
+ * performance-report Javascript Library 1.0.0
+ * https://github.com/wangweianger/web-report-sdk
  * Date : 2018-04-18
  * auther :zane
  */
@@ -12,7 +12,7 @@ if (typeof require === 'function' && typeof exports === "object" && typeof modul
 
 window.ERRORLIST = [];
 window.ADDDATA = {};
-Performance.addError = function(err) {
+Performance.addError = function (err) {
     err = {
         method: 'GET',
         msg: err.msg,
@@ -25,7 +25,7 @@ Performance.addError = function(err) {
     }
     ERRORLIST.push(err)
 }
-Performance.addData = function(fn) { fn && fn(ADDDATA) };
+Performance.addData = function (fn) { fn && fn(ADDDATA) };
 
 function randomString(len) {
     len = len || 10;
@@ -98,7 +98,7 @@ function Performance(option, fn) {
         if (opt.isError) _error();
 
         // 绑定onload事件
-        addEventListener("load", function() {
+        addEventListener("load", function () {
             loadTime = new Date().getTime() - beginTime
             getLargeTime();
         }, false);
@@ -303,7 +303,7 @@ function Performance(option, fn) {
         function _fetch() {
             if (!window.fetch) return;
             const _fetch = fetch
-            window.fetch = function() {
+            window.fetch = function () {
                 const result = fetArg(arguments)
                 if (result.type !== 'report-data') {
                     clearPerformance()
@@ -316,9 +316,9 @@ function Performance(option, fn) {
                     .then((res) => {
                         if (result.type === 'report-data') return;
                         getFetchTime('success')
-                        try { 
+                        try {
                             const url = res.url ? res.url.split('?')[0] : '';
-                            res.text().then(data => { if (conf.ajaxMsg[url]) conf.ajaxMsg[url]['decodedBodySize'] = data.length; }) 
+                            res.text().then(data => { if (conf.ajaxMsg[url]) conf.ajaxMsg[url]['decodedBodySize'] = data.length; })
                         } catch (e) { }
                         return res
                     })
@@ -350,9 +350,9 @@ function Performance(option, fn) {
             if (!args || !args.length) return result;
             try {
                 if (args.length === 1) {
-                    if (typeof(args[0]) === 'string') {
+                    if (typeof (args[0]) === 'string') {
                         result.url = args[0]
-                    } else if (typeof(args[0]) === 'object') {
+                    } else if (typeof (args[0]) === 'object') {
                         result.url = args[0].url
                         result.method = args[0].method
                     }
@@ -361,14 +361,14 @@ function Performance(option, fn) {
                     result.method = args[1].method || 'GET'
                     result.type = args[1].type || 'fetchrequest'
                 }
-            } catch (err) {}
+            } catch (err) { }
             return result;
         }
 
         // 拦截js error信息
         function _error() {
             // img,script,css,jsonp
-            window.addEventListener('error', function(e) {
+            window.addEventListener('error', function (e) {
                 let defaults = Object.assign({}, errordefo);
                 defaults.n = 'resource'
                 defaults.t = new Date().getTime();
@@ -382,9 +382,9 @@ function Performance(option, fn) {
                 if (e.target != window) conf.errorList.push(defaults)
             }, true);
             // js
-            window.onerror = function(msg, _url, line, col, error) {
+            window.onerror = function (msg, _url, line, col, error) {
                 let defaults = Object.assign({}, errordefo);
-                setTimeout(function() {
+                setTimeout(function () {
                     col = col || (window.event && window.event.errorCharacter) || 0;
                     defaults.msg = error && error.stack ? error.stack.toString() : msg
                     defaults.method = 'GET'
@@ -399,7 +399,7 @@ function Performance(option, fn) {
                     if (conf.page === location.href && !conf.haveFetch) reportData(3);
                 }, 0);
             };
-            window.addEventListener('unhandledrejection', function(e) {
+            window.addEventListener('unhandledrejection', function (e) {
                 const error = e && e.reason
                 const message = error.message || '';
                 const stack = error.stack || '';
@@ -423,6 +423,22 @@ function Performance(option, fn) {
                 conf.errorList.push(defaults);
                 if (conf.page === location.href && !conf.haveFetch) reportData(3);
             })
+            // 重写console.error
+            const oldError = console.error;
+            console.error = function (e) {
+                let defaults = Object.assign({}, errordefo);
+                setTimeout(function () {
+                    defaults.msg = e;
+                    defaults.method = 'GET';
+                    defaults.t = new Date().getTime();
+                    defaults.data = {
+                        resourceUrl: location.href,
+                    };
+                    conf.errorList.push(defaults);
+                    if (conf.page === location.href && !conf.haveAjax) reportData(3);
+                }, 0);
+                return oldError.apply(console, arguments);
+            };
         }
 
         // fetch get time
@@ -461,5 +477,5 @@ function Performance(option, fn) {
             fetchTime = 0
             if (type === 0) conf.page = location.href;
         }
-    } catch (err) {}
+    } catch (err) { }
 }

@@ -1,6 +1,6 @@
 /*!
- * performance-report Javascript Library 0.0.1
- * https://github.com/wangweianger/web-performance-report
+ * performance-report Javascript Library 1.0.0
+ * https://github.com/wangweianger/web-report-sdk
  * Date : 2018-04-18
  * auther :zane
  */
@@ -12,7 +12,7 @@ if (typeof require === 'function' && typeof exports === "object" && typeof modul
 
 window.ERRORLIST = [];
 window.ADDDATA = {};
-Performance.addError = function(err) {
+Performance.addError = function (err) {
     err = {
         method: 'GET',
         msg: err.msg,
@@ -25,7 +25,7 @@ Performance.addError = function(err) {
     }
     ERRORLIST.push(err)
 }
-Performance.addData = function(fn) { fn && fn(ADDDATA) };
+Performance.addData = function (fn) { fn && fn(ADDDATA) };
 
 function randomString(len) {
     len = len || 10;
@@ -103,7 +103,7 @@ function Performance(option, fn) {
 
         //  拦截ajax
         if (opt.isAjax || opt.isError) _Ajax({
-            onreadystatechange: function(xhr) {
+            onreadystatechange: function (xhr) {
                 if (xhr.readyState === 4) {
                     setTimeout(() => {
                         if (conf.goingType === 'load') return;
@@ -118,7 +118,7 @@ function Performance(option, fn) {
                     }, 600)
                 }
             },
-            onerror: function(xhr) {
+            onerror: function (xhr) {
                 getAjaxTime('error')
                 if (xhr.args) {
                     xhr.method = xhr.args.method
@@ -127,7 +127,7 @@ function Performance(option, fn) {
                 }
                 ajaxResponse(xhr)
             },
-            onload: function(xhr) {
+            onload: function (xhr) {
                 if (xhr.readyState === 4) {
                     if (conf.goingType === 'readychange') return;
                     conf.goingType = 'load';
@@ -138,7 +138,7 @@ function Performance(option, fn) {
                     }
                 }
             },
-            open: function(arg, xhr) {
+            open: function (arg, xhr) {
                 if (opt.filterUrl && opt.filterUrl.length) {
                     let begin = false;
                     opt.filterUrl.forEach(item => { if (arg[1].indexOf(item) != -1) begin = true; })
@@ -207,7 +207,7 @@ function Performance(option, fn) {
 
         // report date
         // @type  1:页面级性能上报  2:页面ajax性能上报  3：页面内错误信息上报
-        ReportData = function(type = 1) {
+        ReportData = function (type = 1) {
             setTimeout(() => {
                 if (opt.isPage) perforPage();
                 if (opt.isResource || opt.isAjax) perforResource();
@@ -375,7 +375,7 @@ function Performance(option, fn) {
         // 拦截js error信息
         function _error() {
             // img,script,css,jsonp
-            window.addEventListener('error', function(e) {
+            window.addEventListener('error', function (e) {
                 let defaults = Object.assign({}, errordefo);
                 defaults.n = 'resource'
                 defaults.t = new Date().getTime();
@@ -389,9 +389,9 @@ function Performance(option, fn) {
                 if (e.target != window) conf.errorList.push(defaults)
             }, true);
             // js
-            window.onerror = function(msg, _url, line, col, error) {
+            window.onerror = function (msg, _url, line, col, error) {
                 let defaults = Object.assign({}, errordefo);
-                setTimeout(function() {
+                setTimeout(function () {
                     col = col || (window.event && window.event.errorCharacter) || 0;
                     defaults.msg = error && error.stack ? error.stack.toString() : msg
                     defaults.method = 'GET'
@@ -406,7 +406,7 @@ function Performance(option, fn) {
                     if (conf.page === location.href && !conf.haveAjax) reportData(3);
                 }, 0);
             };
-            window.addEventListener('unhandledrejection', function(e) {
+            window.addEventListener('unhandledrejection', function (e) {
                 const error = e && e.reason
                 const message = error.message || '';
                 const stack = error.stack || '';
@@ -430,6 +430,22 @@ function Performance(option, fn) {
                 conf.errorList.push(defaults);
                 if (conf.page === location.href && !conf.haveAjax) reportData(3);
             })
+            // 重写console.error
+            const oldError = console.error;
+            console.error = function (e) {
+                let defaults = Object.assign({}, errordefo);
+                setTimeout(function () {
+                    defaults.msg = e;
+                    defaults.method = 'GET';
+                    defaults.t = new Date().getTime();
+                    defaults.data = {
+                        resourceUrl: location.href,
+                    };
+                    conf.errorList.push(defaults);
+                    if (conf.page === location.href && !conf.haveAjax) reportData(3);
+                }, 0);
+                return oldError.apply(console, arguments);
+            };
         }
 
         function clear(type = 0) {
@@ -446,5 +462,5 @@ function Performance(option, fn) {
             fetchTime = 0
             if (type === 0) conf.page = location.href;
         }
-    } catch (err) {}
+    } catch (err) { }
 }

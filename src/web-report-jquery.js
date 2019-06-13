@@ -1,6 +1,6 @@
 /*!
  * performance-report Javascript Library 0.0.1
- * https://github.com/wangweianger/web-performance-report
+ * https://github.com/wangweianger/web-report-sdk
  * Date : 2018-04-18
  * auther :zane
  */
@@ -12,7 +12,7 @@ if (typeof require === 'function' && typeof exports === "object" && typeof modul
 
 window.ERRORLIST = [];
 window.ADDDATA = {};
-Performance.addError = function(err) {
+Performance.addError = function (err) {
     err = {
         method: 'GET',
         msg: err.msg,
@@ -25,7 +25,7 @@ Performance.addError = function(err) {
     }
     ERRORLIST.push(err)
 }
-Performance.addData = function(fn) { fn && fn(ADDDATA) };
+Performance.addData = function (fn) { fn && fn(ADDDATA) };
 
 function randomString(len) {
     len = len || 10;
@@ -100,7 +100,7 @@ function Performance(option, fn) {
         if (opt.isError) _error();
 
         // 绑定onload事件
-        addEventListener("load", function() {
+        addEventListener("load", function () {
             loadTime = new Date().getTime() - beginTime
             getLargeTime();
         }, false);
@@ -289,7 +289,7 @@ function Performance(option, fn) {
                     decodedBodySize: item.decodedBodySize || 0,
                     nextHopProtocol: item.nextHopProtocol,
                 }
-                const name = item.name ? item.name.split('?')[0]:'';
+                const name = item.name ? item.name.split('?')[0] : '';
                 const ajaxMsg = conf.ajaxMsg[name] || '';
                 if (ajaxMsg) {
                     json.method = ajaxMsg.method || 'GET'
@@ -308,7 +308,7 @@ function Performance(option, fn) {
                 configurable: true,
                 enumerable: true,
                 writable: true,
-                value: function() {
+                value: function () {
                     const config = ajaxArg(arguments)
                     if (config.report !== 'report-data') {
                         const url = config.url ? config.url.split('?')[0] : '';
@@ -316,8 +316,8 @@ function Performance(option, fn) {
                         conf.ajaxLength = conf.ajaxLength + 1;
                         conf.haveAjax = true
                     }
-                    const _complete = arguments[0].complete || function(data) {};
-                    arguments[0].complete = function(data) {
+                    const _complete = arguments[0].complete || function (data) { };
+                    arguments[0].complete = function (data) {
                         if (this.report === 'report-data') return res;
                         if (data.status === 200 && data.readyState === 4) {
                             const url = this.url ? this.url.split('?')[0] : '';
@@ -350,14 +350,14 @@ function Performance(option, fn) {
                 result.method = args[0].type
                 result.report = args[0].report
                 result.options = args[0].data
-            } catch (err) {}
+            } catch (err) { }
             return result;
         }
 
         // 拦截js error信息
         function _error() {
             // img,script,css,jsonp
-            window.addEventListener('error', function(e) {
+            window.addEventListener('error', function (e) {
                 let defaults = Object.assign({}, errordefo);
                 defaults.n = 'resource'
                 defaults.t = new Date().getTime();
@@ -371,9 +371,9 @@ function Performance(option, fn) {
                 if (e.target != window) conf.errorList.push(defaults)
             }, true);
             // js
-            window.onerror = function(msg, _url, line, col, error) {
+            window.onerror = function (msg, _url, line, col, error) {
                 let defaults = Object.assign({}, errordefo);
-                setTimeout(function() {
+                setTimeout(function () {
                     col = col || (window.event && window.event.errorCharacter) || 0;
                     defaults.msg = error && error.stack ? error.stack.toString() : msg
                     defaults.method = 'GET'
@@ -388,7 +388,7 @@ function Performance(option, fn) {
                     if (conf.page === location.href && !conf.haveAjax && !ajaxTime) reportData(3);
                 }, 0);
             };
-            window.addEventListener('unhandledrejection', function(e) {
+            window.addEventListener('unhandledrejection', function (e) {
                 const error = e && e.reason
                 const message = error.message || '';
                 const stack = error.stack || '';
@@ -412,6 +412,22 @@ function Performance(option, fn) {
                 conf.errorList.push(defaults);
                 if (conf.page === location.href && !conf.haveAjax) reportData(3);
             })
+            // 重写console.error
+            const oldError = console.error;
+            console.error = function (e) {
+                let defaults = Object.assign({}, errordefo);
+                setTimeout(function () {
+                    defaults.msg = e;
+                    defaults.method = 'GET';
+                    defaults.t = new Date().getTime();
+                    defaults.data = {
+                        resourceUrl: location.href,
+                    };
+                    conf.errorList.push(defaults);
+                    if (conf.page === location.href && !conf.haveAjax) reportData(3);
+                }, 0);
+                return oldError.apply(console, arguments);
+            };
         }
 
         // ajax统一上报入口
@@ -460,5 +476,5 @@ function Performance(option, fn) {
             ADDDATA = {}
             ajaxTime = 0
         }
-    } catch (err) {}
+    } catch (err) { }
 }
