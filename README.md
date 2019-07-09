@@ -64,7 +64,6 @@ import {
 ### webpack 使用
 ```js
 npm install web-report --save
-或者下载SDK到本地进行引入
 ```
 
 ```js
