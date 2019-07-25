@@ -68,10 +68,12 @@
 			})
 
 
-		fetch('http://mock-api.seosiwei.com/guest/order/api/order/getOrde',{
+		fetch('http://mock-api.seosiwei.com/guest/order/api/order/getOrder',{
 			method: 'POST',
 		}).then(function(response){
-			console.log('++++')
+			return response.josn()
+		}).then(data=>{
+			console.log(data)
 		})
 
 		var req = new Request('http://mock-api.seosiwei.com/guest/home/api/shop/getHomeInitInfo', {method: 'GET', cache: 'reload'});

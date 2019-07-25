@@ -318,7 +318,7 @@ function Performance(option, fn) {
                         getFetchTime('success')
                         try {
                             const url = res.url ? res.url.split('?')[0] : '';
-                            res.text().then(data => { if (conf.ajaxMsg[url]) conf.ajaxMsg[url]['decodedBodySize'] = data.length; })
+                            res.clone().text().then(data => { if (conf.ajaxMsg[url]) conf.ajaxMsg[url]['decodedBodySize'] = data.length; })
                         } catch (e) { }
                         return res
                     })

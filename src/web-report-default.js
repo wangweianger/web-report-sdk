@@ -461,7 +461,7 @@ function Performance(option, fn) {
                         if (result.type === 'report-data') return;
                         try {
                             const url = res.url ? res.url.split('?')[0] : '';
-                            res.text().then(data => { if (conf.ajaxMsg[url]) conf.ajaxMsg[url]['decodedBodySize'] = data.length; })
+                            res.clone().text().then(data => { if (conf.ajaxMsg[url]) conf.ajaxMsg[url]['decodedBodySize'] = data.length; })
                         } catch (e) { }
                         getFetchTime('success')
                         return res
