@@ -71,7 +71,7 @@
 		fetch('http://mock-api.seosiwei.com/guest/order/api/order/getOrder',{
 			method: 'POST',
 		}).then(function(response){
-			return response.josn()
+			return response.json()
 		}).then(data=>{
 			console.log(data)
 		})
@@ -81,6 +81,7 @@
 			console.log('-----')
 			console.log(response)
 		})
+		var wangwei = 'wangwei'
 		console.log(wangwei)
 
 	</script>
