@@ -314,7 +314,7 @@ function Performance(option, fn) {
                 }
                 return _fetch.apply(this, arguments)
                     .then((res) => {
-                        if (result.type === 'report-data') return;
+                        if (result.type === 'report-data') return res;
                         getFetchTime('success')
                         try {
                             const url = res.url ? res.url.split('?')[0] : '';

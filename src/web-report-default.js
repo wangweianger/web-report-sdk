@@ -458,7 +458,7 @@ function Performance(option, fn) {
                 }
                 return _fetch.apply(this, arguments)
                     .then((res) => {
-                        if (result.type === 'report-data') return;
+                        if (result.type === 'report-data') return res;
                         try {
                             const url = res.url ? res.url.split('?')[0] : '';
                             res.clone().text().then(data => { if (conf.ajaxMsg[url]) conf.ajaxMsg[url]['decodedBodySize'] = data.length; })
