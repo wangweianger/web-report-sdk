@@ -141,11 +141,13 @@ function Performance(option, fn) {
                 }
             },
             onerror: function (xhr) {
-                getAjaxTime('error')
                 if (xhr.args) {
                     xhr.method = xhr.args.method
                     xhr.responseURL = xhr.args.url
                     xhr.statusText = 'ajax request error'
+                    if (conf.ajaxMsg[xhr.responseURL]) {
+                        getAjaxTime('error')
+                    }
                 }
                 ajaxResponse(xhr)
             },
