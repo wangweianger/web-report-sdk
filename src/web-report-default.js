@@ -41,7 +41,7 @@ function randomString(len) {
 // web msgs report function
 function Performance(option, fn) {
     try {
-        let filterUrl = ['/api/v1/report/web', 'livereload.js?snipver=1', '/sockjs-node/info'];
+        let filterUrl = ['/api/v1/report/web', 'livereload.js?snipver=1', '/sockjs-node/'];
         let opt = {
             // 上报地址
             domain: 'http://localhost/api',
@@ -169,7 +169,7 @@ function Performance(option, fn) {
                     if (begin) return;
                 }
 
-                let result = { url: arg[1], method: arg[0] || 'GET', type: 'xmlhttprequest' }
+                let result = { url: arg[1].split('?')[0], method: arg[0] || 'GET', type: 'xmlhttprequest' }
                 this.args = result
 
                 clearPerformance()
