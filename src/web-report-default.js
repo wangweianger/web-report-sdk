@@ -122,10 +122,12 @@ function Performance(option, fn) {
                     setTimeout(() => {
                         if (conf.goingType === 'load') return;
                         conf.goingType = 'readychange';
-                        getAjaxTime('readychange')
                         try {
                             const responseURL = xhr.xhr.responseURL ? xhr.xhr.responseURL.split('?')[0] : '';
-                            if (conf.ajaxMsg[responseURL]) conf.ajaxMsg[responseURL]['decodedBodySize'] = xhr.xhr.responseText.length;
+                            if (conf.ajaxMsg[responseURL]) {
+                                conf.ajaxMsg[responseURL]['decodedBodySize'] = xhr.xhr.responseText.length;
+                                getAjaxTime('readychange')
+                            }
                         } catch (err) { }
                         if (xhr.status < 200 || xhr.status > 300) {
                             xhr.method = xhr.args.method
@@ -147,10 +149,12 @@ function Performance(option, fn) {
                 if (xhr.readyState === 4) {
                     if (conf.goingType === 'readychange') return;
                     conf.goingType = 'load';
-                    getAjaxTime('load');
                     try {
                         const responseURL = xhr.xhr.responseURL ? xhr.xhr.responseURL.split('?')[0] : '';
-                        if (conf.ajaxMsg[responseURL]) conf.ajaxMsg[responseURL]['decodedBodySize'] = xhr.xhr.responseText.length;
+                        if (conf.ajaxMsg[responseURL]) {
+                            conf.ajaxMsg[responseURL]['decodedBodySize'] = xhr.xhr.responseText.length;
+                            getAjaxTime('load');
+                        }
                     } catch (err) { }
                     if (xhr.status < 200 || xhr.status > 300) {
                         xhr.method = xhr.args.method
