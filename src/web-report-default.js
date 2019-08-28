@@ -41,7 +41,7 @@ function randomString(len) {
 // web msgs report function
 function Performance(option, fn) {
     try {
-        let filterUrl = ['/api/v1/report/web', 'livereload.js?snipver=1', '/sockjs-node/info'];
+        let filterUrl = ['/api/v1/report/web', 'livereload.js?snipver=1', '/sockjs-node/'];
         let opt = {
             // 上报地址
             domain: 'http://localhost/api',
@@ -122,11 +122,17 @@ function Performance(option, fn) {
                     setTimeout(() => {
                         if (conf.goingType === 'load') return;
                         conf.goingType = 'readychange';
-                        getAjaxTime('readychange')
-                        try {
-                            const responseURL = xhr.xhr.responseURL ? xhr.xhr.responseURL.split('?')[0] : '';
-                            if (conf.ajaxMsg[responseURL]) conf.ajaxMsg[responseURL]['decodedBodySize'] = xhr.xhr.responseText.length;
-                        } catch (err) { }
+                        const responseURL = xhr.xhr.responseURL ? xhr.xhr.responseURL.split('?')[0] : '';
+                        if (conf.ajaxMsg[responseURL]) {
+                            try {
+                                if (xhr.xhr.response instanceof Blob) {
+                                    conf.ajaxMsg[responseURL]['decodedBodySize'] = xhr.xhr.response.size;
+                                } else {
+                                    conf.ajaxMsg[responseURL]['decodedBodySize'] = xhr.xhr.responseText.length;
+                                }
+                            } catch (err) {}
+                            getAjaxTime('readychange')
+                        }
                         if (xhr.status < 200 || xhr.status > 300) {
                             xhr.method = xhr.args.method
                             ajaxResponse(xhr)
@@ -135,11 +141,13 @@ function Performance(option, fn) {
                 }
             },
             onerror: function (xhr) {
-                getAjaxTime('error')
                 if (xhr.args) {
                     xhr.method = xhr.args.method
                     xhr.responseURL = xhr.args.url
                     xhr.statusText = 'ajax request error'
+                    if (conf.ajaxMsg[xhr.responseURL]) {
+                        getAjaxTime('error')
+                    }
                 }
                 ajaxResponse(xhr)
             },
@@ -147,11 +155,17 @@ function Performance(option, fn) {
                 if (xhr.readyState === 4) {
                     if (conf.goingType === 'readychange') return;
                     conf.goingType = 'load';
-                    getAjaxTime('load');
-                    try {
-                        const responseURL = xhr.xhr.responseURL ? xhr.xhr.responseURL.split('?')[0] : '';
-                        if (conf.ajaxMsg[responseURL]) conf.ajaxMsg[responseURL]['decodedBodySize'] = xhr.xhr.responseText.length;
-                    } catch (err) { }
+                    const responseURL = xhr.xhr.responseURL ? xhr.xhr.responseURL.split('?')[0] : '';
+                    if (conf.ajaxMsg[responseURL]) {
+                        try {
+                            if (xhr.xhr.response instanceof Blob) {
+                                conf.ajaxMsg[responseURL]['decodedBodySize'] = xhr.xhr.response.size;
+                            } else {
+                                conf.ajaxMsg[responseURL]['decodedBodySize'] = xhr.xhr.responseText.length;
+                            }
+                        } catch (err) {}    
+                        getAjaxTime('load');
+                    }
                     if (xhr.status < 200 || xhr.status > 300) {
                         xhr.method = xhr.args.method
                         ajaxResponse(xhr)
@@ -165,7 +179,7 @@ function Performance(option, fn) {
                     if (begin) return;
                 }
 
-                let result = { url: arg[1], method: arg[0] || 'GET', type: 'xmlhttprequest' }
+                let result = { url: arg[1].split('?')[0], method: arg[0] || 'GET', type: 'xmlhttprequest' }
                 this.args = result
 
                 clearPerformance()
