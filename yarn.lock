@@ -1345,7 +1345,7 @@ gulp-clean@^0.4.0:
 
 gulp-connect@^5.5.0:
   version "5.7.0"
-  resolved "https://registry.npmjs.org/gulp-connect/-/gulp-connect-5.7.0.tgz#7e925f5e4c34ebfedf9f318576966e8fe8840d5a"
+  resolved "https://registry.yarnpkg.com/gulp-connect/-/gulp-connect-5.7.0.tgz#7e925f5e4c34ebfedf9f318576966e8fe8840d5a"
   integrity sha512-8tRcC6wgXMLakpPw9M7GRJIhxkYdgZsXwn7n56BA2bQYGLR9NOPhMzx7js+qYDy6vhNkbApGKURjAw1FjY4pNA==
   dependencies:
     ansi-colors "^2.0.5"
